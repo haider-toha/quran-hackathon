@@ -2,7 +2,7 @@
 name = "quran-hackathon-backend"
 version = "0.1.0"
 description = "Quran Notion + RAG backend"
-authors = ["Haider Toha"]
+authors = ["Haider Toha <mohammedhaidertoha@gmail.com>"]
 package-mode = false
 
 [tool.poetry.dependencies]
