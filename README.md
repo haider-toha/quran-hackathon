@@ -87,7 +87,7 @@ gh pr create --fill
 gh pr checks --watch
 
 # 6. Merge when green
-gh pr merge --squash --delete-branch
+gh pr merge --squash
 ```
 
 **Branch protection rules in effect on `main`:**
