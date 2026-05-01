@@ -65,6 +65,52 @@ Per-side targets live in `backend/Makefile` and `frontend/package.json` — run 
 
 GitHub Actions runs lint, format-check, type-check, and tests on every push to `main` and every pull request. See `.github/workflows/ci.yml`.
 
+## Team workflow
+
+`main` is protected. **You cannot push directly** — every change goes through a pull request, and CI must pass before merging.
+
+```bash
+# 1. Start fresh from main
+git checkout main && git pull
+
+# 2. Create a branch (use feat/, fix/, chore/, refactor/, docs/)
+git checkout -b feat/verse-notes
+
+# 3. Commit and push
+git add . && git commit -m "Add verse notes endpoint"
+git push -u origin feat/verse-notes
+
+# 4. Open a PR (the gh CLI is the fastest path)
+gh pr create --fill
+
+# 5. Wait for CI — Backend and Frontend jobs run on every push to the PR
+gh pr checks --watch
+
+# 6. Merge when green
+gh pr merge --squash --delete-branch
+```
+
+**Branch protection rules in effect on `main`:**
+
+- All changes via PR — direct pushes blocked
+- `Backend` and `Frontend` CI checks must pass before merge
+- Branch must be up-to-date with `main` before merge (rebase or merge `main` into your branch first)
+- All PR conversations must be resolved before merge
+- Force-pushes and branch deletion blocked
+- 0 approvals required (so you can self-merge a green PR)
+
+**If CI fails on your PR:** fix locally, push to the same branch, CI re-runs automatically.
+
+**If `main` moves while your PR is open:**
+```bash
+git pull --rebase origin main
+git push --force-with-lease
+```
+
+**Branch naming:** `feat/<short-desc>`, `fix/<short-desc>`, `chore/<short-desc>`, `docs/<short-desc>`, `refactor/<short-desc>`.
+
+**Commit messages:** imperative mood, focus on the why ("Add verse notes endpoint", not "added stuff").
+
 ## Conventions
 
 - `CLAUDE.md` — project guide (commands, code style, anti-patterns). Read this first.
