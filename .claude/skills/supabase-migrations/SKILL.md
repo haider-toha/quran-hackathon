@@ -1,11 +1,11 @@
 ---
 name: supabase-migrations
-description: Supabase + Postgres migration standards for the Quran Hackathon — file naming with real timestamps, idempotent DDL, RLS, function security (INVOKER vs DEFINER), the shared `update_updated_at_column` trigger, and views/materialized-view safety. Single-tenant; no org scoping. Use when adding schema, RLS policies, RPCs, triggers, or any SQL under `supabase/migrations/`.
+description: Supabase + Postgres migration standards for the Quran Hackathon — file naming with real timestamps, idempotent DDL, owner-based RLS for B2C user-scoped data, function security (INVOKER vs DEFINER), the shared `update_updated_at_column` trigger, and views/materialized-view safety. Use when adding schema, RLS policies, RPCs, triggers, or any SQL under `supabase/migrations/`.
 ---
 
 # Supabase Migrations — Quran Hackathon
 
-For SQL under `supabase/migrations/`. Single-tenant project — there is no `organisation_id`, no multi-tenant scoping. Owner-based RLS only.
+For SQL under `supabase/migrations/`. B2C app: user-owned rows scoped by `user_id` (FK to `auth.users.id`); RLS enforces "users see and mutate only their own rows". The Quran corpus and other public read-only data is exposed openly.
 
 ## Hard rules
 

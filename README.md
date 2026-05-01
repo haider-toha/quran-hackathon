@@ -74,4 +74,5 @@ GitHub Actions runs lint, format-check, type-check, and tests on every push to `
   - `services-architecture` — service / repository / external-client layering
   - `rag-patterns` — chunking, embeddings, vector stores, citations
   - `quran-domain` — Quran data structure, Arabic handling, translations, attribution
+  - `supabase-migrations` — file naming, idempotent DDL, owner-based RLS, function security
 - `frontend/AGENTS.md` — Next.js 16 caveats for AI agents

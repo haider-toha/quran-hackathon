@@ -20,7 +20,7 @@ frontend/  Next.js 16 App Router + TypeScript + Tailwind
 
 Root-level `make <command>` runs both sides. See `Makefile` and `backend/Makefile` for the full list.
 
-Project conventions live in `.claude/skills/` — `backend-coding-standards`, `frontend-coding-standards`, `services-architecture`, `quran-domain`, `rag-patterns`. Read those before writing code in the matching area.
+Project conventions live in `.claude/skills/` — `backend-coding-standards`, `frontend-coding-standards`, `services-architecture`, `quran-domain`, `rag-patterns`, `supabase-migrations`. Read those before writing code in the matching area.
 
 ---
 
