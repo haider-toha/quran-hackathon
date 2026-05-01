@@ -1,0 +1,98 @@
+[tool.poetry]
+name = "quran-hackathon-backend"
+version = "0.1.0"
+description = "Quran Notion + RAG backend"
+authors = ["Haider Toha <haider@sammylabs.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+fastapi = { version = "^0.115.0", extras = ["standard"] }
+pydantic = "^2.10.0"
+pydantic-settings = "^2.7.0"
+anthropic = "^0.42.0"
+httpx = "^0.28.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.9.0"
+mypy = "^1.14.0"
+pytest = "^8.3.0"
+pytest-asyncio = "^0.25.0"
+httpx = "^0.28.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["app", "tests"]
+extend-exclude = [".venv", ".mypy_cache", ".pytest_cache", ".ruff_cache"]
+
+[tool.ruff.lint]
+# Curated rule set for an async FastAPI + Pydantic v2 codebase.
+# Kept lean for hackathon scale — high-signal rules only.
+# - E/F/W: pycodestyle + pyflakes (the basics)
+# - I: isort
+# - UP: pyupgrade — keeps syntax modern (py3.13)
+# - B: bugbear — catches real bugs
+# - SIM: simplify — readability nits
+# - RUF: Ruff-specific rules — high signal
+# - ASYNC: async/await footguns (e.g. blocking calls in async functions)
+# - PT: pytest style
+# - RET: flake8-return
+# - C4: flake8-comprehensions
+select = [
+    "E", "F", "W",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+    "RUF",
+    "ASYNC",
+    "PT",
+    "RET",
+    "C4",
+]
+ignore = [
+    # Line length is enforced by the formatter, not the linter.
+    "E501",
+    # Pydantic models have lots of `Field(...)` defaults that bugbear B008 flags incorrectly.
+    "B008",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests get extra rope: `assert` statements are fine, magic numbers are common in fixtures.
+"tests/**/*.py" = ["S101", "PLR2004"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+# Tests don't need the full strictness — fixtures are often untyped by design.
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+]

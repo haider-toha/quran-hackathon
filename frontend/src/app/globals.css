@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf7;
+  --foreground: #1a1a17;
+
+  /* Reading-app radius scale — slightly softer than default. */
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0e0e0c;
+    --foreground: #ededea;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Font stacks. Wire actual fonts (e.g. Amiri, Scheherazade, Inter) via
+     next/font in layout.tsx; the CSS vars below are what tokens read from. */
+  --font-sans: var(--font-sans-stack, ui-sans-serif, system-ui, sans-serif);
+  --font-serif: var(--font-serif-stack, ui-serif, Georgia, serif);
+  --font-mono: var(--font-mono-stack, ui-monospace, SFMono-Regular, Menlo, monospace);
+  /* Arabic-first stack — falls back to system Arabic faces until a webfont is wired. */
+  --font-arabic: var(
+    --font-arabic-stack,
+    "Amiri",
+    "Scheherazade New",
+    "Noto Naskh Arabic",
+    "Traditional Arabic",
+    serif
+  );
+
+  /* Reading-friendly line-height tokens. Use as `leading-reading` etc. */
+  --leading-tight-reading: 1.4;
+  --leading-reading: 1.7;
+  --leading-loose-reading: 2;
+  /* Arabic typically wants more vertical breathing room. */
+  --leading-arabic: 2.2;
+
+  /* Border radius tokens (mapped from --radius). */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Extended spacing scale (rem-based, pixel comments for reference). */
+  --spacing-30: 7.5rem; /* 120px */
+  --spacing-40: 10rem; /* 160px */
+  --spacing-50: 12.5rem; /* 200px */
+  --spacing-60: 15rem; /* 240px */
+  --spacing-70: 17.5rem; /* 280px */
+  --spacing-80: 20rem; /* 320px */
+  --spacing-90: 22.5rem; /* 360px */
+  --spacing-100: 25rem; /* 400px */
+  --spacing-120: 30rem; /* 480px */
+  --spacing-150: 37.5rem; /* 600px */
+  --spacing-180: 45rem; /* 720px */
+  --spacing-200: 50rem; /* 800px */
+  --spacing-250: 62.5rem; /* 1000px */
+  --spacing-300: 75rem; /* 1200px */
+  --spacing-350: 87.5rem; /* 1400px */
+  --spacing-400: 100rem; /* 1600px */
+  --spacing-450: 112.5rem; /* 1800px */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  /* Tighter default rendering for reading content. */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Utility class for Arabic text blocks. Use as `<p class="arabic">...</p>` or
+   compose via `<p dir="rtl" class="font-arabic leading-arabic">`. */
+.arabic {
+  font-family: var(--font-arabic);
+  line-height: var(--leading-arabic);
+  direction: rtl;
+}
