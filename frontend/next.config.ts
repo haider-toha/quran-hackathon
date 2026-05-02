@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  // Tree-shake the icon barrel — without this hint, every `import { ... }
+  // from "@/components/Icon"` re-evaluates the whole module, defeating
+  // dead-code elimination across the "use client" boundary.
+  experimental: {
+    optimizePackageImports: ["@/components/Icon"],
+  },
   async headers() {
     return [
       {
