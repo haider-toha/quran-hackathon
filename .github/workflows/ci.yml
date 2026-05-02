@@ -88,3 +88,123 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+  migrations:
+    name: Migrations
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect migration changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            migrations:
+              - 'supabase/migrations/*.sql'
+
+      - name: Skip — no migration changes
+        if: steps.changes.outputs.migrations != 'true'
+        run: echo "No migration changes touched in this commit/PR. Gate skipped."
+
+      - name: Validate migration filenames
+        if: steps.changes.outputs.migrations == 'true'
+        run: |
+          set -e
+          shopt -s nullglob
+          fail=0
+          for f in supabase/migrations/*.sql; do
+            base=$(basename "$f")
+            if [[ ! "$base" =~ ^[0-9]{14}_[a-z0-9_]+\.sql$ ]]; then
+              echo "::error file=$f::Bad filename: '$base' — must match YYYYMMDDHHmmss_<snake_case>.sql"
+              fail=1
+              continue
+            fi
+            ts="${base:0:14}"
+            seconds="${ts:8:6}"
+            if [[ "$seconds" =~ ^(000000|060000|090000|120000|180000)$ ]]; then
+              echo "::error file=$f::Suspicious rounded timestamp '$seconds' — generate via 'supabase migration new <name>' or 'date +%Y%m%d%H%M%S'"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Block edits to merged migrations (forward-only)
+        if: steps.changes.outputs.migrations == 'true' && github.event_name == 'pull_request'
+        run: |
+          BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          modified=$(git diff --diff-filter=M --name-only "$BASE_SHA" HEAD -- 'supabase/migrations/*.sql' || true)
+          if [ -n "$modified" ]; then
+            echo "::error::Migrations are forward-only — do not edit existing migrations once they have been merged. Modified:"
+            echo "$modified"
+            exit 1
+          fi
+
+      - name: Bootstrap minimal Supabase schema for ephemeral DB
+        if: steps.changes.outputs.migrations == 'true'
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 <<'EOF'
+          CREATE EXTENSION IF NOT EXISTS pgcrypto;
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE TABLE IF NOT EXISTS auth.users (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            email text UNIQUE,
+            created_at timestamptz NOT NULL DEFAULT now()
+          );
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+            LANGUAGE sql STABLE AS $func$
+            SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
+          $func$;
+          CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb
+            LANGUAGE sql STABLE AS $func$
+            SELECT nullif(current_setting('request.jwt.claims', true), '')::jsonb
+          $func$;
+          DO $do$ BEGIN
+            CREATE ROLE anon NOLOGIN;
+          EXCEPTION WHEN duplicate_object THEN NULL; END $do$;
+          DO $do$ BEGIN
+            CREATE ROLE authenticated NOLOGIN;
+          EXCEPTION WHEN duplicate_object THEN NULL; END $do$;
+          DO $do$ BEGIN
+            CREATE ROLE service_role NOLOGIN BYPASSRLS;
+          EXCEPTION WHEN duplicate_object THEN NULL; END $do$;
+          EOF
+
+      - name: Apply migrations to ephemeral DB
+        if: steps.changes.outputs.migrations == 'true'
+        env:
+          PGPASSWORD: postgres
+        run: |
+          for f in $(ls -1 supabase/migrations/*.sql | sort); do
+            echo "::group::Applying $f"
+            psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f "$f"
+            echo "::endgroup::"
+          done
+
+      - name: Verify idempotency (re-apply each migration)
+        if: steps.changes.outputs.migrations == 'true'
+        env:
+          PGPASSWORD: postgres
+        run: |
+          for f in $(ls -1 supabase/migrations/*.sql | sort); do
+            echo "::group::Re-applying $f"
+            psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f "$f"
+            echo "::endgroup::"
+          done
