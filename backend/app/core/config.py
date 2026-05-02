@@ -10,5 +10,9 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
 
+    supabase_url: str = ""
+    supabase_publishable_key: str = ""
+    supabase_secret_key: str = ""
+
 
 settings = Settings()
