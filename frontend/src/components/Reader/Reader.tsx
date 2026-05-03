@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icon";
 import { usePreferences } from "@/hooks/usePreferences";
@@ -42,18 +42,38 @@ function pickContinueRef(lastRead: LastRead, currentSurah: number): LastRead {
   return lastRead;
 }
 
+// Returns `true` once we've hydrated on the client. Same pattern TrustLegend
+// and FloatingCard use: SSR returns false, client returns true, no
+// setState-in-effect.
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
 export function Reader({ surah }: Props) {
   const { preferences, setLastRead } = usePreferences();
 
   const [selectedAyah, setSelectedAyah] = useState<number | null>(null);
   const [toolbarRect, setToolbarRect] = useState<DOMRect | null>(null);
   const [playing, setPlaying] = useState<number | null>(null);
-  // Snapshot at mount: we don't want the banner flickering after the user
-  // taps an ayah on this surah (which would update preferences.lastRead and
-  // therefore satisfy the new condition for *this* surah). The lazy
-  // initializer keeps the snapshot stable for the lifetime of this Reader.
-  const [continueRef] = useState<LastRead>(() =>
-    pickContinueRef(preferences.lastRead, surah.number),
+  // Snapshot lastRead at hydration: SSR has no localStorage, so
+  // `preferences.lastRead` is null on the server but populated on the client.
+  // Computing eagerly with a lazy `useState` initializer would render
+  // different HTML on server vs client and trip a hydration mismatch.
+  // Gating on `hydrated` ensures the first hydration render matches SSR
+  // (both yield null), and the post-hydration render captures the snapshot.
+  // The deps array intentionally omits `preferences.lastRead`: we don't want
+  // the banner to disappear mid-read when the user taps an ayah on this
+  // surah (setLastRead → lastRead.surah === currentSurah → pickContinueRef
+  // would return null).
+  const hydrated = useHydrated();
+  const continueRef = useMemo<LastRead>(
+    () => (hydrated ? pickContinueRef(preferences.lastRead, surah.number) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: freeze snapshot at hydration, ignore later lastRead writes
+    [hydrated, surah.number],
   );
 
   const handleSelectAyah = useCallback(

@@ -18,7 +18,14 @@ export type DismissalStore = Record<string /*noteId*/, Record<string /*hash*/, D
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
+// Cached read-side snapshot. `useSyncExternalStore` requires a referentially
+// stable snapshot across calls when nothing has changed; `JSON.parse` would
+// otherwise hand back a new object every read and trigger an infinite loop.
+let snapshot: DismissalStore | null = null;
+
 function notify(): void {
+  // Bust the cached snapshot so the next read pulls fresh state.
+  snapshot = null;
   for (const listener of listeners) listener();
 }
 
@@ -54,13 +61,19 @@ function validate(input: unknown): DismissalStore {
 }
 
 export function readDismissals(): DismissalStore {
+  if (snapshot !== null) return snapshot;
   if (typeof window === "undefined") return {};
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return validate(JSON.parse(raw));
+    if (!raw) {
+      snapshot = {};
+      return snapshot;
+    }
+    snapshot = validate(JSON.parse(raw));
+    return snapshot;
   } catch {
-    return {};
+    snapshot = {};
+    return snapshot;
   }
 }
 
