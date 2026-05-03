@@ -28,7 +28,11 @@ export function AnsweredView({ answer, onFollowUp }: Props) {
     <>
       <div className="answer">
         {answer.paragraphs.map((paragraph, index) => (
-          <Paragraph key={index} answer={answer} paragraph={paragraph} />
+          <Paragraph
+            key={`p-${index}-${paragraph.segments.length}`}
+            answer={answer}
+            paragraph={paragraph}
+          />
         ))}
         <p className="closing">{answer.closing}</p>
       </div>
@@ -68,17 +72,20 @@ function Paragraph({ paragraph, answer }: { paragraph: AnswerParagraph; answer: 
   return (
     <p>
       {paragraph.segments.map((segment, index) => {
+        // Composite keys: kind + position is unique per paragraph and stable
+        // across renders because answer paragraphs are immutable.
+        const key = `${segment.kind}-${index}`;
         if (segment.kind === "text") {
-          return <Fragment key={index}>{segment.value}</Fragment>;
+          return <Fragment key={key}>{segment.value}</Fragment>;
         }
         if (segment.kind === "emphasis") {
-          return <em key={index}>{segment.value}</em>;
+          return <em key={key}>{segment.value}</em>;
         }
         const citation = answer.citations.find((c) => c.number === segment.citation);
         if (!citation) {
-          return <Fragment key={index}>{segment.value}</Fragment>;
+          return <Fragment key={key}>{segment.value}</Fragment>;
         }
-        return <CitationAnchor key={index} citation={citation} />;
+        return <CitationAnchor key={`${key}-${citation.number}`} citation={citation} />;
       })}
     </p>
   );

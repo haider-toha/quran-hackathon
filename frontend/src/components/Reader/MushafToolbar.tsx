@@ -44,6 +44,12 @@ export function MushafToolbar({ rect, onAction, onClose }: Props) {
   const left = clampLeft(rect);
   const ref = useRef<HTMLDivElement>(null);
 
+  // Contract: `onClose` MUST be referentially stable across renders (e.g.
+  // wrapped in `useCallback` with empty/stable deps in the parent). Reader
+  // satisfies this with `handleCloseToolbar = useCallback(() => …, [])`.
+  // If a future caller passes an inline closure, the listener will detach
+  // and reattach on every render — a perf regression we'd notice in the
+  // React DevTools profiler before correctness bites.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();

@@ -158,13 +158,20 @@ export function Ask() {
     [slashOpen],
   );
 
-  // Update slash query as the user keeps typing after `/`. Reads the textarea
-  // value directly because the keydown is raised before the value updates.
+  // Update slash query as the user keeps typing after `/`. Refs avoid
+  // re-attaching the listener every time `slashOpen` flips: the listener is
+  // attached once when the textarea node is captured, and gates its work on
+  // the latest value of `slashOpen` via the ref.
+  const slashOpenRef = useRef(slashOpen);
   useEffect(() => {
-    if (!slashOpen) return;
-    const node = textareaRef.current;
+    slashOpenRef.current = slashOpen;
+  }, [slashOpen]);
+
+  useEffect(() => {
+    const node = textareaEl;
     if (!node) return;
     function onInput() {
+      if (!slashOpenRef.current) return;
       if (!node) return;
       const caret = node.selectionStart ?? 0;
       const value = node.value;
@@ -189,7 +196,7 @@ export function Ask() {
     }
     node.addEventListener("input", onInput);
     return () => node.removeEventListener("input", onInput);
-  }, [slashOpen]);
+  }, [textareaEl]);
 
   const handleSlashSelect = useCallback((cmd: SlashCommand) => {
     const node = textareaRef.current;
@@ -312,14 +319,16 @@ export function Ask() {
                 >
                   {entry.result.kind === "answer"
                     ? entry.result.answer.paragraphs.map((paragraph, index) => (
-                        <p key={index} style={{ marginBottom: 8 }}>
+                        <p key={`${entry.id}-p-${index}`} style={{ marginBottom: 8 }}>
                           {paragraph.segments.map((segment, segIndex) => (
-                            <span key={segIndex}>{segment.value}</span>
+                            <span key={`${entry.id}-p-${index}-s-${segIndex}-${segment.kind}`}>
+                              {segment.value}
+                            </span>
                           ))}
                         </p>
                       ))
                     : entry.result.deferral.body.map((line, index) => (
-                        <p key={index} style={{ marginBottom: 8 }}>
+                        <p key={`${entry.id}-d-${index}`} style={{ marginBottom: 8 }}>
                           {line.replace(/\*\*/g, "").replace(/\*/g, "")}
                         </p>
                       ))}

@@ -23,9 +23,9 @@ type Props = {
 };
 
 export function TafsirPanel({ surah, ayah, onClose }: Props) {
-  // Read responseStyle silently — v3 renders the canonical Detailed layout
-  // regardless of style. The pref still informs server-side response shape.
-  // TODO(v3.1): branch on responseStyle for actual content variants
+  // We read `showReflectionPrompts` (and nothing else) — v3 renders the
+  // canonical Detailed layout regardless of `responseStyle`, so the prior
+  // silent read of that field has been dropped.
   const { preferences } = usePreferences();
 
   const [openSourceId, setOpenSourceId] = useState<string | null>(

@@ -70,7 +70,7 @@ function play(surah: number, ayah: number, onEnded: () => void) {
     cleanup();
   });
 
-  el.play().catch((err) => {
+  el.play().catch((err: unknown) => {
     console.warn("AyahAudio: play() rejected", err);
     cleanup();
   });

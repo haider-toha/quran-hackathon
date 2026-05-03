@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icon";
-import { findSurahSummary } from "@/lib/mock-data";
 import { usePreferences } from "@/hooks/usePreferences";
+import { findSurahSummary } from "@/lib/mock-data";
 import type { LastRead, Surah } from "@/types";
 
 import { ContinueBanner } from "./ContinueBanner";
@@ -90,9 +90,10 @@ export function Reader({ surah }: Props) {
     setToolbarRect(null);
   }, []);
 
-  // Escape closes the panel (and any visible toolbar). Resize is *not*
-  // wired up to dismiss the toolbar — mobile address-bar collapse fires
-  // resize constantly and would make the toolbar disappear under the user.
+  // Escape closes the panel (and any visible toolbar). Empty dep array is
+  // safe here: the only references are `setToolbarRect` and `setSelectedAyah`,
+  // which React guarantees are referentially stable across renders. We
+  // attach once on mount and detach on unmount.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -113,22 +114,31 @@ export function Reader({ surah }: Props) {
   }, []);
 
   // After mount, scroll to the deep-link target if the URL has `#ayah-N`.
-  // Only run once; we don't want to fight the user's scrolling.
+  // Only run once per surah; we don't want to fight the user's scrolling.
+  // Cancellation: if `surah.number` changes mid-frame, the cleanup function
+  // both cancels the requestAnimationFrame and flips `cancelled` so the
+  // queued callback (if it was already mid-flight on the next frame) does
+  // not call `setSelectedAyah` for the previous surah.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const hash = window.location.hash;
     if (!hash.startsWith("#ayah-")) return;
     const n = Number.parseInt(hash.slice("#ayah-".length), 10);
     if (!Number.isFinite(n) || n < 1) return;
+    let cancelled = false;
     // Defer one frame so the chosen reader-mode child has rendered.
     const id = window.requestAnimationFrame(() => {
+      if (cancelled) return;
       const el = document.querySelector<HTMLElement>(`[data-ayah="${n}"]`);
       if (el) {
         el.scrollIntoView({ block: "center", behavior: "smooth" });
         setSelectedAyah(n);
       }
     });
-    return () => window.cancelAnimationFrame(id);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(id);
+    };
   }, [surah.number]);
 
   const selectedVerse =
