@@ -1,10 +1,10 @@
 -- Tafsir RAG layer. Splits long tafsir entries into embedded chunks and
 -- exposes a retrieval RPC that respects per-user tafsir preferences.
 --
--- Embedding dimension (1024) matches voyage-3. Adjust to your embedder:
---   voyage-3              = 1024
---   text-embedding-3-large = 3072
+-- Embedding dimension matches text-embedding-3-small (OpenAI).
 --   text-embedding-3-small = 1536
+--   text-embedding-3-large = 3072
+--   voyage-3               = 1024
 -- If you change this, also update the function signature below.
 
 create table tafsir_chunks (
@@ -15,7 +15,7 @@ create table tafsir_chunks (
   chunk_index   int    not null,
   content       text   not null,
   token_count   int,
-  embedding     vector(1024),
+  embedding     vector(1536),
   created_at    timestamptz not null default now(),
   unique (entry_id, chunk_index)
 );
@@ -35,7 +35,7 @@ create index tafsir_chunks_embedding_idx
 -- user's enabled tafsirs (with fallback to tafsirs.is_default_on), and ranks
 -- by cosine similarity.
 create or replace function match_tafsir_chunks(
-  query_embedding   vector(1024),
+  query_embedding   vector(1536),
   p_user_id         uuid,
   p_chapter_id      smallint,
   p_verse_start     smallint,
