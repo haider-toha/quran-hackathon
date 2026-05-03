@@ -1,6 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
 
 import { AlertWarnIcon, ArrowRightIcon, CompassIcon, PenIcon } from "@/components/Icon";
 import { parseInline } from "@/lib/markdown";
@@ -40,11 +39,7 @@ export function LowConfidenceView() {
           </div>
           <div className="body">
             {SAMPLE_DEFERRAL.body.map((paragraph, index) => (
-              <p key={index}>
-                {parseInline(paragraph).map((node, nodeIndex) => (
-                  <Fragment key={nodeIndex}>{node}</Fragment>
-                ))}
-              </p>
+              <p key={`p-${index}`}>{parseInline(paragraph, `p-${index}`)}</p>
             ))}
           </div>
         </div>
