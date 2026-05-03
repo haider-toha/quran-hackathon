@@ -60,6 +60,9 @@ export {
   AlignLeftIcon,
   BellIcon,
   LockIcon,
+  DownloadIcon,
+  ShareIcon,
+  MapIcon,
 } from "./Icon";
 
 // String-keyed catalog so registries (templates, slash commands) can store
@@ -125,4 +128,7 @@ export type IconName =
   | "columns"
   | "align-left"
   | "bell"
-  | "lock";
+  | "lock"
+  | "download"
+  | "share"
+  | "map";

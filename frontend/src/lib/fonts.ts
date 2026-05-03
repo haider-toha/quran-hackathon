@@ -1,7 +1,12 @@
 import { Amiri_Quran, Geist, Geist_Mono, Newsreader } from "next/font/google";
 
+// `latin-ext` is critical: Latin Extended Additional (ḍ, ḥ, ẓ, ṣ, ṭ, ī, ā,
+// ū, ʿ, ʾ etc.) lives there. Without it the browser silently falls back to
+// the next font in the stack for any glyph in that range, which renders at
+// a different weight than the surrounding Newsreader text — that's why
+// Arabic transliteration looked like it was being rendered bold.
 export const newsreader = Newsreader({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-display-stack",
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
@@ -9,14 +14,14 @@ export const newsreader = Newsreader({
 });
 
 export const geistSans = Geist({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-sans-stack",
   display: "swap",
   weight: ["400", "500", "600"],
 });
 
 export const geistMono = Geist_Mono({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-mono-stack",
   display: "swap",
   weight: ["400", "500"],

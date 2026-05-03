@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────
-   Mishkāt design tokens
+   Mishkat design tokens
    These tokens are exposed via Tailwind's @theme block, which both
    declares the CSS variables AND generates utilities (`bg-bg`,
    `text-ink`, etc.). Override the same variables under
@@ -10,46 +10,56 @@
    ───────────────────────────────────────────────────────────────── */
 
 @theme {
-  /* Surfaces */
-  --color-bg: #f3ede0;
-  --color-bg-2: #ebe3d2;
-  --color-bg-elev: #faf6ec;
-  --color-bg-deep: #e7decb;
-  --color-surface: #ffffffd9;
+  /* Surfaces — desaturated, near-white scholarly canvas. The previous
+     beige (#f3ede0) leaned warm; Phase 8 retunes the palette toward a
+     parchment-but-quieter tone: most surfaces sit in oklch lightness
+     0.96–0.985 with chroma ≤0.006 so the eye registers paper, not amber. */
+  --color-bg: oklch(0.985 0.005 80);
+  --color-bg-2: oklch(0.965 0.006 80);
+  --color-bg-elev: oklch(0.99 0.004 80);
+  --color-bg-deep: oklch(0.95 0.007 80);
+  --color-surface: oklch(0.99 0.004 80 / 0.85);
 
-  /* Ink (text) */
-  --color-ink: #1d1a12;
-  --color-ink-2: #3a342a;
-  --color-ink-3: #6b6354;
-  --color-ink-4: #9a9183;
-  --color-ink-5: #c4bcad;
+  /* Ink (text) — deep, slightly warm ink. Pure black reads as printer
+     output; nudging into oklch(0.18 0.005 80) keeps the manuscript feel
+     while preserving 16:1+ contrast on the lightest surfaces. */
+  --color-ink: oklch(0.18 0.005 80);
+  --color-ink-2: oklch(0.32 0.006 80);
+  --color-ink-3: oklch(0.5 0.006 80);
+  --color-ink-4: oklch(0.66 0.005 80);
+  --color-ink-5: oklch(0.82 0.004 80);
 
-  /* Lines */
-  --color-line: #e0d8c4;
-  --color-line-2: #ebe4d3;
-  --color-line-strong: #cfc6ad;
+  /* Lines — hairline rules. Quiet enough to read as structure, not chrome. */
+  --color-line: oklch(0.92 0.005 80);
+  --color-line-2: oklch(0.95 0.005 80);
+  --color-line-strong: oklch(0.86 0.006 80);
 
-  /* Primary action (soft ink, not pure black) */
-  --color-primary: #3a3327;
-  --color-primary-hover: #4a4233;
-  --color-primary-fg: #faf6ec;
+  /* Primary action — deep ink, not pure black. */
+  --color-primary: oklch(0.26 0.006 80);
+  --color-primary-hover: oklch(0.32 0.006 80);
+  --color-primary-fg: oklch(0.98 0.005 80);
 
-  /* Accent — muted sage */
-  --color-accent: oklch(0.55 0.05 165);
-  --color-accent-soft: oklch(0.55 0.05 165 / 0.14);
-  --color-accent-softer: oklch(0.55 0.05 165 / 0.07);
-  --color-accent-ink: oklch(0.42 0.05 165);
+  /* Accent — restrained muted teal. One accent, used everywhere
+     interactive: links, focus rings, the answer-view-toggle "on" state,
+     citation underlines, the confidence-grounded dot. */
+  --color-accent: oklch(0.5 0.05 195);
+  --color-accent-soft: oklch(0.5 0.05 195 / 0.13);
+  --color-accent-softer: oklch(0.5 0.05 195 / 0.06);
+  --color-accent-ink: oklch(0.42 0.05 195);
 
-  /* Content-type semantic colors */
-  --color-tafsir: oklch(0.52 0.1 60);
-  --color-tafsir-line: oklch(0.52 0.1 60 / 0.55);
-  --color-tafsir-bg: oklch(0.52 0.1 60 / 0.07);
-  --color-tafsir-bg-strong: oklch(0.52 0.1 60 / 0.13);
+  /* Content-type semantic colors. Tafsir keeps its warm sepia hue so
+     the existing Reader / Journal / Library treatments still read as
+     "tafsir/citation chrome" — but desaturated one notch so it doesn't
+     compete with the answer text on /ask. */
+  --color-tafsir: oklch(0.5 0.07 60);
+  --color-tafsir-line: oklch(0.5 0.07 60 / 0.5);
+  --color-tafsir-bg: oklch(0.5 0.07 60 / 0.06);
+  --color-tafsir-bg-strong: oklch(0.5 0.07 60 / 0.12);
 
-  --color-note: oklch(0.5 0.06 155);
-  --color-note-line: oklch(0.5 0.06 155 / 0.55);
-  --color-note-bg: oklch(0.5 0.06 155 / 0.07);
-  --color-note-bg-strong: oklch(0.5 0.06 155 / 0.13);
+  --color-note: oklch(0.48 0.05 155);
+  --color-note-line: oklch(0.48 0.05 155 / 0.5);
+  --color-note-bg: oklch(0.48 0.05 155 / 0.06);
+  --color-note-bg-strong: oklch(0.48 0.05 155 / 0.12);
 
   --color-ai: oklch(0.48 0.04 250);
   --color-ai-line: oklch(0.48 0.04 250 / 0.55);
@@ -87,12 +97,15 @@
   --color-admin-bg: oklch(0.5 0.04 270 / 0.08);
   --color-admin-bg-strong: oklch(0.5 0.04 270 / 0.16);
 
-  /* Geometry */
-  --radius-xs: 3px;
-  --radius-sm: 5px;
-  --radius: 7px;
-  --radius-lg: 11px;
-  --radius-xl: 16px;
+  /* Geometry — capped at 6px per Phase 8. Cards and inline chrome read
+     as paper, not iOS pebbles. The xl scale survives for very large
+     overlay surfaces (cmdk, template picker) that benefit from a
+     slightly softer edge. */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius: 5px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
 
   /* Type stacks (font-family CSS vars wired via next/font in lib/fonts.ts) */
   --font-serif: var(--font-display-stack), "Source Serif Pro", Georgia, serif;
@@ -102,93 +115,103 @@
   --font-display: var(--font-display-stack), Georgia, serif;
 
   /* Misc */
-  --selection: rgba(120, 95, 50, 0.18);
-  --shadow-sm: 0 1px 2px rgba(60, 45, 20, 0.05);
-  --shadow: 0 1px 3px rgba(60, 45, 20, 0.06), 0 0 0 0.5px rgba(60, 45, 20, 0.04);
-  --shadow-md: 0 4px 16px -4px rgba(60, 45, 20, 0.1), 0 2px 4px rgba(60, 45, 20, 0.04);
-  --shadow-lg: 0 14px 44px -10px rgba(60, 45, 20, 0.18), 0 2px 8px rgba(60, 45, 20, 0.06);
+  --selection: rgba(60, 45, 20, 0.12);
+  /* Shadows — only true overlays (popovers, command palette, mushaf
+     toolbar) read shadows now. Cards, inputs, and buttons rely on
+     hairlines. Phase 8 keeps the tokens themselves subtle so legacy
+     callers don't visually shout when audited. */
+  --shadow-sm: 0 1px 1px rgba(20, 18, 12, 0.04);
+  --shadow: 0 1px 2px rgba(20, 18, 12, 0.05), 0 0 0 0.5px rgba(20, 18, 12, 0.03);
+  --shadow-md: 0 2px 8px -2px rgba(20, 18, 12, 0.07), 0 1px 2px rgba(20, 18, 12, 0.04);
+  --shadow-lg: 0 8px 24px -6px rgba(20, 18, 12, 0.12), 0 1px 4px rgba(20, 18, 12, 0.05);
+  /* Easing — clean ease-out everywhere. The spring token survives so
+     legacy callers don't break, but we map it to the same ease so any
+     bouncy entrance falls in line with the calmer voice. */
   --ease: cubic-bezier(0.2, 0, 0, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* Rooting variants — surface palette tweaks only.
    Manuscript is the default declared above. */
 [data-rooting="modern"] {
-  --color-bg: #f6f4f0;
-  --color-bg-2: #efebe4;
-  --color-bg-elev: #fbfaf6;
-  --color-bg-deep: #ebe7df;
-  --color-line: #e6e2d8;
-  --color-line-2: #ede9e0;
-  --color-line-strong: #d6d1c4;
+  --color-bg: oklch(0.99 0.002 80);
+  --color-bg-2: oklch(0.97 0.003 80);
+  --color-bg-elev: oklch(0.995 0.002 80);
+  --color-bg-deep: oklch(0.95 0.004 80);
+  --color-line: oklch(0.92 0.003 80);
+  --color-line-2: oklch(0.95 0.003 80);
+  --color-line-strong: oklch(0.86 0.003 80);
 }
 
 [data-rooting="neutral"] {
-  --color-bg: #f4f2ee;
-  --color-bg-2: #ece9e3;
-  --color-bg-elev: #faf9f6;
-  --color-bg-deep: #e8e5dd;
-  --color-line: #e6e2d8;
-  --color-line-strong: #d2cdc1;
-  --color-primary: #2d2924;
+  --color-bg: oklch(0.985 0.003 80);
+  --color-bg-2: oklch(0.965 0.004 80);
+  --color-bg-elev: oklch(0.99 0.002 80);
+  --color-bg-deep: oklch(0.94 0.004 80);
+  --color-line: oklch(0.92 0.004 80);
+  --color-line-strong: oklch(0.85 0.004 80);
+  --color-primary: oklch(0.22 0.005 80);
 }
 
-/* Warm dark theme — late-night study. Override every token used in the
-   light defaults. Keep ordering stable so chained variants compose. */
+/* True dark theme — deep neutral, not pure black. Phase 8 retunes the
+   dark palette to match the desaturated light voice: less amber tinge,
+   more "library at night". Surfaces sit at oklch lightness 0.13–0.17;
+   text at 0.92 keeps reading contrast comfortable without the harsh
+   pure-white that snow-blinds dark-mode users. */
 [data-theme="dark"] {
-  --color-bg: #161310;
-  --color-bg-2: #1f1a14;
-  --color-bg-elev: #1f1a13;
-  --color-bg-deep: #110e0a;
-  --color-surface: #221d16e6;
+  --color-bg: oklch(0.13 0.005 80);
+  --color-bg-2: oklch(0.16 0.005 80);
+  --color-bg-elev: oklch(0.17 0.005 80);
+  --color-bg-deep: oklch(0.11 0.005 80);
+  --color-surface: oklch(0.17 0.005 80 / 0.9);
 
-  --color-ink: #ece4d2;
-  --color-ink-2: #d2c8b3;
-  --color-ink-3: #948870;
-  --color-ink-4: #6b614c;
-  --color-ink-5: #443d2e;
+  --color-ink: oklch(0.92 0.005 80);
+  --color-ink-2: oklch(0.82 0.005 80);
+  --color-ink-3: oklch(0.62 0.005 80);
+  --color-ink-4: oklch(0.46 0.005 80);
+  --color-ink-5: oklch(0.32 0.005 80);
 
-  --color-line: #2c261c;
-  --color-line-2: #241f17;
-  --color-line-strong: #3d3526;
+  --color-line: oklch(0.24 0.005 80);
+  --color-line-2: oklch(0.2 0.005 80);
+  --color-line-strong: oklch(0.32 0.006 80);
 
-  --selection: rgba(220, 180, 110, 0.22);
+  --selection: rgba(200, 180, 140, 0.18);
 
-  --color-primary: #ece4d2;
-  --color-primary-hover: #faf3df;
-  --color-primary-fg: #161310;
+  --color-primary: oklch(0.92 0.005 80);
+  --color-primary-hover: oklch(0.97 0.005 80);
+  --color-primary-fg: oklch(0.13 0.005 80);
 
-  --color-accent: oklch(0.78 0.06 155);
-  --color-accent-soft: oklch(0.78 0.06 155 / 0.18);
-  --color-accent-softer: oklch(0.78 0.06 155 / 0.09);
-  --color-accent-ink: oklch(0.85 0.06 155);
+  --color-accent: oklch(0.72 0.06 195);
+  --color-accent-soft: oklch(0.72 0.06 195 / 0.16);
+  --color-accent-softer: oklch(0.72 0.06 195 / 0.08);
+  --color-accent-ink: oklch(0.82 0.06 195);
 
-  --color-tafsir: oklch(0.78 0.1 65);
-  --color-tafsir-line: oklch(0.78 0.1 65 / 0.55);
-  --color-tafsir-bg: oklch(0.78 0.1 65 / 0.08);
-  --color-tafsir-bg-strong: oklch(0.78 0.1 65 / 0.14);
+  --color-tafsir: oklch(0.78 0.08 65);
+  --color-tafsir-line: oklch(0.78 0.08 65 / 0.5);
+  --color-tafsir-bg: oklch(0.78 0.08 65 / 0.07);
+  --color-tafsir-bg-strong: oklch(0.78 0.08 65 / 0.13);
 
-  --color-note: oklch(0.8 0.07 155);
-  --color-note-line: oklch(0.8 0.07 155 / 0.55);
-  --color-note-bg: oklch(0.8 0.07 155 / 0.08);
-  --color-note-bg-strong: oklch(0.8 0.07 155 / 0.14);
+  --color-note: oklch(0.78 0.07 155);
+  --color-note-line: oklch(0.78 0.07 155 / 0.5);
+  --color-note-bg: oklch(0.78 0.07 155 / 0.07);
+  --color-note-bg-strong: oklch(0.78 0.07 155 / 0.13);
 
-  --color-ai: oklch(0.76 0.06 250);
-  --color-ai-line: oklch(0.76 0.06 250 / 0.55);
-  --color-ai-bg: oklch(0.76 0.06 250 / 0.08);
-  --color-ai-bg-strong: oklch(0.76 0.06 250 / 0.14);
+  --color-ai: oklch(0.74 0.06 250);
+  --color-ai-line: oklch(0.74 0.06 250 / 0.5);
+  --color-ai-bg: oklch(0.74 0.06 250 / 0.07);
+  --color-ai-bg-strong: oklch(0.74 0.06 250 / 0.13);
 
-  --color-ext: oklch(0.8 0.12 65);
-  --color-ext-line: oklch(0.8 0.12 65 / 0.55);
-  --color-ext-bg: oklch(0.8 0.12 65 / 0.08);
-  --color-ext-bg-strong: oklch(0.8 0.12 65 / 0.14);
+  --color-ext: oklch(0.78 0.1 65);
+  --color-ext-line: oklch(0.78 0.1 65 / 0.5);
+  --color-ext-bg: oklch(0.78 0.1 65 / 0.07);
+  --color-ext-bg-strong: oklch(0.78 0.1 65 / 0.13);
 
   --color-flagged: oklch(72% 0.18 25);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(255, 245, 220, 0.04);
-  --shadow-md: 0 4px 18px -2px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 18px 52px -10px rgba(0, 0, 0, 0.78), 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.4);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 245, 220, 0.03);
+  --shadow-md: 0 2px 10px -2px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 32px -8px rgba(0, 0, 0, 0.7), 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 @layer base {
@@ -251,8 +274,9 @@
 
   /* ── Sidebar ───────────────────────────────────────────── */
   .sidebar {
-    border-right: 1px solid var(--color-line);
-    background: var(--color-bg);
+    /* Subtle background contrast instead of a divider line — separation
+       reads through tone, not a hard rule. */
+    background: var(--color-bg-2);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -264,8 +288,14 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 16px 14px 14px;
-    min-height: 52px;
+    /* Asymmetric vertical padding shifts the brand mark down a few px so
+       its optical center lines up with the topbar text. The brand mark's
+       `::after` outline (inset: -3px) extends above the 26px box, making
+       a strictly centered mark read a touch high; the extra top padding
+       compensates. Height stays locked to the topbar (48px). */
+    padding: 8px 14px 0 14px;
+    height: 48px;
+    flex-shrink: 0;
   }
   .brand-mark {
     width: 26px;
@@ -399,9 +429,20 @@
   .nav-item .kbd {
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
+    /* Phase 6 — recede the chrome. The shortcut hint is hidden by default
+       and fades in on hover of the row OR anywhere on the sidebar so
+       "all hints arrive together" without forcing the user to land on
+       each row. The collapsed-icon state already hides the hint via the
+       `.sidebar.collapsed-inner .nav-item .kbd { display: none }` rule
+       further down, so opacity here doesn't fight that. */
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
   }
-  .nav-item:hover .kbd {
+  .nav-item:hover .kbd,
+  .sidebar:hover .nav-item .kbd {
+    opacity: 1;
     color: var(--color-ink-3);
   }
   .nav-item.active .kbd {
@@ -412,8 +453,10 @@
   .sidebar.collapsed-inner .nav-item .label,
   .sidebar.collapsed-inner .nav-item .kbd,
   .sidebar.collapsed-inner .brand-name,
-  .sidebar.collapsed-inner .recent,
-  .sidebar.collapsed-inner .foot-detail {
+  .sidebar.collapsed-inner .brand-mark,
+  .sidebar.collapsed-inner .foot-detail,
+  .sidebar.collapsed-inner .source-pill .lbl,
+  .sidebar.collapsed-inner .source-pill .num {
     display: none;
   }
   .sidebar.collapsed-inner .nav-item {
@@ -421,60 +464,79 @@
   }
   .sidebar.collapsed-inner .brand {
     justify-content: center;
-    padding: 16px 0 14px;
+    padding: 0;
+  }
+  /* Collapsed: the brand mark steps aside and the toggle takes its
+     spot — centered, fully visible (no hover-only fade), so the
+     collapse control isn't competing with the brand for the same
+     56-px column. */
+  .sidebar.collapsed-inner .collapse-btn {
+    position: static;
+    opacity: 1;
+    width: 28px;
+    height: 28px;
+    margin: 0 auto;
+    color: var(--color-ink-3);
+  }
+  /* The chat-history block is conditionally rendered in the JSX too —
+     this rule makes the rule stick if a future change keeps it mounted. */
+  .sidebar.collapsed-inner .sidebar-chat-block {
+    display: none;
+  }
+  .sidebar.collapsed-inner .source-pill {
+    justify-content: center;
+    padding: 8px 0;
   }
 
-  .recent {
-    padding: 0 4px 8px;
-    margin-top: 4px;
-  }
-  .recent-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .recent-item {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 4px 14px;
-    font-size: 12.5px;
-    color: var(--color-ink-3);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition:
-      color 100ms var(--ease),
-      background 100ms var(--ease);
-    text-decoration: none;
-    width: 100%;
-    border: 0;
-    background: transparent;
-    text-align: left;
-    font-family: inherit;
-  }
-  .recent-item:hover {
-    color: var(--color-ink-2);
-    background: var(--color-line-2);
-  }
-  .recent-item .ref {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    flex-shrink: 0;
-    width: 38px;
-  }
-  .recent-item .ttl {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    flex: 1;
+  /* Auto-collapse the rail below 1100px viewport so the canvas stays
+     usable on narrow displays. The rule mirrors what the manual collapse
+     toggle does, but driven by viewport width instead. The shell's
+     `--sidebar-w` falls back here because the SidebarWithCollapse client
+     leaf only writes the variable when the user toggles manually. */
+  @media (max-width: 1099px) {
+    .shell {
+      --sidebar-w: 56px;
+    }
+    .sidebar:not(.collapsed-inner) {
+      /* Force the icons-only treatment without needing the user to opt in. */
+    }
+    .sidebar:not(.collapsed-inner) .nav-label,
+    .sidebar:not(.collapsed-inner) .nav-item .label,
+    .sidebar:not(.collapsed-inner) .nav-item .kbd,
+    .sidebar:not(.collapsed-inner) .brand-name,
+    .sidebar:not(.collapsed-inner) .brand-mark,
+    .sidebar:not(.collapsed-inner) .foot-detail,
+    .sidebar:not(.collapsed-inner) .source-pill .lbl,
+    .sidebar:not(.collapsed-inner) .source-pill .num,
+    .sidebar:not(.collapsed-inner) .sidebar-chat-block {
+      display: none;
+    }
+    .sidebar:not(.collapsed-inner) .nav-item {
+      justify-content: center;
+    }
+    .sidebar:not(.collapsed-inner) .brand {
+      justify-content: center;
+      padding: 0;
+    }
+    .sidebar:not(.collapsed-inner) .collapse-btn {
+      position: static;
+      opacity: 1;
+      width: 28px;
+      height: 28px;
+      margin: 0 auto;
+      color: var(--color-ink-3);
+    }
+    .sidebar:not(.collapsed-inner) .source-pill {
+      justify-content: center;
+      padding: 8px 0;
+    }
   }
 
   .sidebar-foot {
     margin-top: auto;
     padding: 8px 8px 12px;
     border-top: 1px solid var(--color-line);
+    flex-shrink: 0;
   }
 
   .source-pill {
@@ -513,37 +575,55 @@
     color: var(--color-ink-4);
   }
 
+  /* Foot row: avatar on the left, name + meta on the right. The avatar is
+     a flat circle (no gradient, no overflow) so the initial reads as the
+     focal element. The name/meta column has min-width:0 + ellipsis on the
+     name so a long display name won't push the avatar out of the rail. */
   .foot-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 4px 4px;
+    padding: 8px 6px;
     margin-top: 4px;
   }
   .avatar {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, oklch(0.55 0.1 60), oklch(0.4 0.06 50));
+    background: var(--color-bg-deep);
+    color: var(--color-ink);
+    border: 1px solid var(--color-line-strong);
     display: grid;
     place-items: center;
-    color: #faf6ec;
-    font-size: 10.5px;
-    font-weight: 500;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .avatar-initial {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
   }
   .foot-detail {
     font-size: 12px;
     line-height: 1.3;
     min-width: 0;
+    flex: 1;
   }
   .foot-detail .name {
     color: var(--color-ink);
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .foot-detail .meta {
     color: var(--color-ink-4);
     font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* ── Main column ───────────────────────────────────────── */
@@ -559,17 +639,23 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 18px;
+    /* Right padding follows the explanation-panel width — when the panel
+       is open the topbar shrinks so its controls don't slide under the
+       panel, and the panel's own header lines up at the topbar's Y. */
+    padding: 0 calc(18px + var(--tafsir-panel-w, 0px)) 0 18px;
+    transition: padding 200ms var(--ease);
     height: 48px;
-    border-bottom: 1px solid var(--color-line);
     background: var(--color-bg);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .crumbs {
     display: flex;
     align-items: center;
     gap: 6px;
+    height: 28px;
     font-size: 13px;
     color: var(--color-ink-3);
     min-width: 0;
@@ -579,6 +665,28 @@
   }
   .crumbs .current {
     color: var(--color-ink);
+  }
+  /* SurahCrumb dropdown trigger — must inherit `.crumbs` font so the
+     "Read" span and the trigger label render at the same size and weight.
+     `.btn` would force font-weight: 500 + a different font-size, which
+     visually breaks the breadcrumb path. */
+  .crumbs .crumb-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    transition: background 100ms var(--ease);
+  }
+  .crumbs .crumb-trigger:hover {
+    background: var(--color-line-2);
   }
 
   .topbar .spacer {
@@ -606,7 +714,7 @@
   }
   .iconbtn:active {
     background: var(--color-bg-deep);
-    transform: translateY(0.5px);
+    transform: translateY(0.5px) scale(0.94);
   }
   .iconbtn.on {
     background: var(--color-accent-soft);
@@ -635,10 +743,24 @@
     border-color: var(--color-line-strong);
     background: var(--color-bg-deep);
   }
+  /* Focus-within (keyboard tab into the searchbar button) gets a subtle
+     ring + lift so the user knows it's actionable. The shadow uses the
+     accent-soft tint so it doesn't compete with the topbar's neutral
+     palette. */
+  .searchbar:focus-visible,
+  .searchbar:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+    outline: none;
+  }
+  .searchbar:active {
+    transform: translateY(0.5px);
+  }
   .searchbar .kbd {
     margin-left: auto;
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
     background: var(--color-bg);
     padding: 1px 5px;
@@ -777,7 +899,7 @@
   .seg button.on {
     background: var(--color-bg-elev);
     color: var(--color-ink);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-line);
   }
   [data-theme="dark"] .seg button.on {
     background: var(--color-line-strong);
@@ -807,7 +929,9 @@
     background: var(--color-bg-elev);
     border-radius: 50%;
     transition: transform 150ms var(--ease);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    /* Hairline ring instead of a soft drop shadow — keeps the toggle
+       reading as part of the surface rather than floating above it. */
+    border: 1px solid var(--color-line-strong);
   }
   .toggle.on {
     background: var(--color-note);
@@ -817,24 +941,12 @@
   }
 
   /* ── Skeleton ──────────────────────────────────────────── */
+  /* Phase 8: kill the shimmer gradient. A flat hairline-toned block reads
+     as "loading" without competing with the rest of the calm page chrome
+     (and without the AI-app shimmer cliché). */
   .skel {
-    background: linear-gradient(
-      90deg,
-      var(--color-line-2) 0%,
-      var(--color-line) 50%,
-      var(--color-line-2) 100%
-    );
-    background-size: 200% 100%;
-    animation: skel 1.4s ease-in-out infinite;
-    border-radius: 4px;
-  }
-  @keyframes skel {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
+    background: var(--color-line-2);
+    border-radius: var(--radius-xs);
   }
 
   /* ── Reader ────────────────────────────────────────────── */
@@ -844,6 +956,11 @@
     min-width: 0;
     overflow: hidden;
     position: relative;
+    /* The explanation panel is `position: fixed` (so its header lines up
+       with the topbar) — give the reader the corresponding right padding
+       so verses don't disappear behind the panel. */
+    padding-right: var(--tafsir-panel-w, 0px);
+    transition: padding-right 200ms var(--ease);
   }
   .reader {
     flex: 1;
@@ -902,7 +1019,8 @@
   [data-rooting="neutral"] .sura-band {
     background: transparent;
     border: 0;
-    border-bottom: 1px solid var(--color-line);
+    /* No bottom rule — the band reads as a header through typography and
+       whitespace alone. */
     margin-bottom: 28px;
     padding-bottom: 28px;
   }
@@ -919,8 +1037,12 @@
     font-family: var(--font-arabic);
     font-size: 56px;
     color: var(--color-ink);
-    line-height: 1;
-    margin-bottom: 12px;
+    /* line-height: 1 was too tight — the high diacritics on Arabic glyphs
+       (shadda, fatha, sukoon) overflowed the line box and visually crashed
+       into the English transliteration below. Give them room. */
+    line-height: 1.5;
+    padding-top: 0.1em;
+    margin-bottom: 18px;
     direction: rtl;
   }
   .sura-name-en {
@@ -954,13 +1076,12 @@
 
   .mushaf-page {
     direction: rtl;
-    text-align: justify;
+    text-align: start;
     font-family: var(--font-arabic);
     font-size: 32px;
     line-height: 2.3;
     color: var(--color-ink);
     word-spacing: 2px;
-    text-align-last: right;
   }
   .mushaf-page .ayah-frag {
     display: inline;
@@ -992,6 +1113,21 @@
   .mushaf-page .ayah-run.selected {
     background: var(--color-tafsir-bg-strong);
     color: var(--color-ink);
+    /* `selectionPulse` plays once on selection — a tiny background-glow
+       breathe so the verse confirms the click. The keyframes box-shadow
+       is on top of the existing background, not replacing it. */
+    animation: selectionPulse 320ms var(--ease-spring, var(--ease));
+  }
+  @keyframes selectionPulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--color-tafsir-bg-strong);
+    }
+    50% {
+      box-shadow: 0 0 0 4px var(--color-tafsir-bg);
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
   }
   .mushaf-page .ayah-run.playing {
     background: var(--color-accent-softer);
@@ -1020,13 +1156,9 @@
     display: block;
   }
   .verse-marker .vm-num {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
     font-family: var(--font-arabic);
-    font-size: 13px;
-    color: var(--color-tafsir);
+    font-size: 12px;
+    fill: var(--color-tafsir);
     pointer-events: none;
   }
   .verse-marker .vm-circle {
@@ -1048,27 +1180,7 @@
   }
 
   .translation-lane {
-    margin-top: 36px;
-    padding-top: 24px;
-    border-top: 1px solid var(--color-line);
-  }
-  .translation-lane .tl-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-ink-4);
-    font-weight: 500;
-  }
-  .translation-lane .tl-head .src {
-    font-family: var(--font-display);
-    font-style: italic;
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 11.5px;
+    margin-top: 12px;
   }
   .tl-ayah {
     display: grid;
@@ -1153,6 +1265,10 @@
     background: var(--color-line-2);
     color: var(--color-ink);
   }
+  .mushaf-toolbar button:active {
+    transform: scale(0.94);
+    background: var(--color-bg-deep);
+  }
   .mushaf-toolbar .div {
     width: 1px;
     background: var(--color-line);
@@ -1192,29 +1308,6 @@
     border-color: var(--color-tafsir-line);
   }
 
-  .marginalia {
-    position: relative;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 13.5px;
-    line-height: 1.55;
-    color: var(--color-ink-3);
-    padding: 8px 0 8px 16px;
-    border-left: 1px solid var(--color-note-line);
-    margin: 14px 0 14px 8px;
-    max-width: 320px;
-  }
-  .marginalia .lbl {
-    font-family: var(--font-sans);
-    font-style: normal;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-note);
-    margin-bottom: 4px;
-    display: block;
-  }
-
   /* ── Continue-from-last-read banner ────────────────────── */
   .continue-banner {
     display: flex;
@@ -1243,8 +1336,11 @@
   }
   .continue-banner .cb-text {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    /* Center-align — baseline alignment with two different font families
+       (sans label vs ref) reads as misaligned because the optical centers
+       differ. Centering looks balanced regardless of metrics. */
+    align-items: center;
+    gap: 10px;
     flex: 1;
     min-width: 0;
   }
@@ -1256,10 +1352,12 @@
     color: var(--color-ink-3);
   }
   .continue-banner .cb-ref {
-    font-family: var(--font-display);
-    font-style: italic;
+    /* Match the mono treatment used for refs elsewhere (e.g. `.sura-no`) —
+       italic display felt out of place against the sans label. */
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--color-ink);
-    font-size: 13.5px;
+    letter-spacing: 0.01em;
   }
   .continue-banner .cb-arrow {
     display: inline-flex;
@@ -1328,110 +1426,69 @@
     letter-spacing: -0.005em;
   }
 
-  /* ── Side-by-side reader ───────────────────────────────── */
-  .sbs-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  .sbs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 28px;
-    padding: 12px 14px;
-    margin: 0 -14px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: background 120ms var(--ease);
-    background: transparent;
-    border: 0;
-    color: inherit;
-    font: inherit;
-    width: calc(100% + 28px);
-    text-align: inherit;
-    align-items: start;
-  }
-  .sbs-row:hover {
-    background: var(--color-line-2);
-  }
-  .sbs-row.selected {
-    background: var(--color-tafsir-bg);
-  }
-  .sbs-row:focus-visible {
-    outline: 2px solid var(--color-tafsir);
-    outline-offset: 2px;
-  }
-  .sbs-row .sbs-english {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: left;
-  }
-  .sbs-row .sbs-num {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    letter-spacing: 0.04em;
-  }
-  .sbs-row .sbs-english-text {
-    font-family: var(--font-serif);
-    font-size: 15.5px;
-    line-height: 1.7;
-    color: var(--color-ink-2);
-    font-weight: 380;
-    letter-spacing: -0.005em;
-  }
-  .sbs-row .sbs-arabic {
-    font-family: var(--font-arabic);
-    font-size: 26px;
-    line-height: 1.9;
-    color: var(--color-ink);
-    text-align: right;
-  }
-
   /* ── Topbar reader-mode switcher ───────────────────────── */
   .reader-mode-switch {
     display: inline-flex;
     align-items: center;
+    position: relative;
+    height: 28px;
     background: var(--color-bg-deep);
     border: 1px solid var(--color-line);
     border-radius: var(--radius);
-    padding: 2px;
+    padding: 1px;
     gap: 1px;
+  }
+  /* Sliding pill that follows the active tab. Position is driven by the
+     `--rms-index` custom property set on the wrapper from React. The
+     spring easing gives the slide a tiny overshoot so the motion reads as
+     "snapping" into the next tab rather than a flat tween. 25px = button
+     width (24px) + gap (1px). */
+  .reader-mode-switch .rms-indicator {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    transform: translateX(calc(var(--rms-index, 0) * 25px));
+    transition: transform 180ms var(--ease);
+    pointer-events: none;
+    z-index: 0;
+  }
+  [data-theme="dark"] .reader-mode-switch .rms-indicator {
+    background: var(--color-line-strong);
   }
   .reader-mode-switch .rms-btn {
     appearance: none;
     border: 0;
     background: transparent;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: inline-grid;
     place-items: center;
     color: var(--color-ink-4);
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
+    position: relative;
+    z-index: 1;
     transition:
-      background 100ms var(--ease),
-      color 100ms var(--ease);
+      color 160ms var(--ease),
+      transform 120ms var(--ease);
   }
   .reader-mode-switch .rms-btn:hover {
     color: var(--color-ink-2);
   }
-  .reader-mode-switch .rms-btn.on {
-    background: var(--color-bg-elev);
-    color: var(--color-ink);
-    box-shadow: var(--shadow-sm);
+  .reader-mode-switch .rms-btn:active {
+    transform: scale(0.92);
   }
-  [data-theme="dark"] .reader-mode-switch .rms-btn.on {
-    background: var(--color-line-strong);
+  .reader-mode-switch .rms-btn.on {
     color: var(--color-ink);
   }
 
-  /* ── Per-ayah audio play button (interleaved + sbs + tl) ── */
+  /* ── Per-ayah audio play button (interleaved + tl) ───────── */
   .ayah-audio {
     display: inline-grid;
     place-items: center;
@@ -1463,10 +1520,6 @@
     margin-top: 6px;
     display: flex;
     justify-content: flex-end;
-  }
-  .sbs-row .sbs-audio {
-    display: inline-flex;
-    align-items: center;
   }
 
   /* ── Toolbar viewport-bounds flip ──────────────────────── */
@@ -1521,8 +1574,11 @@
     padding: 4px;
   }
   .pop-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Single column so each item gets the popover's full inner width and
+       the meaning + verse-count subtitle has room to breathe (a 2-col grid
+       was forcing "11 verses" to ellipsize). */
+    display: flex;
+    flex-direction: column;
     gap: 1px;
   }
   .pop-item {
@@ -1580,27 +1636,58 @@
     display: block;
     margin-top: 1px;
   }
-  .pop-foot {
-    padding: 6px 10px;
-    border-top: 1px solid var(--color-line);
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-  }
-
   /* ── Tafsir panel ──────────────────────────────────────── */
   .tafsir-panel {
+    /* Fixed to the viewport's right edge so the panel covers the topbar's
+       vertical band — that lets `.tp-head` sit at Y=0 alongside the topbar
+       row. The reader and topbar both leave room for it via
+       `--tafsir-panel-w`, written by TafsirPanel on mount/resize. */
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: 460px;
     max-width: 50vw;
-    flex-shrink: 0;
-    border-left: 1px solid var(--color-line);
+    min-width: 360px;
+    z-index: 10;
+    /* The lighter `bg-elev` already separates the panel from the reader —
+       no border needed. */
     background: var(--color-bg-elev);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: slideInRight 220ms var(--ease);
+    animation: slideInRight 180ms var(--ease);
+  }
+  /* When the parent flips `closing`, the panel slides right + fades. The
+     parent waits for `animationend` (or a 200ms timeout fallback) before
+     unmounting so the user sees the exit. */
+  .tafsir-panel.tp--closing {
+    animation: slideOutRight 160ms var(--ease) forwards;
+    pointer-events: none;
+  }
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(28px);
+      opacity: 0;
+    }
+  }
+  .tp-resize {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    transform: translateX(-3px);
+    cursor: col-resize;
+    z-index: 2;
+    background: transparent;
+    transition: background 120ms var(--ease);
+  }
+  .tp-resize:hover,
+  .tp-resize.dragging {
+    background: var(--color-line-strong);
   }
   @keyframes slideInRight {
     from {
@@ -1613,25 +1700,40 @@
     }
   }
   .tp-head {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--color-line);
+    /* Match the topbar's height + padding + gap exactly so the panel's
+       "93:1 Explanation" row visually sits on the same Y as the topbar
+       controls (reader-mode switch, search bar, night-mode toggle). */
+    height: 48px;
+    padding: 0 18px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    flex-shrink: 0;
   }
   .tp-ref {
+    /* 28px tall to match the topbar's iconbtn / searchbar / reader-mode
+       switch — without a fixed height the badge collapses to its content
+       (~18px) and reads as visually shorter than the surrounding row. */
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 8px;
     font-family: var(--font-mono);
     font-size: 11.5px;
+    line-height: 1;
     color: var(--color-tafsir);
     background: var(--color-tafsir-bg);
-    padding: 2px 8px;
     border-radius: 4px;
     border: 1px solid var(--color-tafsir-line);
   }
   .tp-title {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 500;
+    line-height: 1;
     color: var(--color-ink);
   }
 
@@ -1648,8 +1750,8 @@
     line-height: 2;
     color: var(--color-ink);
     padding: 14px 16px;
+    /* Background contrast against the panel's bg-elev — no border. */
     background: var(--color-bg);
-    border: 1px solid var(--color-line);
     border-radius: var(--radius);
     margin-bottom: 6px;
   }
@@ -1826,7 +1928,6 @@
   }
 
   .tp-foot {
-    border-top: 1px solid var(--color-line);
     padding: 12px 18px;
     display: flex;
     gap: 8px;
@@ -1834,39 +1935,195 @@
   }
 
   /* ── Ask screen ────────────────────────────────────────── */
+  /* Two-column shell: conversation column on the left (scope breadcrumb +
+     conversation log + composer), context panel on the right. The chat
+     history rail moved into the main left sidebar so the canvas can host
+     the context panel without adding a third column. The outer `.workarea`
+     is `display: flex; overflow: hidden`, so we just claim its row. */
+  .ask-shell {
+    flex: 1;
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
   .ask-screen {
     flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .ask-conversation {
+    flex: 1;
     overflow-y: auto;
+    min-height: 0;
+  }
+  .ask-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 28px 40px 24px;
+  }
+
+  /* Empty-state canvas: the heading, prompt cards and a centered composer
+     stack vertically. We stop short of dead-centring the block — the eye
+     wants the prompt cards a touch above optical center, so the inner
+     wrapper aligns to the top half of the canvas with extra padding above. */
+  .ask-empty-canvas {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    padding: 64px 40px 32px;
+  }
+  .ask-empty-inner {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .ask-welcome {
+    text-align: center;
+  }
+  .ask-welcome h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--color-ink);
+    margin: 0 0 10px;
+    letter-spacing: -0.012em;
+    font-weight: 450;
+  }
+  .ask-welcome p {
+    color: var(--color-ink-3);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .conversation {
     display: flex;
     flex-direction: column;
   }
-  .ask-inner {
-    max-width: 760px;
+  .conversation > .conversation-exchange + .conversation-exchange {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-line);
+  }
+  .conversation + .conversation-inflight {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* Scope-change system divider — a centered hairline rule with a
+     low-contrast caption explaining what the user did. Not a chip, not a
+     toast. The conversation log carries the audit trail; the divider is
+     deliberately quiet so it doesn't compete with answers for attention. */
+  .conversation-scope-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 28px 0;
+    padding: 0 12px;
+  }
+  .conversation-scope-divider::before,
+  .conversation-scope-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-line);
+  }
+  .conversation-scope-divider-text {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-4);
+    white-space: nowrap;
+  }
+
+  /* Composer chrome: docked variant pins to the bottom of the canvas with
+     a hairline top border; centered variant floats inside the empty state
+     with no border so it reads as a continuous part of the welcome block. */
+  .ask-composer {
+    flex-shrink: 0;
+    background: var(--color-bg);
+    padding: 12px 40px 16px;
+  }
+  .ask-composer.ask-composer-docked {
+    border-top: 0;
+  }
+  .ask-composer.ask-composer-centered {
+    padding: 0;
+    background: transparent;
+  }
+  .ask-composer-inner {
+    max-width: 720px;
     margin: 0 auto;
     width: 100%;
-    padding: 36px 40px 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ask-composer-centered .ask-composer-inner {
+    max-width: 720px;
   }
 
   .ask-input-wrap {
-    position: sticky;
-    top: 12px;
-    z-index: 4;
-    background: var(--color-bg);
-    padding-bottom: 6px;
+    background: transparent;
+  }
+  /* Inline notice rendered when every tafsir source has been disabled —
+     a quiet line under the composer explaining why the Ask button is
+     greyed out, with a `Enable at least one tafsir` action that opens
+     the SourcesChip popover. Phase 10 polish. */
+  .ask-input-notice {
+    margin: 8px 4px 0;
+    font-size: 12px;
+    color: var(--color-ink-3);
+    line-height: 1.5;
+  }
+  .ask-input-notice-link {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-accent-ink);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-underline-offset: 2px;
+  }
+  .ask-input-notice-link:hover,
+  .ask-input-notice-link:focus-visible {
+    color: var(--color-accent);
+    outline: none;
+  }
+  /* Disabled primary submit — keep the "Ask" button visible but quiet
+     so the user reads it as "you cannot do this right now" rather than
+     "this is broken". */
+  .ask-input-foot .btn.primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
   }
   .ask-input {
     border: 1px solid var(--color-line-strong);
     border-radius: var(--radius-lg);
     background: var(--color-bg-elev);
-    box-shadow: var(--shadow);
     overflow: hidden;
-    transition:
-      border-color 150ms var(--ease),
-      box-shadow 150ms var(--ease);
+    transition: border-color 150ms var(--ease);
   }
   .ask-input:focus-within {
-    border-color: var(--color-ink-3);
-    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
   }
   .ask-input textarea {
     width: 100%;
@@ -1892,14 +2149,14 @@
     border-top: 1px solid var(--color-line);
     background: var(--color-bg);
   }
-  .ask-input-foot .scope {
-    font-size: 11.5px;
-    color: var(--color-ink-3);
-    display: flex;
+
+  /* `ref-pill` — a small mono-font reference chip used both in the
+     composer footer (legacy "scoped to" pill — now removed) and in the
+     empty-state copy. The standalone selector lets either context
+     reference the same look. */
+  .ref-pill {
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-  }
-  .ask-input-foot .ref-pill {
     font-family: var(--font-mono);
     font-size: 10.5px;
     background: var(--color-tafsir-bg);
@@ -1909,47 +2166,697 @@
     border: 1px solid var(--color-tafsir-line);
   }
 
-  .source-mode {
+  .ask-sources-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+  .ask-sources-panel {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    z-index: 50;
+    min-width: 180px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ask-sources-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin: 18px 0 28px;
-    padding: 6px;
-    background: var(--color-bg-deep);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius);
-    font-size: 12.5px;
-  }
-  .source-mode .lbl {
-    color: var(--color-ink-4);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0 8px 0 6px;
-    flex-shrink: 0;
-  }
-  .source-mode .opt {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--color-ink-3);
-    font-weight: 500;
-    transition: all 100ms var(--ease);
+    gap: 8px;
+    padding: 6px 8px;
     border: 0;
     background: transparent;
+    color: var(--color-ink-2);
     font-family: inherit;
-    font-size: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    text-align: left;
+    transition: background 100ms var(--ease);
   }
-  .source-mode .opt.on {
+  .ask-sources-row:hover:not(.locked),
+  .ask-sources-row:focus-visible {
+    background: var(--color-line-2);
+  }
+  .ask-sources-row:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+  .ask-sources-row.on {
+    color: var(--color-ink);
+  }
+  .ask-sources-row.locked {
+    cursor: not-allowed;
+    color: var(--color-ink-3);
+  }
+  .ask-sources-row-mark {
+    width: 14px;
+    height: 14px;
+    display: grid;
+    place-items: center;
+    color: var(--color-accent-ink);
+    flex-shrink: 0;
+  }
+  .ask-sources-row-label {
+    flex: 1;
+  }
+
+  /* ── Scope breadcrumb + sources chip ─────────────────── */
+  /* Sits at the top of the Ask canvas, just below the global topbar.
+     The breadcrumb is the canonical "what is the AI looking at"
+     affordance — every segment is clickable; the rightmost is the
+     verse-range editor. The sources chip lives at the right edge so
+     "scope" and "sources" read as a paired control row. */
+  .scope-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 40px;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-bg);
+    min-height: 44px;
+  }
+
+  .scope-crumbs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  .scope-crumb {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .scope-crumb-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-3);
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 3px 6px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .scope-crumb-btn:hover {
+    background: var(--color-line-2);
+    color: var(--color-ink);
+  }
+  .scope-crumb-btn.root {
+    color: var(--color-ink-4);
+  }
+  .scope-crumb-btn.current {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .scope-sep {
+    display: inline-flex;
+    color: var(--color-ink-5);
+    align-items: center;
+  }
+
+  .verse-range-picker {
+    position: fixed;
+    z-index: 100;
     background: var(--color-bg-elev);
-    color: var(--color-ink);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 12px;
+    width: 240px;
+    animation: popIn 160ms var(--ease);
   }
-  .source-mode .opt:not(.on):hover {
+  .vrp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vrp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    font-size: 11px;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .vrp-field input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xs);
+    background: var(--color-bg);
     color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .vrp-field input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: var(--color-accent);
+  }
+  .vrp-sep {
+    color: var(--color-ink-4);
+    margin-top: 16px;
+  }
+  .vrp-foot {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .vrp-meta {
+    font-size: 11px;
+    color: var(--color-ink-4);
+  }
+
+  .sources-chip-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .sources-chip {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elev);
+    color: var(--color-ink-2);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition:
+      background 120ms var(--ease),
+      border-color 120ms var(--ease);
+  }
+  .sources-chip:hover,
+  .sources-chip.open {
+    border-color: var(--color-line-strong);
+    background: var(--color-bg-deep);
+  }
+  .sources-chip .num {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .sources-chip .lbl {
+    color: var(--color-ink-3);
+  }
+
+  .sources-chip-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 60;
+    width: 320px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: popIn 160ms var(--ease);
+  }
+  .sources-chip-head {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-4);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .sources-chip-list {
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  .sources-chip-row {
+    appearance: none;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-3);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .sources-chip-row:hover,
+  .sources-chip-row:focus-visible {
+    background: var(--color-line-2);
+  }
+  .sources-chip-row.on {
+    color: var(--color-ink);
+  }
+  .sources-chip-row-mark {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    display: grid;
+    place-items: center;
+    color: var(--color-accent-ink);
+    border: 1px solid var(--color-line-strong);
+    border-radius: 3px;
+    flex-shrink: 0;
+    background: var(--color-bg);
+  }
+  .sources-chip-row.on .sources-chip-row-mark {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent);
+  }
+  .sources-chip-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .sources-chip-row-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: inherit;
+  }
+  .sources-chip-row-meta {
+    font-size: 11px;
+    color: var(--color-ink-4);
+    line-height: 1.4;
+  }
+  .sources-chip-foot {
+    padding: 8px 14px 10px;
+    font-size: 11px;
+    color: var(--color-ink-4);
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* ── Prompt cards ────────────────────────────────────── */
+  /* 2x2 (or single row at very wide widths) of subtle scaffolding cards
+     for the empty state. Quiet — 1px hairline grid, no shadows. The
+     icon stays at the top-left so the card reads top-down: icon → label
+     → example. */
+  .prompt-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  @media (min-width: 1480px) {
+    .prompt-cards {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .prompt-card {
+    appearance: none;
+    text-align: left;
+    background: var(--color-bg-elev);
+    border: 0;
+    padding: 16px 18px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--color-ink-2);
+    font-family: inherit;
+    transition:
+      background 120ms var(--ease),
+      color 120ms var(--ease);
+    min-height: 110px;
+  }
+  .prompt-card:hover,
+  .prompt-card:focus-visible {
+    background: var(--color-bg-deep);
+    color: var(--color-ink);
+  }
+  .prompt-card-icon {
+    display: inline-flex;
+    width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    background: var(--color-bg);
+    color: var(--color-ink-3);
+    margin-bottom: 2px;
+  }
+  .prompt-card:hover .prompt-card-icon,
+  .prompt-card:focus-visible .prompt-card-icon {
+    color: var(--color-ink);
+  }
+  .prompt-card-label {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: -0.005em;
+  }
+  .prompt-card-example {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--color-ink-4);
+  }
+
+  /* ── Context panel (right-hand) ──────────────────────── */
+  /* Always present when /ask is mounted. The panel claims a fixed width
+     of 360px when open and shrinks to a 36px gutter when collapsed.
+     Below 1100px the parent defaults it collapsed; above 1280px the
+     parent defaults it open. */
+  .context-panel {
+    flex-shrink: 0;
+    width: 360px;
+    border-left: 1px solid var(--color-line);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    transition:
+      width 200ms var(--ease),
+      background 200ms var(--ease);
+  }
+  .context-panel.collapsed {
+    width: 36px;
+  }
+  .context-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-line);
+    flex-shrink: 0;
+  }
+  .context-panel.collapsed .context-panel-head {
+    padding: 10px 6px;
+    justify-content: center;
+  }
+  .context-panel-toggle {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-4);
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .context-panel-toggle:hover {
+    background: var(--color-line-2);
+    color: var(--color-ink-2);
+  }
+  .context-panel-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 2px;
+  }
+  .context-panel-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-4);
+  }
+  .context-panel-name {
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    color: var(--color-ink);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .context-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 24px;
+    min-height: 0;
+  }
+  .context-panel-empty {
+    color: var(--color-ink-4);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .context-bismillah {
+    font-family: var(--font-arabic);
+    font-size: 22px;
+    line-height: 1.8;
+    text-align: center;
+    color: var(--color-ink);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .context-verse-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .context-verse {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+  }
+  .context-verse-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-ink-4);
+    padding-top: 6px;
+    text-align: right;
+  }
+  .context-verse-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .context-verse-arabic {
+    font-family: var(--font-arabic);
+    font-size: 19px;
+    line-height: 2;
+    color: var(--color-ink);
+    margin: 0;
+    text-align: right;
+    direction: rtl;
+  }
+  .context-verse-english {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-ink-2);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ── Chat-history-in-sidebar section ─────────────────── */
+  /* Folded under the primary nav. Threads are grouped by scope (the
+     research-tool framing) rather than by date. Default open; the
+     section header doubles as a collapse toggle. */
+  .sidebar-chat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 8px 0;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .sidebar-new-chat-btn {
+    appearance: none;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elev);
+    color: var(--color-ink-2);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 120ms var(--ease),
+      border-color 120ms var(--ease),
+      color 120ms var(--ease);
+  }
+  .sidebar-new-chat-btn:hover {
+    background: var(--color-bg-deep);
+    border-color: var(--color-line-strong);
+    color: var(--color-ink);
+  }
+  .chat-history-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .chat-history-toggle {
+    appearance: none;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 8px 4px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-4);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .chat-history-toggle:hover {
+    color: var(--color-ink-3);
+  }
+  .chat-history-toggle-label {
+    flex: 1;
+    text-align: left;
+  }
+  .chat-history-toggle-count {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--color-ink-4);
+    background: var(--color-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--color-line);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .chat-history-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 0 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .chat-history-empty {
+    margin: 8px 6px;
+    color: var(--color-ink-4);
+    font-size: 11.5px;
+  }
+  .chat-history-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-history-group-label {
+    padding: 4px 8px 2px;
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chat-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .chat-history-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    transition: background 100ms var(--ease);
+  }
+  .chat-history-item:hover {
+    background: var(--color-line-2);
+  }
+  .chat-history-item.active {
+    background: var(--color-bg-deep);
+  }
+  .chat-history-item-btn {
+    appearance: none;
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: var(--color-ink-2);
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 5px 8px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .chat-history-item.active .chat-history-item-btn {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .chat-history-item-title {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chat-history-item-delete {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-4);
+    border-radius: 4px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition:
+      opacity 100ms var(--ease),
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .chat-history-item:hover .chat-history-item-delete,
+  .chat-history-item:focus-within .chat-history-item-delete {
+    opacity: 1;
+  }
+  .chat-history-item-delete:hover {
+    background: var(--color-line-strong);
+    color: var(--color-ink-2);
   }
 
   .retrieval {
@@ -2025,25 +2932,6 @@
     color: var(--color-ink);
     margin-bottom: 20px;
     font-weight: 380;
-  }
-  .answer .q-label {
-    font-family: var(--font-sans);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-ink-4);
-    margin-bottom: 8px;
-    display: block;
-    font-weight: 500;
-  }
-  .answer .q-text {
-    font-family: var(--font-display);
-    font-size: 21px;
-    line-height: 1.4;
-    color: var(--color-ink);
-    margin-bottom: 20px;
-    letter-spacing: -0.012em;
-    font-weight: 450;
   }
   .answer p {
     margin: 0 0 14px;
@@ -2254,6 +3142,570 @@
     font-weight: 500;
   }
 
+  /* ── Pre-answer transparency (Phase 4) ──────────────────── */
+  /* The "Searching: Ibn Kathir · Al-Tabari …" strip that fronts the
+     answer. Reads as a quiet status line, not a loader chrome. */
+  .consulting-strip {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background: var(--color-bg-elev);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .consulting-strip-label {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .consulting-strip-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    flex: 1;
+    min-width: 0;
+  }
+  .consulting-strip-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    color: var(--color-ink-2);
+  }
+  .consulting-strip-item.is-empty {
+    color: var(--color-ink-4);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-ink-5);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .consulting-strip-marker {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-tafsir);
+    opacity: 0.6;
+  }
+  .consulting-strip-item.is-pending .consulting-strip-marker {
+    background: var(--color-ink-5);
+    opacity: 0.9;
+  }
+  .consulting-strip-item.is-active .consulting-strip-marker {
+    background: var(--color-tafsir);
+    box-shadow: 0 0 0 3px var(--color-tafsir-bg);
+  }
+  .consulting-strip-item.is-empty .consulting-strip-marker {
+    background: transparent;
+    border: 1px solid var(--color-ink-5);
+  }
+  .consulting-strip-name {
+    font-weight: 500;
+  }
+  .consulting-strip-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background: transparent;
+    overflow: hidden;
+  }
+  .consulting-strip-progress-bar {
+    display: block;
+    height: 100%;
+    width: 30%;
+    background: var(--color-tafsir);
+    opacity: 0.45;
+    animation: consultingSweep 1100ms var(--ease) infinite;
+  }
+  @keyframes consultingSweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(380%);
+    }
+  }
+
+  /* ── Sources consulted footer ──────────────────────────── */
+  .sources-consulted {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sources-consulted-label {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .sources-consulted-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sources-consulted-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-bg-elev);
+    font-size: 11.5px;
+    color: var(--color-ink-2);
+  }
+  .sources-consulted-chip.is-empty {
+    color: var(--color-ink-4);
+    background: transparent;
+    border-color: var(--color-line-2);
+  }
+  .sources-consulted-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+  .sources-consulted-count {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+  }
+  .sources-consulted-chip.is-empty .sources-consulted-name {
+    font-weight: 400;
+  }
+
+  /* ── Visible uncertainty (Phase 6) ─────────────────────── */
+  /* Confidence dot + label that sits above an answer body. Three states:
+     grounded (green), partial (amber), deferred (gray). The dot is a
+     small filled circle; the label is the explanatory copy. */
+  .confidence-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .confidence-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .confidence-text {
+    color: var(--color-ink-2);
+  }
+  .confidence-label.is-grounded .confidence-dot {
+    background: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+  .confidence-label.is-partial .confidence-dot {
+    background: var(--color-tafsir);
+    box-shadow: 0 0 0 3px var(--color-tafsir-bg);
+  }
+  .confidence-label.is-deferred .confidence-dot {
+    background: var(--color-ink-4);
+    box-shadow: 0 0 0 3px var(--color-line-2);
+  }
+  .confidence-label.is-deferred .confidence-text {
+    color: var(--color-ink-3);
+  }
+
+  /* `?` icon trigger that sits just after the confidence text and opens
+     the legend popover. Quiet when idle — the user has to look for it,
+     it never demands attention. Phase 10 polish. */
+  .confidence-legend-trigger {
+    appearance: none;
+    border: 1px solid var(--color-line);
+    background: transparent;
+    color: var(--color-ink-4);
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-grid;
+    place-items: center;
+    transition:
+      border-color 120ms var(--ease),
+      color 120ms var(--ease),
+      background 120ms var(--ease);
+  }
+  .confidence-legend-trigger:hover,
+  .confidence-legend-trigger[aria-expanded="true"] {
+    color: var(--color-ink-2);
+    border-color: var(--color-ink-4);
+    background: var(--color-bg-deep);
+  }
+  .confidence-legend-trigger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .confidence-legend {
+    width: 280px;
+    padding: 14px 16px 12px;
+    font-family: var(--font-sans);
+    color: var(--color-ink-2);
+  }
+  .confidence-legend-title {
+    margin: 0 0 8px;
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .confidence-legend-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .confidence-legend-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .confidence-legend-term {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .confidence-legend-def {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--color-ink-3);
+  }
+
+  /* ── Deferred next-step buttons ────────────────────────── */
+  .deferral-next-steps {
+    margin-top: 12px;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .deferral-next-steps-label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .deferral-next-steps-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .deferral-fallback-row {
+    display: flex;
+    gap: 8px;
+    padding-left: 28px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .deferral-note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--color-ink-4);
+    font-family: var(--font-serif);
+    font-style: italic;
+    max-width: 480px;
+  }
+
+  /* ── Citation tooltip card (Phase 5) ───────────────────── */
+  /* Lifted out of the inline-style block in CitationAnchor so the
+     tooltip can be themed alongside the rest of the citation chrome.
+     The card lives inside a portal'd FloatingCard, which positions it
+     absolutely; we just style the inner content. */
+  .cite-card {
+    display: block;
+    width: 320px;
+    padding: 12px 14px;
+    font-family: var(--font-serif);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--color-ink-2);
+    font-weight: 380;
+    text-align: left;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+  .cite-card-source {
+    display: inline;
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-tafsir);
+    margin-right: 6px;
+  }
+  .cite-card-ref {
+    display: inline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-ink-4);
+  }
+  .cite-card-arabic {
+    margin: 8px 0 6px;
+    font-family: var(--font-arabic);
+    direction: rtl;
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--color-ink);
+    font-weight: 400;
+    text-align: right;
+  }
+  .cite-card-english {
+    margin: 0 0 8px;
+  }
+  .cite-card-hint {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* Inline cite anchor — the small `[n]` superscript marker. Phase 8
+     dials the chrome down: no chrome around the bracket itself, a quiet
+     accent-tinted dotted underline so the citation reads as a footnote
+     pointer rather than a button. The bracket text uses the accent ink
+     so the ref is greppable across the prose. */
+  .cite-anchor .cite {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-accent-ink);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .cite-anchor .cite:hover,
+  .cite-anchor .cite:focus-visible {
+    text-decoration-style: solid;
+    color: var(--color-accent);
+    outline: none;
+  }
+
+  /* The cite-list rows are buttons now (Phase 5 — clickable anchors).
+     Reset native button chrome so they keep their hairline-card look. */
+  button.cite-list-item {
+    appearance: none;
+    text-align: left;
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  button.cite-list-item:focus-visible {
+    outline: 2px solid var(--color-tafsir);
+    outline-offset: 2px;
+  }
+
+  /* ── Context panel: mode toggle + citation view ────────── */
+  .context-panel-modes {
+    display: flex;
+    gap: 4px;
+    padding: 8px 14px 0;
+    border-bottom: 0;
+  }
+  .context-panel-mode-btn {
+    appearance: none;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elev);
+    color: var(--color-ink-3);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease),
+      border-color 100ms var(--ease);
+  }
+  .context-panel-mode-btn:hover:not(:disabled) {
+    background: var(--color-bg-deep);
+    color: var(--color-ink);
+  }
+  .context-panel-mode-btn.is-active {
+    background: var(--color-bg-deep);
+    color: var(--color-ink);
+    border-color: var(--color-line-strong);
+  }
+  .context-panel-mode-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .context-citation {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .context-citation-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .context-citation-source {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .context-citation-author {
+    font-size: 11.5px;
+    color: var(--color-ink-3);
+  }
+  .context-citation-ref {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+  }
+  .context-citation-section-title {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 6px;
+  }
+  .context-citation-snippet,
+  .context-citation-context {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .context-citation-arabic,
+  .context-citation-fulltext-arabic,
+  .context-citation-verse-arabic {
+    font-family: var(--font-arabic);
+    direction: rtl;
+    text-align: right;
+    font-size: 18px;
+    line-height: 1.95;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .context-citation-english,
+  .context-citation-fulltext-english,
+  .context-citation-verse-translation,
+  .context-citation-summary {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-ink-2);
+    margin: 0;
+  }
+  .context-citation-verse-translation {
+    font-style: italic;
+  }
+  .context-citation-fallback {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--color-ink-4);
+    margin: 0;
+  }
+  .context-citation-fulltext {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--color-ink-3);
+  }
+  .context-citation-fulltext > summary {
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    list-style: none;
+  }
+  .context-citation-fulltext > summary::-webkit-details-marker {
+    display: none;
+  }
+  .context-citation-fulltext[open] > summary {
+    color: var(--color-ink-2);
+  }
+  .context-citation-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-line);
+    flex-wrap: wrap;
+  }
+  .context-citation-link {
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-tafsir);
+    text-decoration: none;
+  }
+  .context-citation-link:hover {
+    text-decoration: underline;
+  }
+  .context-citation-clear {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--color-ink-4);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .context-citation-clear:hover {
+    color: var(--color-ink-2);
+  }
+
   /* ── Journal ───────────────────────────────────────────── */
   .journal {
     flex: 1;
@@ -2269,16 +3721,6 @@
     flex-direction: column;
     background: var(--color-bg);
   }
-  .journal-divider {
-    width: 1px;
-    background: var(--color-line);
-    position: relative;
-    cursor: col-resize;
-    flex-shrink: 0;
-  }
-  .journal-divider:hover {
-    background: var(--color-line-strong);
-  }
   .journal-pane.right {
     background: var(--color-bg-elev);
   }
@@ -2288,7 +3730,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid var(--color-line);
     height: 44px;
     flex-shrink: 0;
     font-size: 12px;
@@ -2323,12 +3764,46 @@
     border-radius: 7px;
     background: transparent;
     border: 1px solid transparent;
-    transition: background 120ms var(--ease);
+    transition:
+      background 120ms var(--ease),
+      box-shadow 220ms var(--ease);
+    /* Anchor for the inset accent bar + corner icon on linked rows. */
+    position: relative;
   }
+  /* Phase 3: stronger anchored-verse styling. The amber tint is deepened
+     one step (oklch shift) and the leading edge gains a thicker accent
+     bar that's slightly inset from the row edge. The corner anchor icon
+     is positioned via the `.vc-anchor-icon` rule below. */
   .verse-context .vc-row.linked {
-    background: var(--color-tafsir-bg);
+    background: oklch(from var(--color-tafsir-bg) calc(l - 0.02) c h);
     border: 1px solid var(--color-tafsir-line);
-    border-left: 2px solid var(--color-tafsir);
+    /* Reset the legacy left border — the ::before bar replaces it. */
+    border-left: 1px solid var(--color-tafsir-line);
+  }
+  .verse-context .vc-row.linked::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--color-tafsir);
+  }
+  .verse-context .vc-anchor-icon {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    color: var(--color-tafsir);
+    opacity: 0.5;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+  }
+  /* Brief flash when the user clicks the anchored-to label in connect
+     mode — the row scrolls into view and pulses for ~800ms. */
+  .verse-context .vc-row.flash {
+    box-shadow: 0 0 0 2px var(--color-tafsir-line);
   }
   .verse-context .vc-arabic {
     font-family: var(--font-arabic);
@@ -2345,41 +3820,6 @@
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--color-ink-2);
-  }
-
-  .note-toolbar {
-    padding: 8px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid var(--color-line);
-    background: var(--color-bg);
-    flex-shrink: 0;
-    flex-wrap: wrap;
-  }
-  .toolbar-group {
-    display: flex;
-    align-items: center;
-    gap: 1px;
-    background: var(--color-bg-deep);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-sm);
-    padding: 2px;
-  }
-  .toolbar-group.ai {
-    border-color: var(--color-ai-line);
-    background: var(--color-ai-bg);
-  }
-  .toolbar-group.ai .iconbtn {
-    color: var(--color-ai);
-  }
-  .toolbar-group .iconbtn {
-    width: 26px;
-    height: 24px;
-    border-radius: 3px;
-  }
-  .toolbar-group .iconbtn:hover {
-    background: var(--color-bg-elev);
   }
 
   .note-doc-wrap {
@@ -2577,6 +4017,130 @@
     pointer-events: none;
   }
 
+  /* ── Inline suggestions (Phase 2) ────────────────────────────────
+     Compose-mode inline keyword underlines + popover. The mirror sits
+     OVER the textarea (not under) so its `.inline-suggestion-mark`
+     spans can intercept hover. The mirror itself has
+     `pointer-events: none` so most of it is invisible to the pointer
+     and clicks pass through to the textarea below. */
+  .note-body .note-body-editor-wrap {
+    position: relative;
+  }
+  .note-body .note-body-mirror {
+    /* Inherits font, size, weight, line-height from .note-body so the
+       mirror's text positions match the textarea's character-for-character.
+       Padding/margins are flattened in the JS-applied inline style. */
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    z-index: 1;
+  }
+  .note-body .inline-suggestion-mark {
+    /* Transparent fill — only the dotted underline shows. The textarea
+       below paints the actual visible text. The marks claim hover with
+       `pointer-events: auto` so they can open the popover. */
+    color: transparent;
+    pointer-events: auto;
+    cursor: help;
+    text-decoration: underline dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    border-radius: 2px;
+    transition: text-decoration-color 120ms var(--ease);
+    /* default accent — overridden by [data-accent] selectors below */
+    text-decoration-color: oklch(from var(--color-ink-4) l c h / 0.6);
+  }
+  .note-body .inline-suggestion-mark[data-accent="tafsir"] {
+    text-decoration-color: oklch(from var(--color-tafsir) l c h / 0.6);
+  }
+  .note-body .inline-suggestion-mark[data-accent="verse-link"] {
+    text-decoration-color: oklch(from var(--color-verse-link) l c h / 0.6);
+  }
+  .note-body .inline-suggestion-mark[data-accent="ai"] {
+    text-decoration-color: oklch(from var(--color-ai) l c h / 0.6);
+  }
+  .note-body .inline-suggestion-mark[data-accent="ink-quiet"] {
+    text-decoration-color: oklch(from var(--color-ink-4) l c h / 0.7);
+  }
+  .note-body .inline-suggestion-mark:hover,
+  .note-body .inline-suggestion-mark:focus-visible {
+    /* Brighten the underline to full saturation on hover so the user
+       has confirmation the mark is interactive. Outline kept off so the
+       editor reads as prose, not a form. */
+    text-decoration-thickness: 1.5px;
+    outline: 0;
+  }
+  .note-body .inline-suggestion-mark:hover[data-accent="tafsir"],
+  .note-body .inline-suggestion-mark:focus-visible[data-accent="tafsir"] {
+    text-decoration-color: var(--color-tafsir);
+  }
+  .note-body .inline-suggestion-mark:hover[data-accent="verse-link"],
+  .note-body .inline-suggestion-mark:focus-visible[data-accent="verse-link"] {
+    text-decoration-color: var(--color-verse-link);
+  }
+  .note-body .inline-suggestion-mark:hover[data-accent="ai"],
+  .note-body .inline-suggestion-mark:focus-visible[data-accent="ai"] {
+    text-decoration-color: var(--color-ai);
+  }
+  .note-body .inline-suggestion-mark:hover[data-accent="ink-quiet"],
+  .note-body .inline-suggestion-mark:focus-visible[data-accent="ink-quiet"] {
+    text-decoration-color: var(--color-ink-3);
+  }
+
+  /* Popover. Subtle shadow, --color-bg-elev fill, --radius corners,
+     ~12.5px serif body. Layered above the editor via FloatingCard's
+     portal. */
+  .floating-card.inline-suggestion-popover {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    min-width: 240px;
+    max-width: 320px;
+  }
+  .inline-suggestion-popover-body {
+    padding: 10px 12px;
+    border-left: 2px solid var(--color-line-strong);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .inline-suggestion-popover-body[data-accent="tafsir"] {
+    border-left-color: var(--color-tafsir);
+  }
+  .inline-suggestion-popover-body[data-accent="verse-link"] {
+    border-left-color: var(--color-verse-link);
+  }
+  .inline-suggestion-popover-body[data-accent="ai"] {
+    border-left-color: var(--color-ai);
+  }
+  .inline-suggestion-popover-body[data-accent="ink-quiet"] {
+    border-left-color: var(--color-ink-4);
+  }
+  .inline-suggestion-popover-body .src {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .inline-suggestion-popover-body .body {
+    font-family: var(--font-serif);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--color-ink-2);
+    margin-bottom: 10px;
+  }
+  .inline-suggestion-popover-body .actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
   /* ── Cards system (spec §9.1) ──────────────────────────────────
      Three kinds of card render in the journal: suggestion (rail),
      insert (inline AI result), source (inline citation). They share
@@ -2687,67 +4251,75 @@
 
   .suggestions-rail {
     width: 320px;
-    border-left: 1px solid var(--color-line);
     background: var(--color-bg);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
   }
   .rail-head {
-    padding: 12px 18px;
+    padding: 14px 18px 6px;
     display: flex;
     align-items: center;
     gap: 8px;
-    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-mono);
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-ink-4);
-    font-weight: 500;
+    font-weight: 400;
   }
   .rail-head .count {
     margin-left: auto;
     font-family: var(--font-mono);
-    background: var(--color-bg-deep);
-    color: var(--color-ink-3);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 10px;
+    background: transparent;
+    color: var(--color-ink-4);
+    padding: 0;
+    border-radius: 0;
+    font-size: 10.5px;
     text-transform: none;
-    border: 1px solid var(--color-line);
+    border: 0;
   }
   .rail-body {
     flex: 1;
     overflow-y: auto;
     padding: 12px;
   }
+  /* Phase 2: quieter rail cards. No border / no fill — just vertical
+     spacing and a thin (2px) left accent line in the source's colour.
+     Snooze + Dismiss icons are hidden by default and revealed via
+     hover/focus-within. The body uses `-webkit-line-clamp: 2` so the
+     preview reads as a soft summary rather than full prose. */
   .rail-card {
-    border: 1px solid var(--color-line);
-    border-left: 2px solid var(--color-note-line);
-    border-radius: var(--radius);
-    background: var(--color-bg-elev);
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    transition: border-color 120ms var(--ease);
+    border: 0;
+    background: transparent;
+    border-left: 2px solid var(--color-line-strong);
+    border-radius: 0;
+    padding: 8px 14px;
+    margin-bottom: 14px;
+    transition: border-left-color 120ms var(--ease);
   }
-  .rail-card:hover {
-    border-color: var(--color-line-strong);
-    border-left-color: var(--color-note);
+  .rail-card:hover,
+  .rail-card:focus-within {
+    border-left-color: var(--color-ink-3);
   }
+  /* `reason` is no longer rendered in Phase 2 — the source label has
+     replaced it. The selector stays so legacy callers don't break, but
+     it collapses to nothing. */
   .rail-card .reason {
-    font-size: 11px;
-    color: var(--color-note);
-    margin-bottom: 8px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    display: none;
   }
   .rail-card .body {
     font-family: var(--font-serif);
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--color-ink-2);
-    margin-bottom: 8px;
+    margin: 4px 0 8px;
+    /* Two-line clamp per Phase 2 spec — readable summary, not full
+       prose. The card hover reveals the rest in tooltips later. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .rail-card .ayah-q {
     font-family: var(--font-arabic);
@@ -2766,35 +4338,53 @@
     margin-bottom: 8px;
   }
   .rail-card .src {
-    font-size: 11px;
+    font-size: 10.5px;
     color: var(--color-ink-4);
     font-family: var(--font-mono);
-    margin-bottom: 8px;
     letter-spacing: 0.01em;
+    margin-bottom: 0;
   }
   .rail-card .actions {
     display: flex;
-    gap: 4px;
-    padding-top: 8px;
-    border-top: 1px solid var(--color-line);
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    margin-top: 0;
   }
-  .rail-card[data-kind="related-verse"] {
-    border-left-color: var(--color-verse-link-line);
+  /* Snooze + dismiss icons hide until the card is hovered or any
+     child receives focus. The Insert button stays visible. */
+  .rail-card .actions-hover {
+    display: inline-flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+    pointer-events: none;
   }
-  .rail-card[data-kind="related-verse"] .reason {
-    color: var(--color-verse-link);
+  .rail-card:hover .actions-hover,
+  .rail-card:focus-within .actions-hover {
+    opacity: 1;
+    pointer-events: auto;
   }
-  .rail-card[data-kind="tafsir-match"] {
-    border-left-color: var(--color-tafsir-line);
+  /* Accent colours by source kind. The `data-accent` attribute is set
+     in the rail component so adding new kinds is a one-line CSS
+     change without editing the JS lookup. */
+  .rail-card[data-accent="tafsir"] {
+    border-left-color: var(--color-tafsir);
   }
-  .rail-card[data-kind="tafsir-match"] .reason {
-    color: var(--color-tafsir);
+  .rail-card[data-accent="tafsir"]:hover,
+  .rail-card[data-accent="tafsir"]:focus-within {
+    border-left-color: var(--color-tafsir);
+    filter: brightness(0.92);
   }
-  .rail-card[data-kind="prompt"] {
-    border-left-color: var(--color-ai-line);
+  .rail-card[data-accent="verse-link"] {
+    border-left-color: var(--color-verse-link);
   }
-  .rail-card[data-kind="prompt"] .reason {
-    color: var(--color-ai);
+  .rail-card[data-accent="ink-quiet"] {
+    border-left-color: var(--color-ink-4);
+  }
+  .rail-card[data-accent="ai"] {
+    border-left-color: var(--color-ai);
   }
   .rail-empty {
     padding: 24px 12px;
@@ -2805,261 +4395,972 @@
     font-style: italic;
   }
   .rail-foot {
-    padding: 14px 14px 0;
-    font-size: 11px;
+    padding: 18px 14px 0;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     color: var(--color-ink-4);
-    text-align: center;
-    font-style: italic;
-    font-family: var(--font-serif);
+    text-align: left;
+    letter-spacing: 0.02em;
+    font-style: normal;
   }
 
-  /* ── Library ───────────────────────────────────────────── */
-  .library {
+  /* ── Journal v2 (Phase 1) ───────────────────────────────────────
+     The new compose-vs-connect layout. Compose mode dominates the
+     writing pane; Connect mode falls back to the v1 3-column layout
+     reusing `.journal` / `.journal-pane` styles above. */
+  .journal-v2 {
     flex: 1;
-    overflow-y: auto;
-    padding: 32px 56px 120px;
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    transition: background 220ms var(--ease);
   }
-  .library-inner {
-    max-width: 1100px;
+
+  /* Compose-mode container: rail + writing pane. Connect mode renders
+     the legacy `.journal` div directly so no v2-specific layout
+     applies in that branch. */
+  .journal-v2-mode-compose {
+    background: var(--color-bg);
+  }
+  .journal-v2-mode-connect {
+    background: var(--color-bg);
+  }
+  .journal-v2-mode-map {
+    background: var(--color-bg);
+  }
+
+  /* Narrow left rail in compose mode. Hover brightens the badge so
+     the click affordance is obvious without competing with content. */
+  .journal-v2-rail {
+    width: 80px;
+    flex-shrink: 0;
+    background: var(--color-bg-2);
+    border-right: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 8px;
+    border: 0;
+    border-right: 1px solid var(--color-line);
+    cursor: pointer;
+    color: inherit;
+    font-family: inherit;
+    text-align: center;
+    transition:
+      background 200ms var(--ease),
+      border-color 200ms var(--ease);
+  }
+  .journal-v2-rail:hover {
+    background: var(--color-bg-deep);
+  }
+  .journal-v2-rail.is-open {
+    background: var(--color-bg-deep);
+    border-right-color: var(--color-line-strong);
+  }
+  .journal-v2-rail:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+  .journal-v2-rail-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-tafsir-bg-strong);
+    border: 1px solid var(--color-tafsir-line);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .journal-v2-rail-badge-num {
+    font-family: var(--font-arabic);
+    font-size: 16px;
+    color: var(--color-tafsir);
+    line-height: 1;
+  }
+  .journal-v2-rail-preview {
+    font-family: var(--font-arabic);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-ink-3);
+    direction: rtl;
+    text-align: center;
+    /* Allow wrapping but keep the column tight. The Arabic preview is
+       intentionally a glanceable snippet, not the full ayah. */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Drawer overlay — does NOT push layout. Sits absolutely positioned
+     over the page so the writing pane behind stays put while the
+     verse pane slides in from the left. */
+  .journal-v2-drawer-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.04);
+    z-index: 10;
+    animation: journal-v2-drawer-scrim-in 220ms var(--ease);
+  }
+  .journal-v2-drawer {
+    position: absolute;
+    top: 0;
+    left: 80px;
+    bottom: 0;
+    width: min(440px, calc(100% - 96px));
+    background: var(--color-bg-deep);
+    border-right: 1px solid var(--color-line);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: journal-v2-drawer-in 240ms var(--ease);
+    z-index: 11;
+  }
+  @keyframes journal-v2-drawer-scrim-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes journal-v2-drawer-in {
+    from {
+      transform: translateX(-12px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .journal-v2-drawer-meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+  }
+
+  /* Writing pane in compose mode. Centers a max-720 column so the
+     editor never stretches across a wide viewport — the eye should
+     stay on a comfortable measure. */
+  .journal-v2-pane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    overflow: hidden;
+    position: relative;
+  }
+  .journal-v2-doc-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    position: relative;
+  }
+  /* The .note-doc rendered inside takes the centered column. We
+     reuse the existing .note-doc class but constrain its width here so
+     the v1 grid (.note-doc-wrap with the suggestions column) is
+     unaffected. */
+  .journal-v2-doc-wrap > .note-doc {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 36px 32px 200px;
+  }
+
+  /* Phase 3: "Anchored to <surah> <ayah>" label. Sits above the editor
+     in BOTH compose and connect v2 layouts (rendered between the
+     toolbar and the doc-wrap). Tracks the rail-head's letter-spacing
+     and color so it reads as quiet metadata, not an action. The button
+     itself is a transparent affordance — visual weight comes from the
+     icon + uppercase mono label.
+
+     `journal-v2-anchored-row` is the wrapper that aligns the label with
+     the centered editor column (same max-width). In connect mode the
+     editor isn't centered, so the row falls back to a left-aligned
+     position with the same horizontal padding as the toolbar. */
+  .journal-v2-anchored-row {
+    flex-shrink: 0;
+    padding: 4px 32px 0;
+    width: 100%;
+    max-width: 720px;
     margin: 0 auto;
   }
-  .library-hd {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 6px;
+  .journal .journal-v2-anchored-row {
+    /* Connect-mode v2: the editor is full-width (no max-720 cap), so the
+       label hugs the toolbar's left padding instead of being centered. */
+    max-width: none;
+    padding: 4px 56px 0;
   }
-  .library-hd h1 {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-    margin: 0;
-  }
-  .library-hd .count {
-    font-size: 12px;
-    color: var(--color-ink-4);
-    font-family: var(--font-mono);
-  }
-
-  .library-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 0 18px;
-    border-bottom: 1px solid var(--color-line);
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-  }
-  .library-bar .search {
-    flex: 1;
-    min-width: 240px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--color-bg-elev);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius);
-    padding: 0 10px;
-    height: 32px;
-  }
-  .library-bar .search:focus-within {
-    border-color: var(--color-ink-4);
-  }
-  .library-bar .search input {
-    flex: 1;
+  .journal-v2-anchored {
+    appearance: none;
     border: 0;
-    outline: 0;
     background: transparent;
-    color: inherit;
-    font-family: inherit;
-    font-size: 13px;
-  }
-  .library-bar .search input::placeholder {
-    color: var(--color-ink-4);
-  }
-
-  .note-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
-  }
-  .note-card {
-    background: var(--color-bg-elev);
-    border: 1px solid var(--color-line);
-    border-left: 2px solid var(--color-note-line);
-    border-radius: var(--radius);
-    padding: 16px 16px 14px;
+    padding: 4px 0;
     cursor: pointer;
-    transition: all 130ms var(--ease);
-    display: flex;
-    flex-direction: column;
-    min-height: 168px;
-    width: 100%;
-    text-align: left;
-    font-family: inherit;
-    color: inherit;
-  }
-  .note-card:hover {
-    border-color: var(--color-line-strong);
-    border-left-color: var(--color-note);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-  }
-  .note-card .nc-title {
-    font-family: var(--font-display);
-    font-size: 15.5px;
-    font-weight: 500;
-    color: var(--color-ink);
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-    line-height: 1.35;
-  }
-  .note-card .nc-snip {
-    font-size: 13px;
-    color: var(--color-ink-3);
-    line-height: 1.55;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    flex: 1;
-    font-family: var(--font-serif);
-  }
-  .note-card .nc-foot {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--color-line);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .note-card .nc-foot .nc-link {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    color: var(--color-tafsir);
-    background: var(--color-tafsir-bg);
-    padding: 1px 6px;
-    border-radius: 3px;
-    border: 1px solid var(--color-tafsir-line);
-    font-weight: 500;
-  }
-  .note-card .nc-foot .nc-tag {
-    font-size: 10.5px;
-    color: var(--color-ink-3);
-  }
-  .note-card .nc-foot .nc-tag::before {
-    content: "#";
-    opacity: 0.6;
-  }
-  .note-card .nc-foot .nc-date {
-    margin-left: auto;
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    font-family: var(--font-mono);
-  }
-
-  .note-table {
-    display: flex;
-    flex-direction: column;
-  }
-  .note-row {
-    display: grid;
-    grid-template-columns: 1fr 220px 110px 90px;
-    gap: 16px;
-    padding: 14px 12px;
-    border-bottom: 1px solid var(--color-line);
-    cursor: pointer;
-    transition: background 100ms var(--ease);
-    align-items: start;
-    border-left: 0;
-    border-right: 0;
-    border-top: 0;
-    background: transparent;
-    width: 100%;
-    text-align: left;
-    font-family: inherit;
-    color: inherit;
-  }
-  .note-row:hover {
-    background: var(--color-line-2);
-  }
-  .note-row .nr-main {
-    min-width: 0;
-  }
-  .note-row .nr-title {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--color-ink);
-    margin-bottom: 4px;
-  }
-  .note-row .nr-snip {
-    font-size: 13px;
-    color: var(--color-ink-3);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-family: var(--font-serif);
-  }
-  .note-row .nr-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .note-row .nr-tag {
     display: inline-flex;
-    padding: 1px 7px;
-    border-radius: 4px;
-    background: var(--color-bg-deep);
-    color: var(--color-ink-3);
-    font-size: 10.5px;
-    border: 1px solid var(--color-line);
-  }
-  .note-row .nr-link {
+    align-items: center;
+    gap: 6px;
     font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--color-tafsir);
-    background: var(--color-tafsir-bg);
-    padding: 1px 7px;
-    border-radius: 3px;
-    border: 1px solid var(--color-tafsir-line);
-    align-self: start;
-    font-weight: 500;
-  }
-  .note-row .nr-date {
-    font-size: 11px;
+    font-size: 10.5px;
     color: var(--color-ink-4);
-    font-family: var(--font-mono);
-  }
-  .note-table-head {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--color-line-strong);
-    font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--color-ink-4);
-    font-weight: 500;
-    cursor: default;
-    display: grid;
-    grid-template-columns: 1fr 220px 110px 90px;
-    gap: 16px;
+    transition: color 120ms var(--ease);
+  }
+  .journal-v2-anchored:hover {
+    color: var(--color-ink-2);
+  }
+  .journal-v2-anchored:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
   }
 
-  /* ── Library v3: filter bar, empty state, AI badge ───────── */
-  .lib-filters {
+  /* Phase 3 watermark — anchored verse's English translation, faded into
+     the right margin of the writing pane. Mounted as a sibling of the
+     scroll container so it stays pinned to the pane's top-right rather
+     than scrolling with the editor body. pointer-events:none keeps it
+     purely decorative. */
+  .journal-v2-watermark {
+    position: absolute;
+    top: 80px;
+    right: 24px;
+    max-width: 280px;
+    width: 280px;
+    padding: 0 8px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 36px;
+    line-height: 1.18;
+    color: var(--color-ink-2);
+    text-align: right;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 400ms var(--ease);
+    z-index: 1;
+    /* Only the .is-visible variant becomes visible. */
+  }
+  .journal-v2-watermark.is-visible {
+    opacity: 0.08;
+  }
+
+  /* Bottom-right "✦ N connections" indicator. Subtle, no card chrome —
+     pure muted text that only reveals itself as a button on hover.
+     Pinned to the writing pane's bottom-right (not the scroll viewport)
+     so it stays in view as the user writes a long note. */
+  .journal-v2-connections {
+    position: absolute;
+    right: 24px;
+    bottom: 18px;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-4);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition:
+      color 150ms var(--ease),
+      background 150ms var(--ease);
+    pointer-events: auto;
+    z-index: 5;
+  }
+  .journal-v2-connections:hover {
+    color: var(--color-ink-2);
+    background: var(--color-line-2);
+  }
+  .journal-v2-connections:focus-visible {
+    color: var(--color-ink-2);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .journal-v2-connections-mark {
+    color: var(--color-accent-ink);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* ── Phase 4: V2 metadata stack (title → anchor → tags) ─────────
+     The vertical block above the editor body. The previous (legacy)
+     `.note-meta` strip is bypassed entirely in V2; this stack replaces
+     it with a quieter, prose-first hierarchy. */
+  .journal-v2-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .journal-v2-meta-title {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--color-ink);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .journal-v2-meta-anchor {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin: 2px 0 0;
   }
+  /* Render the V2 anchor without the per-row's outer padding so it
+     visually aligns with the title's left edge. */
+  .journal-v2-meta-anchor .journal-v2-anchored {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .journal-v2-meta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-top: 4px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--color-ink-4);
+    line-height: 1.5;
+  }
+  .journal-v2-meta-tag {
+    display: inline-flex;
+    align-items: baseline;
+    transition: color 120ms var(--ease);
+  }
+  .journal-v2-meta-tag:hover {
+    color: var(--color-ink-2);
+  }
+  .journal-v2-meta-tag-sep {
+    margin: 0 8px;
+    color: var(--color-ink-5);
+    pointer-events: none;
+  }
+
+  /* Edit timestamp (bottom-right of the V2 writing pane). Default opacity
+     is 0; the surrounding pane's :hover/:focus-within state fades it in.
+     Sits to the LEFT of the connections indicator with a small gap so
+     both can be visible together when the user hovers in compose mode. */
+  .journal-v2-edited {
+    position: absolute;
+    right: 24px;
+    bottom: 48px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms var(--ease);
+    z-index: 4;
+  }
+  .journal-v2-pane:hover .journal-v2-edited,
+  .journal-v2-pane:focus-within .journal-v2-edited {
+    opacity: 0.9;
+  }
+
+  /* Top-right `…` overflow trigger + dropdown menu. Positioned absolutely
+     inside the V2 writing pane. */
+  .journal-v2-overflow {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    z-index: 6;
+  }
+  .note-overflow-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    color: var(--color-ink-4);
+    cursor: pointer;
+    transition:
+      background 120ms var(--ease),
+      color 120ms var(--ease);
+  }
+  .note-overflow-trigger:hover {
+    background: var(--color-line-2);
+    color: var(--color-ink-2);
+  }
+  .note-overflow-trigger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  .note-overflow-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 220px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 10;
+  }
+  .note-overflow-row {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    color: var(--color-ink-2);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    transition: background 120ms var(--ease);
+  }
+  .note-overflow-row:hover {
+    background: var(--color-line-2);
+  }
+  .note-overflow-row:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+  .note-overflow-icon {
+    color: var(--color-ink-3);
+    margin-top: 1px;
+  }
+  .note-overflow-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .note-overflow-label {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .note-overflow-desc {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Phase 7: Entry experience (V2 only) ─────────────────────────
+     A small ritual of arrival when the user opens a journal note:
+       1. Bismillah fades in over 400ms (compose: when the verse drawer
+          opens; connect: on initial JournalV2 mount).
+       2. Writing pane fades in over 300ms after a 200ms delay so the
+          text settles AFTER the verse context has had a moment to
+          register.
+       3. Soft, italic placeholder for empty notes.
+     All three are pure CSS keyframes — they fire on mount (or on the
+     `key={note.id}` remount inside JournalV2) and never re-trigger on
+     re-render, which is the desired one-shot ritual. The reduced-
+     motion media query at the end of this stylesheet collapses every
+     animation-duration to ~0, so reduced-motion users see no fade. */
+
+  /* Bismillah fade-in. Scoped to V2 so the legacy verse pane (where
+     VerseContext is also rendered) is unaffected. `animation-fill-mode:
+     both` holds the from-state before the keyframe starts, preventing
+     a flash at full opacity on initial paint. */
+  .journal-v2 .vc-bismillah {
+    animation: journal-v2-fade-bismillah 400ms ease-out both;
+  }
+  @keyframes journal-v2-fade-bismillah {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Writing-pane fade-in. Applied via the explicit `journal-v2-enter-
+     pane` class (rather than the structural `.journal-v2-pane`) so the
+     animation is opt-in per call site — JournalV2 attaches this class
+     and a `key={note.id}` to the pane wrapper, which re-runs the keyframe
+     on note navigation. The 200ms delay matches the bismillah's earlier
+     start; the 300ms duration finishes ~500ms after mount. */
+  .journal-v2-enter-pane {
+    animation: journal-v2-fade-pane 300ms ease-out 200ms both;
+  }
+  @keyframes journal-v2-fade-pane {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* ── Journal v2 — Map mode (Phase 8) ─────────────────────────────
+     A read-only radial diagram of a single note's connections. Full-
+     bleed centered SVG canvas; small title in the top-left, dismiss-
+     to-compose in the top-right. The arrival fade reuses the same
+     400ms beat as the bismillah so the map "lands" the same way. */
+  .journal-v2-map {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    display: grid;
+    place-items: center;
+    background: var(--color-bg);
+    overflow: hidden;
+    animation: journal-v2-map-enter 400ms ease-out both;
+  }
+  @keyframes journal-v2-map-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .journal-v2-map-canvas {
+    width: min(960px, 92%);
+    height: min(640px, 78%);
+    /* `overflow: visible` so the tag labels at the outer ring don't get
+       clipped by the SVG bounding box if a label runs slightly past the
+       canvas edge. */
+    overflow: visible;
+    cursor: default;
+  }
+
+  /* Hover dimming via :has(). When any node inside the canvas is
+     hovered or focused, all OTHER nodes/lines fade slightly so the
+     hovered relation reads as the foreground. Pure CSS — no JS state.
+     Browsers without :has() support (very rare in 2026) just lose the
+     dimming gracefully; the underlying interaction still works. */
+  .journal-v2-map-canvas:has(.journal-v2-map-node:hover) .journal-v2-map-node,
+  .journal-v2-map-canvas:has(.journal-v2-map-node:focus-visible) .journal-v2-map-node {
+    opacity: 0.32;
+    transition:
+      opacity 200ms var(--ease),
+      transform 200ms var(--ease);
+  }
+  .journal-v2-map-canvas:has(.journal-v2-map-node:hover) .journal-v2-map-line,
+  .journal-v2-map-canvas:has(.journal-v2-map-node:focus-visible) .journal-v2-map-line {
+    opacity: 0.12;
+  }
+  .journal-v2-map-canvas .journal-v2-map-node:hover,
+  .journal-v2-map-canvas .journal-v2-map-node:focus-visible {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  /* Connector lines: low-opacity ribs from each peripheral node back to
+     the center. Stroke colour comes from the line's modifier class so
+     tafsir lines and note lines read as different relationships. */
+  .journal-v2-map-line {
+    stroke: var(--color-ink-4);
+    stroke-width: 1;
+    opacity: 0.3;
+    transition: opacity 200ms var(--ease);
+    pointer-events: none;
+  }
+  .journal-v2-map-line-tafsir {
+    stroke: var(--color-tafsir);
+  }
+  .journal-v2-map-line-note {
+    stroke: var(--color-note-line);
+  }
+
+  /* Generic node group: a circle + a label. We expose a single
+     `.journal-v2-map-node` hover target so the :has() rules above don't
+     have to enumerate every variant. Cursor stays as a pointer because
+     every node is clickable. */
+  .journal-v2-map-node {
+    cursor: pointer;
+    outline: none;
+    transition:
+      opacity 200ms var(--ease),
+      transform 200ms var(--ease);
+  }
+  .journal-v2-map-node:focus-visible .journal-v2-map-node-circle {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 50%;
+  }
+
+  .journal-v2-map-node-circle {
+    fill: var(--color-bg-elev);
+    stroke: var(--color-ink-4);
+    stroke-width: 1;
+    transition:
+      stroke 160ms var(--ease),
+      fill 160ms var(--ease);
+  }
+  .journal-v2-map-node-center .journal-v2-map-node-circle {
+    /* Center node: tafsir-coloured ring + a slightly stronger fill so
+       it reads as the focal point of the diagram. */
+    stroke: var(--color-tafsir);
+    stroke-width: 1.4;
+    fill: var(--color-bg);
+  }
+  .journal-v2-map-node-tafsir .journal-v2-map-node-circle {
+    stroke: var(--color-tafsir);
+    fill: var(--color-bg-elev);
+  }
+  .journal-v2-map-node-note .journal-v2-map-node-circle {
+    stroke: var(--color-note-line);
+    fill: var(--color-bg-elev);
+  }
+  .journal-v2-map-node:hover .journal-v2-map-node-circle {
+    fill: var(--color-bg-elev);
+    stroke-width: 1.5;
+  }
+
+  /* Labels: small mono text under each node. The center label uses a
+     slightly larger size / tafsir colour so the anchor reads first. */
+  .journal-v2-map-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--color-ink-2);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    user-select: none;
+  }
+  .journal-v2-map-label-center {
+    font-size: 12px;
+    fill: var(--color-tafsir);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Tag labels: outer-ring decorative text. No node, no interaction. */
+  .journal-v2-map-tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--color-ink-4);
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Empty-state hint when a note has zero tafsir + zero related notes. */
+  .journal-v2-map-empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    fill: var(--color-ink-4);
+    pointer-events: none;
+  }
+
+  /* Corner chrome: title (top-left) and dismiss button (top-right).
+     Positioned absolutely so the SVG canvas can claim the full grid
+     cell beneath them. The eyebrow ("Map") is uppercase mono to match
+     the rest of the v2 metadata language. */
+  .journal-v2-map-meta {
+    position: absolute;
+    top: 18px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-ink-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .journal-v2-map-meta-title {
+    left: 24px;
+    max-width: min(40%, 360px);
+  }
+  .journal-v2-map-meta-eyebrow {
+    color: var(--color-tafsir);
+  }
+  .journal-v2-map-meta-text {
+    color: var(--color-ink-2);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-family: var(--font-display);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .journal-v2-map-meta-dismiss {
+    right: 24px;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-3);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition:
+      color 120ms var(--ease),
+      background 120ms var(--ease);
+  }
+  .journal-v2-map-meta-dismiss:hover {
+    color: var(--color-ink);
+    background: var(--color-bg-deep);
+  }
+  .journal-v2-map-meta-dismiss:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Soft placeholder for V2 empty notes. The legacy `.note-body
+     .note-body-editor::placeholder` rule already provides a muted
+     italic colour; we restate font-family/style/colour explicitly here
+     to lock the V2 surface to the exact tokens the spec calls for,
+     regardless of inherited cascade order. */
+  .journal-v2 .note-body .note-body-editor::placeholder {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink-4);
+  }
+
+  /* Floating selection toolbar (text-format actions). Portaled to the
+     body so ancestor overflow doesn't clip it; positioned via fixed
+     coords above the selection's midpoint. */
+  .floating-selection-toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    z-index: 50;
+    /* The transform translate is set inline so the toolbar centers above
+       the selection. Avoid extra animations to keep the surface calm. */
+  }
+  .floating-selection-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    color: var(--color-ink-2);
+    cursor: pointer;
+    transition:
+      background 120ms var(--ease),
+      color 120ms var(--ease);
+  }
+  .floating-selection-btn:hover {
+    background: var(--color-line-2);
+    color: var(--color-ink);
+  }
+  .floating-selection-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -1px;
+  }
+  .floating-selection-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+    padding-left: 6px;
+    border-left: 1px solid var(--color-line);
+  }
+  .floating-selection-input {
+    width: 84px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .floating-selection-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0;
+    border-color: var(--color-accent);
+  }
+  .floating-selection-confirm {
+    appearance: none;
+    border: 0;
+    background: var(--color-ink);
+    color: var(--color-bg-elev);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+
+  /* Slash-command menu (Phase 4 V2 variant). Distinct from the legacy
+     SlashMenu rule above — but reuses the .slash-* class names so future
+     refactors can converge. We scope this rule to the inline list to
+     avoid leaking into the legacy menu's existing presentation. */
+  .slash-menu .slash-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 240px;
+  }
+  .slash-menu .slash-list li {
+    display: block;
+  }
+  .slash-menu .slash-empty {
+    padding: 10px;
+    color: var(--color-ink-4);
+    font-size: 12px;
+  }
+  .slash-menu {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    z-index: 50;
+  }
+  .slash-menu .slash-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    background: transparent;
+    border: 0;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: var(--color-ink-2);
+    font-family: inherit;
+    font-size: 12.5px;
+    transition: background 120ms var(--ease);
+  }
+  .slash-menu .slash-row.is-active,
+  .slash-menu .slash-row:hover {
+    background: var(--color-line-2);
+  }
+  .slash-menu .slash-icon {
+    color: var(--color-ink-3);
+    margin-top: 1px;
+  }
+  .slash-menu .slash-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .slash-menu .slash-name {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .slash-menu .slash-desc {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    letter-spacing: 0.02em;
+  }
+  .slash-picker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    min-width: 240px;
+  }
+  .slash-picker-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .slash-picker-input {
+    flex: 1;
+    padding: 4px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .slash-picker-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0;
+    border-color: var(--color-accent);
+  }
+  .slash-picker-select {
+    padding: 3px 4px;
+    border-radius: 3px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  /* Topbar journal-mode switcher. Tiny segmented control modeled on
+     `.iconbtn` chrome so it sits naturally next to the theme toggle. */
+  .journal-mode-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+  }
+  .journal-mode-switch-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 26px;
+    height: 24px;
+    border-radius: 3px;
+    color: var(--color-ink-4);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .journal-mode-switch-btn:hover {
+    background: var(--color-bg-elev);
+    color: var(--color-ink-2);
+  }
+  .journal-mode-switch-btn.is-active {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+  .journal-mode-switch-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
+  /* Topbar layout tweaks while a JournalV2 is mounted. The v1 layout
+     stays untouched — only this opt-in class changes anything. */
+  .topbar-journal-v2 .searchbar {
+    /* No-op default: the searchbar element is conditionally rendered
+       in TSX so this rule isn't needed for v1, but kept here so that
+       any custom topbar treatments under v2 can hang off this hook
+       without re-touching the base topbar. */
+  }
+
+  /* ── Library: shared filter pill + empty state ─────────── */
+  /* Filter dropdown chrome shared by SurahFilter, DateFilter, and
+     SortControl. Library overrides the look scoped to `.lib2-filterbar`
+     so the page reads as quiet pills; other surfaces inherit the
+     loud-pill default. */
   .lib-filter-group {
     position: relative;
   }
@@ -3158,40 +5459,6 @@
     color: inherit;
   }
 
-  .lib-chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 18px;
-  }
-  .lib-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    border: 1px solid var(--color-line);
-    background: var(--color-bg-elev);
-    color: var(--color-ink-3);
-    font-family: inherit;
-    font-size: 11.5px;
-    cursor: pointer;
-    transition: all 120ms var(--ease);
-  }
-  .lib-chip:hover {
-    border-color: var(--color-line-strong);
-    color: var(--color-ink-2);
-  }
-  .lib-chip.on {
-    border-color: var(--color-accent);
-    background: var(--color-accent-soft);
-    color: var(--color-accent-ink);
-  }
-  .lib-chip-hash {
-    opacity: 0.5;
-    margin-right: 1px;
-  }
-
   .lib-empty {
     display: flex;
     flex-direction: column;
@@ -3236,28 +5503,546 @@
     justify-content: center;
   }
 
-  .note-ai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--color-ai);
-    background: var(--color-ai-bg);
-    border: 1px solid var(--color-ai-line);
-    letter-spacing: 0.02em;
+  /* ── Library v2 ────────────────────────────────────────── */
+  /* Recessed, calm rebuild of the Library/Notes page. The notes list is
+     the protagonist; filters are quiet, metadata is muted, the page has
+     rhythm. Typography is intentionally sourced from existing tokens —
+     sizes and weights match v1 voices so the rebuild reads as a layout
+     change, not a font change. */
+
+  .lib2 {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 24px 120px;
   }
-  .note-row .nr-date {
+  @media (min-width: 768px) {
+    .lib2 {
+      padding: 32px 56px 120px;
+    }
+  }
+  .lib2-inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* Header (Phase 6): title + rich subtitle on the left, primary action
+     on the right. The thin rule below isolates the page opening from
+     the filter row. */
+  .lib2-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .lib2-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .lib2-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.1;
+  }
+  .lib2-subtitle {
+    font-size: 12px;
+    color: var(--color-ink-4);
+    margin: 0;
+    font-family: var(--font-serif);
+    line-height: 1.5;
+  }
+  .lib2-rule {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+    opacity: 0.6;
+    margin: 0 0 48px;
+  }
+
+  /* Primary "New note" button (Phase 5). Solid-dark/cream voice mirrors
+     the most-important-action treatment used elsewhere in the shell.
+     The keycap stays hidden until hover/focus so it doesn't distract. */
+  .lib2-primary-btn {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: var(--radius);
+    border: 0;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 120ms var(--ease);
+  }
+  .lib2-primary-btn:hover {
+    background: var(--color-ink-2);
+  }
+  .lib2-keycap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin-left: 4px;
+    border-radius: 3px;
+    border: 1px solid var(--color-ink-3);
+    background: transparent;
+    color: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+  }
+  .lib2-primary-btn:hover .lib2-keycap,
+  .lib2-primary-btn:focus-visible .lib2-keycap {
+    opacity: 0.9;
+  }
+
+  /* Filter bar (Phase 2). Quiet treatment — borderless pills, muted
+     text, the search input fades into the background until focused. */
+  .lib2-filterbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .lib2-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 240px;
+    max-width: 360px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 0 10px;
+    height: 30px;
+    color: var(--color-ink-3);
+    transition:
+      border-color 120ms var(--ease),
+      background 120ms var(--ease);
+  }
+  .lib2-search:hover,
+  .lib2-search:focus-within {
+    border-color: var(--color-line);
+    background: var(--color-bg-elev);
+  }
+  .lib2-search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .lib2-search input::placeholder {
+    color: var(--color-ink-4);
+  }
+
+  /* Filter pills. SurahFilter / DateFilter / SortControl ship with
+     `.lib-filter-button`; we override that scoped to `.lib2-filterbar`
+     so the page reads as quiet siblings of the new TagPopover and AI
+     toggle. */
+  .lib2-filter-group {
+    position: relative;
+  }
+  .lib2-filter-button,
+  .lib2-filterbar .lib-filter-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-ink-3);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      color 120ms var(--ease),
+      background 120ms var(--ease),
+      border-color 120ms var(--ease);
+  }
+  .lib2-filter-button:hover:not(:disabled),
+  .lib2-filterbar .lib-filter-button:hover:not(:disabled) {
+    color: var(--color-ink);
+    background: var(--color-line-2);
+    border-color: transparent;
+  }
+  .lib2-filter-button:disabled,
+  .lib2-filterbar .lib-filter-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .lib2-filter-button.on,
+  .lib2-filterbar .lib-filter-button.on {
+    color: var(--color-accent-ink);
+    background: var(--color-accent-softer);
+    border-color: transparent;
+  }
+
+  .lib2-clear-link {
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-4);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-xs);
+    transition: color 120ms var(--ease);
+  }
+  .lib2-clear-link:hover {
+    color: var(--color-ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Active tag chip row — surfaces below the filter bar only when at
+     least one tag is selected. Each chip is removable; a "Clear" link
+     at the end drops the whole selection. */
+  .lib2-active-tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 18px;
+  }
+  .lib2-active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 22px;
+    padding: 0 6px 0 8px;
+    border-radius: 999px;
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: background 120ms var(--ease);
+  }
+  .lib2-active-chip:hover {
+    background: var(--color-accent-softer);
+  }
+  .lib2-active-chip-hash {
+    opacity: 0.55;
+  }
+  .lib2-active-chip svg {
+    margin-left: 1px;
+    opacity: 0.7;
+  }
+  .lib2-active-chip:hover svg {
+    opacity: 1;
+  }
+  .lib2-clear-tags {
+    margin-left: 4px;
+    margin-right: 0;
+  }
+
+  /* Tag popover (Phase 1). Replaces the always-visible chip cloud. The
+     panel hosts a search input (only above SEARCH_THRESHOLD tags) plus
+     a wrapping grid of selectable chips. */
+  .lib2-filter-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 50;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 260px;
+    max-width: 360px;
+  }
+  .lib2-tag-panel {
+    max-height: 360px;
+    overflow: hidden;
+  }
+  .lib2-tag-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line);
+    color: var(--color-ink-3);
+  }
+  .lib2-tag-search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 12.5px;
+  }
+  .lib2-tag-search input::placeholder {
+    color: var(--color-ink-4);
+  }
+  .lib2-tag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .lib2-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    color: var(--color-ink-3);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all 120ms var(--ease);
+  }
+  .lib2-tag-chip:hover {
+    border-color: var(--color-line-strong);
+    color: var(--color-ink);
+  }
+  .lib2-tag-chip.on {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+  }
+  .lib2-tag-hash {
+    opacity: 0.5;
+    margin-right: 1px;
+  }
+  .lib2-tag-empty {
+    font-size: 12px;
+    color: var(--color-ink-4);
+    padding: 4px 6px;
+  }
+
+  /* Card list (Phase 3 / 8). Notes render as roomy two-column cards
+     with a quiet hairline divider between siblings. When sort=Recent,
+     the list is split into recency groups (Today / Yesterday / This
+     week / …). */
+  .lib2-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .lib2-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .lib2-group-label {
+    font-family: inherit;
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-4);
+    margin: 0 0 16px 4px;
+  }
+  .lib2-cards {
+    display: flex;
+    flex-direction: column;
+  }
+  .lib2-card {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 20px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      background 130ms var(--ease),
+      border-color 130ms var(--ease);
+  }
+  .lib2-card + .lib2-card {
+    border-top-color: var(--color-line);
+  }
+  .lib2-card:hover {
+    background: var(--color-bg-elev);
+    border-color: var(--color-line);
+  }
+  /* Suppress the divider above a hovered card so the lift looks clean. */
+  .lib2-card:hover + .lib2-card {
+    border-top-color: transparent;
+  }
+  .lib2-card-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .lib2-card-titlerow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lib2-card-title {
+    font-family: var(--font-display);
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  /* AI sparkle (Phase 7) — silent next to the title; the tooltip explains. */
+  .lib2-card-ai {
+    display: inline-flex;
+    color: var(--color-ink-4);
+    opacity: 0.7;
+    cursor: help;
+    align-self: center;
+    transition:
+      color 120ms var(--ease),
+      opacity 120ms var(--ease);
+  }
+  .lib2-card:hover .lib2-card-ai,
+  .lib2-card-ai:hover {
+    opacity: 1;
+    color: var(--color-ai);
+  }
+  .lib2-card-preview {
+    font-size: 13px;
+    color: var(--color-ink-3);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    font-family: var(--font-serif);
+  }
+  .lib2-card-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+    align-self: center;
+    min-width: 140px;
+    max-width: 220px;
+  }
+  .lib2-card-tags {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 6px;
   }
-  .note-row .nr-date-text {
+  .lib2-card-tag {
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    font-family: inherit;
+  }
+  .lib2-card-tag-more {
+    color: var(--color-ink-5);
+  }
+  /* Verse anchor (Phase 4) — icon + muted reference. No filled chip;
+     reserve the amber treatment for the Reader / note-detail surfaces. */
+  .lib2-card-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+  }
+  .lib2-card-anchor svg {
+    opacity: 0.7;
+  }
+  .lib2-card-time {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-ink-5);
+  }
+
+  /* No-results state inside an otherwise-populated library. */
+  .lib2-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 80px 20px 60px;
+    color: var(--color-ink-3);
+  }
+  .lib2-empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-line);
+    display: grid;
+    place-items: center;
+    color: var(--color-ink-4);
+    margin-bottom: 18px;
+  }
+  .lib2-empty-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .lib2-empty-body {
+    font-size: 14px;
+    line-height: 1.55;
+    font-family: var(--font-serif);
+    color: var(--color-ink-3);
+    max-width: 380px;
+  }
+  .lib2-mono-inline {
+    font-family: var(--font-mono);
+  }
+
+  /* Phase 10 — chrome suppression on /library. The Sidebar source pill
+     hides entirely; the topbar notification bell drops to a quieter
+     opacity until hover/focus. The global Toaster is suppressed in
+     `Toaster.tsx` itself. */
+  .sidebar[data-on-library="true"] .source-pill {
+    display: none;
+  }
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notifications" i],
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notification" i] {
+    opacity: 0.55;
+    transition: opacity 120ms var(--ease);
+  }
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notifications" i]:hover,
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notification" i]:hover,
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notifications" i]:focus-visible,
+  .topbar[data-on-library="true"] .iconbtn[aria-label*="notification" i]:focus-visible {
+    opacity: 1;
   }
 
   /* ── Research ──────────────────────────────────────────── */
@@ -3270,11 +6055,9 @@
     max-width: 880px;
     margin: 0 auto;
   }
+
   .research-hd {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
+    margin-bottom: 22px;
   }
   .research-hd h1 {
     font-family: var(--font-display);
@@ -3282,43 +6065,282 @@
     font-weight: 500;
     letter-spacing: -0.015em;
     color: var(--color-ink);
+    margin: 0 0 4px;
+  }
+  .research-sub {
+    color: var(--color-ink-3);
+    font-size: 13px;
+    line-height: 1.55;
     margin: 0;
   }
-  .research-disc {
-    font-size: 12.5px;
-    color: var(--color-ink-2);
-    line-height: 1.6;
-    margin: 12px 0 22px;
-    padding: 12px 14px;
-    border: 1px solid var(--color-ext-line);
-    border-left-width: 3px;
-    background: var(--color-ext-bg);
-    border-radius: var(--radius);
-    display: flex;
-    gap: 10px;
-  }
-  .research-disc .ic {
-    color: var(--color-ext);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
 
-  .research-q {
+  /* Editable query — refined input row, not a generic search bar. The
+     submit ("Rerun") sits inline; it disables when the draft matches the
+     active query so the affordance only fires on actual edits. */
+  .research-query {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: var(--color-bg-elev);
-    border: 1px solid var(--color-line);
+    border: 1px solid var(--color-line-strong);
     border-radius: var(--radius);
-    padding: 10px 14px;
-    margin-bottom: 24px;
-    font-family: var(--font-display);
-    font-size: 16px;
-    color: var(--color-ink-2);
-    font-style: italic;
+    padding: 8px 10px 8px 14px;
+    transition:
+      border-color 150ms var(--ease),
+      box-shadow 150ms var(--ease);
   }
-  .research-q .ic {
+  .research-query:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+  .research-query-ic {
     color: var(--color-ink-4);
+    flex-shrink: 0;
+  }
+  .research-query-input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--color-ink);
+    padding: 4px 0;
+    min-width: 0;
+  }
+  .research-query-input::placeholder {
+    color: var(--color-ink-4);
+  }
+
+  .research-deep-link {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 8px 0 24px;
+    padding-left: 14px;
+  }
+  .research-deep-link-btn {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-accent-ink);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .research-deep-link-btn:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .research-deep-link-hint {
+    color: var(--color-ink-4);
+    font-size: 11.5px;
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+
+  /* Deep-research running/completed states. Shared chrome; the running
+     variant adds the shimmer progress bar. */
+  .deep-research-state {
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elev);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .deep-research-state.completed {
+    border-color: var(--color-note-line);
+    background: var(--color-note-bg);
+  }
+  .deep-research-state-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .deep-research-state-body {
+    font-size: 12.5px;
+    color: var(--color-ink-3);
+    line-height: 1.5;
+  }
+  .deep-research-state-progress {
+    margin-top: 4px;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--color-line-2);
+    position: relative;
+  }
+  .deep-research-state-progress > span {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--color-accent-soft), transparent);
+    animation: research-shimmer 1.4s linear infinite;
+  }
+  @keyframes research-shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Filter row — single horizontal strip, all controls same visual
+     weight. Type tabs on the left; speaker filter + trust legend
+     trigger on the right. */
+  .research-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .research-filter-tabs {
+    display: flex;
+    gap: 2px;
+  }
+  .research-filter-trailing {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .research-filter-anchor {
+    position: relative;
+  }
+
+  .research-trust-help {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    width: 280px;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 12px 14px;
+  }
+  .research-trust-help-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin-bottom: 8px;
+  }
+  .research-trust-help ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .research-trust-help li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--color-ink-3);
+  }
+  .research-trust-help .trust-dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .research-trust-help li strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* Synthesis card — collapsible summary clustering results into
+     interpretive groups. Lives directly above the result list when
+     there are enough results to cluster. */
+  .research-synth {
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elev);
+    border-radius: var(--radius);
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .research-synth-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 12px 14px;
+    cursor: pointer;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+  }
+  .research-synth-head:hover {
+    background: var(--color-line-2);
+  }
+  .research-synth-headline {
+    color: var(--color-ink);
+  }
+  .research-synth-chev {
+    color: var(--color-ink-4);
+    transition: transform 120ms var(--ease);
+  }
+  .research-synth.open .research-synth-chev {
+    transform: rotate(180deg);
+  }
+  .research-synth-list {
+    margin: 0;
+    padding: 4px 14px 14px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--color-line);
+  }
+  .research-synth-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .research-synth-row-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .research-synth-row-label {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .research-synth-row-speakers {
+    font-size: 11px;
+    color: var(--color-ink-4);
+  }
+  .research-synth-row-body {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--color-ink-3);
+    font-family: var(--font-serif);
+  }
+
+  /* Result list */
+  .research-results {
+    display: flex;
+    flex-direction: column;
   }
 
   .res-result {
@@ -3327,15 +6349,14 @@
     display: flex;
     gap: 16px;
     align-items: flex-start;
-    cursor: pointer;
     transition: background 100ms var(--ease);
   }
   .res-result:hover {
-    background: var(--color-ext-bg);
+    background: var(--color-bg-deep);
   }
   .res-result .res-thumb {
-    width: 80px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     background: var(--color-bg-deep);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-sm);
@@ -3343,78 +6364,108 @@
     display: grid;
     place-items: center;
     color: var(--color-ink-3);
-    position: relative;
-    overflow: hidden;
   }
-  .res-result .res-thumb .duration {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    background: rgba(20, 15, 10, 0.7);
-    color: #faf6ec;
-    padding: 1px 4px;
-    border-radius: 2px;
+  .res-result.trust-flagged .res-thumb {
+    color: var(--color-flagged);
   }
   .res-result .res-body {
     flex: 1;
     min-width: 0;
   }
-  .res-result .res-row {
+  .res-result .res-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+    line-height: 1.35;
+  }
+  .res-result .res-meta {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 11px;
+    gap: 6px;
+    font-size: 11.5px;
     color: var(--color-ink-4);
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     flex-wrap: wrap;
+    line-height: 1.5;
   }
-  .res-result .res-row .speaker {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
+  .res-result .res-meta-speaker {
     color: var(--color-ink-2);
-    font-weight: 500;
   }
+  .res-result .res-meta-sep {
+    color: var(--color-ink-5);
+  }
+  .res-result .res-flag-tag {
+    margin-left: 4px;
+    color: var(--color-flagged);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
   .trust-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--color-note);
     display: inline-block;
+    flex-shrink: 0;
   }
   .trust-dot.verified {
     background: var(--color-note);
   }
   .trust-dot.unknown {
-    background: var(--color-ink-4);
+    background: var(--color-ext);
   }
   .trust-dot.flagged {
     background: var(--color-flagged);
   }
 
-  .res-result .res-title {
-    font-family: var(--font-display);
-    font-size: 16.5px;
-    font-weight: 500;
-    color: var(--color-ink);
-    letter-spacing: -0.01em;
-    margin-bottom: 4px;
-    line-height: 1.35;
-  }
   .res-result .res-snip {
     font-size: 13px;
     color: var(--color-ink-3);
     line-height: 1.55;
-    margin-bottom: 8px;
+    margin: 0 0 10px;
     font-family: var(--font-serif);
   }
   .res-result .res-actions {
     display: flex;
-    gap: 6px;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .res-result .res-actions-secondary {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+  }
+  .res-result:hover .res-actions-secondary,
+  .res-result:focus-within .res-actions-secondary {
+    opacity: 1;
+  }
+
+  .research-foot {
+    margin-top: 28px;
+    padding: 18px 0;
+    text-align: center;
+    color: var(--color-ink-4);
+    font-size: 12px;
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+  .research-foot-link {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-ink-3);
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+  }
+  .research-foot-link:hover {
+    color: var(--color-ink-2);
   }
 
   /* ── Settings ──────────────────────────────────────────── */
@@ -3651,7 +6702,8 @@
   .settings-nav-item.on {
     background: var(--color-bg-elev);
     color: var(--color-ink);
-    box-shadow: var(--shadow-sm);
+    border-left: 2px solid var(--color-ink);
+    padding-left: 10px;
   }
   .settings-pane {
     padding: 32px 56px 120px;
@@ -3709,7 +6761,6 @@
   .settings-radio-card.on {
     border-color: var(--color-accent);
     background: var(--color-accent-softer);
-    box-shadow: var(--shadow-sm);
   }
   .settings-radio-card.admin-disabled {
     border-color: var(--color-admin-line);
@@ -4129,6 +7180,7 @@
   .kbd-inline {
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
   }
   .cmdk-foot .kbd-inline {
@@ -4136,6 +7188,197 @@
     border: 1px solid var(--color-line);
     padding: 0 5px;
     border-radius: 3px;
+  }
+
+  /* ── Phase 6: command palette (new class names) ────────────
+     The Phase 6 palette ships with `.command-palette*` classes so the
+     legacy `.cmdk*` selectors (still used by the older internal palette
+     paths) and the new ones can coexist. Visual treatment mirrors the
+     cmdk look: scrim + floating card, top-aligned around 14vh, with the
+     same fadeIn / cmdkIn keyframes already declared above. */
+  .command-palette {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 120px;
+    animation: fadeIn 140ms var(--ease);
+  }
+  .command-palette-scrim {
+    background: rgba(20, 15, 10, 0.36);
+    backdrop-filter: blur(2px);
+  }
+  [data-theme="dark"] .command-palette-scrim {
+    background: rgba(0, 0, 0, 0.65);
+  }
+  .command-palette-card {
+    width: 520px;
+    max-width: 90vw;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: cmdkIn 200ms var(--ease);
+  }
+  .command-palette-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink-3);
+  }
+  .command-palette-input input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+  .command-palette-input input::placeholder {
+    color: var(--color-ink-4);
+  }
+  .command-palette-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 6px;
+  }
+  .command-palette-empty {
+    padding: 24px 16px;
+    color: var(--color-ink-4);
+    text-align: center;
+    font-size: 13px;
+  }
+  .command-palette-group {
+    /* Each group is a vertical stack so its head label aligns above its
+       result rows. Wrapping `padding` would push the head off the input
+       border, so we keep paddings on the head and rows themselves. */
+  }
+  .command-palette-group + .command-palette-group {
+    margin-top: 4px;
+  }
+  .command-palette-group-head {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--color-ink-4);
+    padding: 10px 8px 4px;
+    font-weight: 500;
+  }
+  .command-palette-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-ink-2);
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+  .command-palette-result.active {
+    background: var(--color-bg-deep);
+    color: var(--color-ink);
+  }
+  .command-palette-result .ic {
+    color: var(--color-ink-3);
+  }
+  .command-palette-result .col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .command-palette-result .ttl {
+    font-weight: 450;
+  }
+  .command-palette-result .sub {
+    font-size: 11px;
+    color: var(--color-ink-4);
+    margin-top: 1px;
+  }
+  .command-palette-foot {
+    border-top: 1px solid var(--color-line);
+    padding: 8px 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 10.5px;
+    color: var(--color-ink-4);
+    font-family: var(--font-mono);
+  }
+  .command-palette-foot .kbd-inline {
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    padding: 0 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Phase 6: sidebar search button ───────────────────────
+     The sidebar's new search trigger reuses `.nav-item` for layout but
+     adds a small visual nudge: the icon picks up the ink-3 colour by
+     default (matching nav-item) and the row sits between the brand and
+     the primary nav. The hover-reveal of the ⌘K kbd hint is inherited
+     from the `.nav-item .kbd { opacity: 0 }` rule above. */
+  .sidebar-search {
+    width: calc(100% - 16px);
+    margin: 4px 8px 8px;
+    text-align: left;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* ── Phase 6: chromeless theme toggle ─────────────────────
+     The Topbar's theme toggle drops the iconbtn frame (no border, no
+     background) and relies on opacity to signal hover. Position stays
+     top-right; the icon is the only visible element. */
+  .theme-toggle.minimal {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-3);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0.65;
+    transition:
+      opacity 120ms var(--ease),
+      color 120ms var(--ease);
+  }
+  .theme-toggle.minimal:hover {
+    opacity: 1;
+    color: var(--color-ink);
+  }
+  .theme-toggle.minimal:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Phase 6 — sidebar bell row. The notifications bell relocated from
+     the topbar into the sidebar foot. The wrapper centers the icon
+     button within the foot's left margin so the bell aligns with the
+     other foot rows (avatar / settings link). */
+  .sidebar-bell-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 6px 6px;
+  }
+  .sidebar.collapsed-inner .sidebar-bell-row {
+    justify-content: center;
+    padding: 4px 0 6px;
   }
 
   /* ── Empty / loading / error states ─────────────────────── */
@@ -4429,28 +7672,6 @@
     -webkit-box-orient: vertical;
   }
 
-  /* === Research tabs === */
-  /* Visual treatment for the Research mode-switcher tabs and the
-     filter-button row. Container is the segmented well; .research-tab
-     is the inactive state and .research-tab--active layers on top. */
-  .research-tab-row {
-    display: flex;
-    gap: 4px;
-    padding: 3px;
-    background: var(--color-bg-deep);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius);
-    width: fit-content;
-  }
-  .research-tab {
-    border: 0;
-    background: transparent;
-  }
-  .research-tab--active {
-    background: var(--color-bg-elev);
-    box-shadow: var(--shadow-sm);
-  }
-
   /* === Ask history === */
   /* Collapsed Q&A entries shown above the active Ask input. Each row
      is a <details> element so we style the row + summary together. */
@@ -4480,22 +7701,574 @@
     font-family: var(--font-serif);
     line-height: 1.55;
   }
+
+  /* ── Toaster (ephemeral micro-feedback) ─────────────────────────
+     Bottom-center stack. Each toast slides up from below + fades in,
+     then fades + slips back down on exit. Pointer-events none on the
+     stack so the rest of the UI stays interactive; toasts re-enable
+     pointer events on themselves so the close button works. */
+  .toaster {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    z-index: 1200;
+    pointer-events: none;
+  }
+  .toast {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 8px 12px;
+    min-width: 180px;
+    max-width: min(420px, calc(100vw - 48px));
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    animation: toastIn 220ms var(--ease-spring, var(--ease)) both;
+  }
+  .toast--exiting {
+    animation: toastOut 180ms var(--ease) forwards;
+  }
+  .toast-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: inherit;
+    flex-shrink: 0;
+  }
+  .toast--success .toast-icon {
+    background: var(--color-positive, #22c55e);
+    color: var(--color-bg);
+  }
+  .toast--error .toast-icon {
+    background: var(--color-danger, #ef4444);
+    color: #fff;
+  }
+  .toast--info .toast-icon {
+    background: var(--color-accent);
+    color: var(--color-accent-fg, #fff);
+  }
+  .toast-msg {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toast-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+    padding: 4px;
+    margin: -4px -2px -4px 0;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    transition:
+      opacity 120ms var(--ease),
+      background 120ms var(--ease);
+  }
+  .toast-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes toastOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+  }
+
+  /* ── Polish micro-interactions ──────────────────────────────────
+     Small, replayable animations the rest of the UI hooks into:
+       • theme-icon-swap    rotate + fade entrance for sun/moon
+       • bell-pulse         attention pulse for unread badge
+       • notif-stagger      list-item stagger using --n index
+  */
+  .theme-icon-swap {
+    display: inline-grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    animation: themeIconIn 280ms var(--ease-spring, var(--ease)) both;
+    transform-origin: center;
+  }
+  @keyframes themeIconIn {
+    from {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+    }
+  }
+
+  .bell-pulse {
+    animation: bellPulse 1.8s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes bellPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 var(--color-accent);
+    }
+    50% {
+      transform: scale(1.18);
+      box-shadow: 0 0 0 3px transparent;
+    }
+  }
+
+  /* Stagger: each list item gets `style={{ "--n": index }}` so the entrance
+     `popIn` animation delays per row. Cap at 8 so deep lists don't trail. */
+  .notif-row {
+    animation: popIn 200ms var(--ease) both;
+    animation-delay: calc(min(var(--n, 0), 8) * 38ms);
+  }
 }
 
-/* ── Focus-visible on text inputs that null-out their outline ───────
-   Each of these inputs sets `outline: 0` because they sit inside a
-   container that paints its own focus state (e.g. .ask-input border
-   change, .library-bar .search border change). This block keeps a
-   visible :focus-visible ring as a fallback in case the container
-   focus state is missing or overridden. */
-.cmdk-input input:focus-visible,
-.popover .pop-search input:focus-visible,
-.ask-input:focus-within,
-.library-bar .search:focus-within,
-.note-title:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+/* ── Phase 7 — Comparative answer view ───────────────────────────────
+   The synthesized prose body (existing AnsweredView) is the default;
+   the by-source columns let the user compare what each mufassir said
+   side-by-side. Calm typography over chrome — hairline 1px dividers,
+   no shadows, no fills. */
+@layer components {
+  /* Wraps the confidence label + view toggle so they share a row at the
+     top of an answer, not stacked with the toggle floating off to the
+     right. The toggle hugs the right edge; the label takes the rest. */
+  .answer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .answer-head .confidence-label {
+    margin-bottom: 0;
+  }
+
+  .answer-view-toggle {
+    display: inline-flex;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background: var(--color-bg-elev);
+    padding: 2px;
+    gap: 0;
+  }
+  .answer-view-toggle-btn {
+    appearance: none;
+    background: transparent;
+    color: var(--color-ink-3);
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border: 0;
+    border-radius: calc(var(--radius) - 2px);
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .answer-view-toggle-btn:hover:not(.is-active) {
+    color: var(--color-ink);
+  }
+  .answer-view-toggle-btn.is-active {
+    background: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+  }
+  .answer-view-toggle-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Comparative grid. data-source-count drives column count: ≤3 sources
+     get one-per-column; 4+ wrap onto two rows at narrow widths. The
+     hairline borders sit on the cards, not the grid, so the divider
+     lines naturally between adjacent cards without extra rules. */
+  .by-source-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+  .by-source-card {
+    padding: 18px 20px;
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    border-right: 1px solid var(--color-line);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  /* The leftmost card in each row picks up the left border so the grid
+     reads as a row of equal cells with hairline gutters between. */
+  .by-source-card:first-child {
+    border-left: 1px solid var(--color-line);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+  }
+  .by-source-card:last-child {
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+  }
+  /* Single-column case (only one cited source, or wrapped): give every
+     card both side borders so the rounded corners look intentional. */
+  .by-source-grid[data-source-count="1"] .by-source-card,
+  .by-source-card:only-child {
+    border-left: 1px solid var(--color-line);
+    border-radius: var(--radius);
+  }
+
+  .by-source-card-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .by-source-card-name {
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: 0.005em;
+  }
+  .by-source-card-author {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--color-ink-3);
+  }
+  .by-source-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .by-source-citation {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .by-source-citation-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .by-source-citation-num {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-tafsir);
+    font-weight: 500;
+  }
+  .by-source-citation-ref {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-ink-4);
+  }
+  .by-source-citation-arabic {
+    font-family: var(--font-arabic);
+    direction: rtl;
+    text-align: right;
+    font-size: 17px;
+    line-height: 1.95;
+    color: var(--color-ink);
+    margin: 2px 0 0;
+  }
+  .by-source-citation-english {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-ink-2);
+    margin: 0;
+  }
+  .by-source-citation-open {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-top: 2px;
+    align-self: flex-start;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--color-tafsir);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--color-tafsir-line);
+    text-underline-offset: 3px;
+  }
+  .by-source-citation-open:hover {
+    text-decoration-style: solid;
+  }
+  .by-source-citation-open:focus-visible {
+    outline: 2px solid var(--color-tafsir);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .by-source-empty {
+    padding: 16px 18px;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: var(--radius);
+    color: var(--color-ink-3);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+
+  /* Narrow content area: stack the cards. The grid's auto-fit minmax
+     already handles most of it; the explicit single-column override
+     below keeps the wrap predictable on awkward viewport sizes. */
+  @media (max-width: 720px) {
+    .by-source-grid {
+      grid-template-columns: 1fr;
+    }
+    .by-source-card,
+    .by-source-card:first-child,
+    .by-source-card:last-child {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+    }
+    .by-source-card + .by-source-card {
+      margin-top: -1px;
+    }
+  }
+}
+
+/* ── Phase 9 — Help overlay (? shortcut legend) ─────────────────── */
+@layer components {
+  .help-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 16, 8, 0.32);
+    backdrop-filter: blur(2px);
+    display: grid;
+    place-items: center;
+    z-index: 80;
+    animation: helpOverlayIn 140ms var(--ease) both;
+    padding: 24px;
+  }
+  .help-overlay {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: min(640px, 100%);
+    max-height: min(80vh, 720px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .help-overlay:focus {
+    outline: none;
+  }
+  .help-overlay-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .help-overlay-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin: 0;
+    letter-spacing: 0.005em;
+  }
+  .help-overlay-close {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 6px;
+    border-radius: var(--radius-xs);
+    color: var(--color-ink-3);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition:
+      background 100ms var(--ease),
+      color 100ms var(--ease);
+  }
+  .help-overlay-close:hover {
+    color: var(--color-ink);
+    background: var(--color-bg-deep);
+  }
+  .help-overlay-body {
+    overflow-y: auto;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .help-overlay-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .help-overlay-group-title {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-4);
+    margin: 0;
+  }
+  .help-overlay-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .help-overlay-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0;
+    font-family: var(--font-serif);
+    font-size: 13px;
+    color: var(--color-ink-2);
+  }
+  .help-overlay-desc {
+    flex: 1;
+    min-width: 0;
+  }
+  .help-overlay-kbd,
+  .kbd-inline {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-ink-2);
+    background: var(--color-bg-deep);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xs);
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  .help-overlay-foot {
+    padding: 10px 18px 14px;
+    border-top: 1px solid var(--color-line);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--color-ink-4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  @keyframes helpOverlayIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ── Text-input focus is intentionally quiet ────────────────────────
+   The blinking caret is enough — text inputs do not paint a focus
+   ring. Container-level inputs (.ask-input, .library-bar .search) get
+   a subtle border/shadow shift inside their own block; everything
+   else relies on the caret. Buttons and links still pick up the
+   global :focus-visible ring for keyboard accessibility. */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[contenteditable]:focus,
+[contenteditable]:focus-visible {
+  outline: none;
+}
+
+/* ── RTL overrides ──────────────────────────────────────────────────
+   The default UI direction is LTR. When `dir="rtl"` is applied to the
+   document (Arabic UI opt-in), mirror the affordances that have a
+   visual handedness. Components whose direction comes from the content
+   (Arabic verses, bismillah) already render RTL via inline `dir="rtl"`
+   and don't need overrides. */
+[dir="rtl"] .scope-crumbs {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .scope-sep svg {
+  /* Mirror the chevron so the breadcrumb reads root → leaf in RTL
+     visual order. */
+  transform: scaleX(-1);
+}
+[dir="rtl"] .crumbs .crumb-trigger svg {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .shell {
+  /* Sidebar moves to the right edge under RTL by reversing the column
+     order. The sidebar itself paints the same; only its visual side
+     flips so the user's "primary" rail follows reading direction. */
+  direction: rtl;
+}
+[dir="rtl"] .shell .sidebar,
+[dir="rtl"] .shell .main {
+  direction: ltr;
+}
+[dir="rtl"] .context-panel {
+  border-left: 0;
+  border-right: 1px solid var(--color-line);
+}
+[dir="rtl"] .ask-shell {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .cite-anchor .cite,
+[dir="rtl"] .scope-crumb-btn,
+[dir="rtl"] .ask-input-notice,
+[dir="rtl"] .confidence-text,
+[dir="rtl"] .confidence-legend-def {
+  /* Force LTR for content that reads as English ref tokens / labels
+     even under an RTL document direction. Mixed-script text in an RTL
+     paragraph otherwise gets re-ordered by the browser's bidi engine. */
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 /* ── Reduced-motion users opt out of slide / spring animations ──── */
@@ -4507,5 +8280,12 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* Phase 7: also flatten the entry-fade delay so reduced-motion users
+     don't see a 200ms gap of nothingness before the writing pane appears.
+     The wildcard above only zeros animation-duration, not delay — set
+     it explicitly here to skip the delay entirely. */
+  .journal-v2-enter-pane {
+    animation-delay: 0ms !important;
   }
 }

@@ -7,10 +7,10 @@ import type { Answer, AskScenario, AskScenarioVariant, Deferral, RetrievalStep }
 //   • off-scope / ambiguous / partial input shapes (deferral)
 //   • retrieval pipeline progress (pending → active → done)
 //
-// The classical sources cited (As-Saʿdī, Ibn Kathīr, al-Qurṭubī, aṭ-Ṭabarī)
-// are the canonical tafsir corpus on Aḍ-Ḍuḥā 93. The Bukhārī 4983 /
-// Muslim 1797 narration of Jundub b. Sufyān anchors the historical
-// context (the wife of Abū Lahab's taunt, the *fatra*).
+// The classical sources cited (As-Sadi, Ibn Kathir, al-Qurtubi, at-Tabari)
+// are the canonical tafsir corpus on Ad-Duha 93. The Bukhari 4983 /
+// Muslim 1797 narration of Jundub b. Sufyan anchors the historical
+// context (the wife of Abu Lahab's taunt, the *fatra*).
 
 // ─────────────────────────────────────────────────────────────────────────
 // Scenario 1 — "What does it mean that God 'has not forsaken' the
@@ -21,17 +21,17 @@ import type { Answer, AskScenario, AskScenarioVariant, Deferral, RetrievalStep }
 const S1_CANONICAL: Answer = {
   question:
     "What does it mean that God 'has not forsaken' the Prophet ﷺ — and how should I read that when my own prayer feels unanswered?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
         { kind: "text", value: "The phrase " },
-        { kind: "emphasis", value: "mā waddaʿaka rabbuka" },
+        { kind: "emphasis", value: "ma waddaaka rabbuka" },
         {
           kind: "text",
           value: ' — "your Lord has not forsaken you" — uses a verb (',
         },
-        { kind: "emphasis", value: "waddaʿa" },
+        { kind: "emphasis", value: "waddaa" },
         {
           kind: "text",
           value:
@@ -49,7 +49,7 @@ const S1_CANONICAL: Answer = {
         {
           kind: "text",
           value:
-            "The verse arrived during a documented pause in revelation. The pagans of Quraysh — and notably the wife of Abū Lahab — taunted the Prophet ﷺ that his Lord had abandoned him",
+            "The verse arrived during a documented pause in revelation. The pagans of Quraysh — and notably the wife of Abu Lahab — taunted the Prophet ﷺ that his Lord had abandoned him",
         },
         { kind: "cite", value: "[2]", citation: 2 },
         {
@@ -65,13 +65,13 @@ const S1_CANONICAL: Answer = {
           kind: "text",
           value: "Read for yourself: the verse pairs two negations carefully. ",
         },
-        { kind: "emphasis", value: "Waddaʿaka" },
+        { kind: "emphasis", value: "Waddaaka" },
         { kind: "text", value: " denies a warm farewell; " },
-        { kind: "emphasis", value: "qalā" },
+        { kind: "emphasis", value: "qala" },
         {
           kind: "text",
           value:
-            " denies a cold heart. Both possibilities are closed. As-Saʿdī notes that what we call divine silence is often divine timing",
+            " denies a cold heart. Both possibilities are closed. As-Sadi notes that what we call divine silence is often divine timing",
         },
         { kind: "cite", value: "[3]", citation: 3 },
         {
@@ -87,8 +87,8 @@ const S1_CANONICAL: Answer = {
   citations: [
     {
       number: 1,
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi",
       ref: "93:3",
       arabic: "ما تركك منذ اعتنى بك، وما أبغضك منذ أحبك",
       english:
@@ -96,18 +96,18 @@ const S1_CANONICAL: Answer = {
     },
     {
       number: 2,
-      source: "Ṣaḥīḥ al-Bukhārī 4983 / Muslim 1797",
-      author: "via Jundub b. Sufyān",
+      source: "Sahih al-Bukhari 4983 / Muslim 1797",
+      author: "via Jundub b. Sufyan",
       ref: "93:1",
       arabic:
         "اشتكى النبي ﷺ فلم يقم ليلتين أو ثلاثاً، فجاءته امرأة فقالت: يا محمد ما أرى شيطانك إلا قد ودَّعك. فأنزل الله: والضحى والليل إذا سجى ما ودَّعك ربك وما قلى.",
       english:
-        "The Prophet ﷺ fell ill and did not rise to pray for two or three nights. A woman came and said, 'O Muḥammad, I see only that your *shayṭān* has bid you farewell.' So God revealed: 'By the morning, and by the night when it grows still — your Lord has not forsaken you, nor does He hate you.'",
+        "The Prophet ﷺ fell ill and did not rise to pray for two or three nights. A woman came and said, 'O Muhammad, I see only that your *shaytan* has bid you farewell.' So God revealed: 'By the morning, and by the night when it grows still — your Lord has not forsaken you, nor does He hate you.'",
     },
     {
       number: 3,
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi",
       ref: "93:3",
       arabic: "احتبس الوحي عن رسول الله صلى الله عليه وسلم خمسة عشر يوماً",
       english:
@@ -115,20 +115,20 @@ const S1_CANONICAL: Answer = {
     },
   ],
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "4 passages" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "3 passages" },
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "2 passages" },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (Bukhārī 4983)" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "4 passages" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "3 passages" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "2 passages" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
-  confidence: { level: "high", sources: 4, total: 4 },
+  confidence: { level: "high", sources: 3, total: 4 },
   durationMs: 1400,
 };
 
 const S1_TERSE_VARIANT: Answer = {
   // Same shape, condensed phrasing — the model collapses the framing and
   // gives just the textual finding plus the closing.
-  question: "what does *ma waddaʿaka* mean",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  question: "what does *ma waddaaka* mean",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
@@ -138,7 +138,7 @@ const S1_TERSE_VARIANT: Answer = {
           kind: "text",
           value: ". The verb ",
         },
-        { kind: "emphasis", value: "waddaʿa" },
+        { kind: "emphasis", value: "waddaa" },
         {
           kind: "text",
           value:
@@ -151,7 +151,7 @@ const S1_TERSE_VARIANT: Answer = {
     {
       segments: [
         { kind: "text", value: "Paired in the same verse with " },
-        { kind: "emphasis", value: "qalā" },
+        { kind: "emphasis", value: "qala" },
         {
           kind: "text",
           value:
@@ -163,20 +163,20 @@ const S1_TERSE_VARIANT: Answer = {
     },
   ],
   closing:
-    "Two negations, two reassurances. Forsakenness denies absence; *qilā* denies displeasure.",
+    "Two negations, two reassurances. Forsakenness denies absence; *qila* denies displeasure.",
   citations: [
     {
       number: 1,
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir",
       ref: "93:3",
       arabic: "ما تركك ربك يا محمد، وما أبغضك",
-      english: "Your Lord has not left you, O Muḥammad, nor has He hated you.",
+      english: "Your Lord has not left you, O Muhammad, nor has He hated you.",
     },
     {
       number: 2,
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi",
       ref: "93:3",
       arabic: "ما تركك منذ اعتنى بك، وما أبغضك منذ أحبك",
       english:
@@ -184,8 +184,8 @@ const S1_TERSE_VARIANT: Answer = {
     },
   ],
   retrieval: [
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "2 passages" },
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "2 passages" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "2 passages" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "2 passages" },
   ],
   confidence: { level: "high", sources: 2, total: 2 },
   durationMs: 880,
@@ -195,28 +195,37 @@ const S1_SPECULATIVE_DEFERRAL: Deferral = {
   // Edge variant — user asks about the Prophet's *internal experience*
   // during the pause, which the classical corpus refuses to speculate on.
   question: "Did the Prophet ﷺ ever feel God was angry with him during the pause in revelation?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "0 direct matches" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "1 oblique" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "0 direct matches" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "1 oblique" },
     {
-      source: "Tafsir al-Qurṭubī",
+      source: "Tafsir al-Qurtubi",
       status: "done",
       meta: "0 direct matches",
     },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (external state)" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
   confidence: { level: "low", sources: 1, total: 4 },
   body: [
-    "**The classical tafsir corpus doesn't address the Prophet's ﷺ *internal experience* of the pause directly.** What the commentaries describe is the external situation: revelation paused, Quraysh — and the wife of Abū Lahab specifically — mocked, this surah arrived as the response (Bukhārī 4983).",
-    "What you're asking — about whether the Prophet ﷺ *felt* God's anger — is a question about subjective experience, and the verse is explicit that no such anger existed (*mā qalā*). But the texts I'm drawing on don't speculate about his internal state in the way your question implies.",
+    "**The classical tafsir corpus doesn't address the Prophet's ﷺ *internal experience* of the pause directly.** What the commentaries describe is the external situation: revelation paused, Quraysh — and the wife of Abu Lahab specifically — mocked, this surah arrived as the response (Bukhari 4983).",
+    "What you're asking — about whether the Prophet ﷺ *felt* God's anger — is a question about subjective experience, and the verse is explicit that no such anger existed (*ma qala*). But the texts I'm drawing on don't speculate about his internal state in the way your question implies.",
     "I can give you what the sources *do* say about his outward state during the *fatra*, or you can rephrase. Both options below.",
+  ],
+  nextSteps: [
+    {
+      kind: "enable-source",
+      label: "Enable Tafsir al-Razi for theological/psychological readings",
+      target: "Tafsir al-Razi",
+    },
+    { kind: "rephrase", label: "Ask about the Prophet's ﷺ outward state instead" },
+    { kind: "external", label: "Search external biographical sources (sira)" },
   ],
 };
 
 const SCENARIO_1: AskScenario = {
-  id: "scenario-mā-waddaʿaka",
-  title: "Reading mā waddaʿaka rabbuka",
+  id: "scenario-ma-waddaaka",
+  title: "Reading ma waddaaka rabbuka",
   canonicalQuestion: S1_CANONICAL.question,
   variants: [
     {
@@ -252,21 +261,21 @@ const SCENARIO_1: AskScenario = {
 
 const S2_CANONICAL: Answer = {
   question: "Why does the surah talk about being an orphan?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
         { kind: "text", value: "Verses 6–8 turn from oath and reassurance to recollection: " },
         {
           kind: "emphasis",
-          value: "alam yajidka yatīman fa-āwā",
+          value: "alam yajidka yatiman fa-awa",
         },
         { kind: "text", value: " — " },
         { kind: "emphasis", value: '"Did He not find you an orphan and shelter you?"' },
         {
           kind: "text",
           value:
-            " The Prophet ﷺ's father ʿAbdallāh died before he was born; his mother Āmina when he was six; his grandfather ʿAbd al-Muṭṭalib when he was eight. The verse does not list these losses — it names the condition they produced and the response they received",
+            " The Prophet ﷺ's father Abdallah died before he was born; his mother Amina when he was six; his grandfather Abd al-Muttalib when he was eight. The verse does not list these losses — it names the condition they produced and the response they received",
         },
         { kind: "cite", value: "[1]", citation: 1 },
         { kind: "text", value: "." },
@@ -279,7 +288,7 @@ const S2_CANONICAL: Answer = {
         {
           kind: "text",
           value:
-            " — *He found you*. Ibn Kathīr reads this as a structural pattern: God's response is not to *fix* the lack but to *meet it*. Orphan → shelter; lost → guidance; in want → sufficiency",
+            " — *He found you*. Ibn Kathir reads this as a structural pattern: God's response is not to *fix* the lack but to *meet it*. Orphan → shelter; lost → guidance; in want → sufficiency",
         },
         { kind: "cite", value: "[2]", citation: 2 },
         { kind: "text", value: "." },
@@ -308,18 +317,18 @@ const S2_CANONICAL: Answer = {
   citations: [
     {
       number: 1,
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir",
       ref: "93:6",
       arabic:
         "وذلك أن أباه توفي وأمه حامل به، وقيل بعد أن ولد، وماتت أمه وهو ابن ست سنين. ثم كان في كفالة جده عبد المطلب حتى مات وله ثمان سنين، فكفله عمه أبو طالب",
       english:
-        "His father died while his mother was still carrying him — and it has been said: after he was born. His mother died when he was six. Then he was under the care of his grandfather ʿAbd al-Muṭṭalib until the latter's death when he was eight, after which his uncle Abū Ṭālib took him in.",
+        "His father died while his mother was still carrying him — and it has been said: after he was born. His mother died when he was six. Then he was under the care of his grandfather Abd al-Muttalib until the latter's death when he was eight, after which his uncle Abu Talib took him in.",
     },
     {
       number: 2,
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi",
       ref: "93:6-8",
       arabic:
         "ألم يجدك يتيماً فآوى. ووجدك ضالاً فهدى. ووجدك عائلاً فأغنى. هذه نعم ثلاث، قابلها بثلاثة أوامر",
@@ -328,18 +337,18 @@ const S2_CANONICAL: Answer = {
     },
     {
       number: 3,
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi",
       ref: "93:9",
       arabic: "أي: كما كنت يتيماً فآواك الله، فلا تقهر اليتيم",
       english: "Just as you were an orphan and God sheltered you, do not crush the orphan.",
     },
   ],
   retrieval: [
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "4 passages" },
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "3 passages" },
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "2 passages" },
-    { source: "Tafsir aṭ-Ṭabarī", status: "done", meta: "1 passage" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "4 passages" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "3 passages" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "2 passages" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "1 passage" },
   ],
   confidence: { level: "high", sources: 4, total: 4 },
   durationMs: 1620,
@@ -347,7 +356,7 @@ const S2_CANONICAL: Answer = {
 
 const S2_DIRECT_VARIANT: Answer = {
   question: "what are the three wajadaka clauses",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
@@ -359,21 +368,21 @@ const S2_DIRECT_VARIANT: Answer = {
     {
       segments: [
         { kind: "text", value: "1. " },
-        { kind: "emphasis", value: "yatīman fa-āwā" },
+        { kind: "emphasis", value: "yatiman fa-awa" },
         { kind: "text", value: " — orphan, sheltered (93:6)." },
       ],
     },
     {
       segments: [
         { kind: "text", value: "2. " },
-        { kind: "emphasis", value: "ḍāllan fa-hadā" },
+        { kind: "emphasis", value: "dallan fa-hada" },
         { kind: "text", value: " — unaware/seeking, guided (93:7)." },
       ],
     },
     {
       segments: [
         { kind: "text", value: "3. " },
-        { kind: "emphasis", value: "ʿāʾilan fa-aghnā" },
+        { kind: "emphasis", value: "ailan fa-aghna" },
         { kind: "text", value: " — in want, made sufficient (93:8)." },
       ],
     },
@@ -393,16 +402,16 @@ const S2_DIRECT_VARIANT: Answer = {
   citations: [
     {
       number: 1,
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi",
       ref: "93:6-11",
       arabic: "ثلاث نعم، قابلها بثلاثة أوامر",
       english: "Three blessings, met with three commands.",
     },
   ],
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "3 passages" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "2 passages" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "3 passages" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "2 passages" },
   ],
   confidence: { level: "high", sources: 2, total: 2 },
   durationMs: 720,
@@ -410,19 +419,26 @@ const S2_DIRECT_VARIANT: Answer = {
 
 const S2_OFF_SCOPE_DEFERRAL: Deferral = {
   question:
-    "How does the orphan motif in Ad-Ḍuḥā compare to orphan stories in the Hebrew Bible or the New Testament?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+    "How does the orphan motif in Ad-Duha compare to orphan stories in the Hebrew Bible or the New Testament?",
+  scope: "Ad-Duha 93:1–11",
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "0 direct matches" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "0 direct matches" },
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "0 direct matches" },
-    { source: "Comparative scripture corpus", status: "done", meta: "out of scope" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "0 direct matches" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "0 direct matches" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "0 direct matches" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
   confidence: { level: "low", sources: 0, total: 4 },
   body: [
-    "**This is a comparative-religion question, and the corpus I'm drawing on is the classical Quranic tafsir on Surat Aḍ-Ḍuḥā specifically.** The four commentaries I have access to (As-Saʿdī, Ibn Kathīr, al-Qurṭubī, aṭ-Ṭabarī) treat the orphan motif inside the Quranic and prophetic frame — they don't compare it to orphan figures in the Hebrew Bible or the New Testament.",
-    "If you want, I can stay in scope and unpack the *internal* logic of the orphan motif here — how 93:6 connects to 93:9, what *yatīm* means in Arabic usage, how the verse is read by the classical tradition. That I can do well.",
+    "**This is a comparative-religion question, and the corpus I'm drawing on is the classical Quranic tafsir on Surat Ad-Duha specifically.** The four commentaries I have access to (As-Sadi, Ibn Kathir, al-Qurtubi, at-Tabari) treat the orphan motif inside the Quranic and prophetic frame — they don't compare it to orphan figures in the Hebrew Bible or the New Testament.",
+    "If you want, I can stay in scope and unpack the *internal* logic of the orphan motif here — how 93:6 connects to 93:9, what *yatim* means in Arabic usage, how the verse is read by the classical tradition. That I can do well.",
     "If you want the comparative reading, that's a different corpus and a different question. I'd recommend asking it as a fresh search rather than trying to stretch this one.",
+  ],
+  nextSteps: [
+    {
+      kind: "rephrase",
+      label: "Stay in scope: ask about the Quranic orphan motif itself",
+    },
+    { kind: "external", label: "Open external comparative-religion search" },
   ],
 };
 
@@ -457,7 +473,7 @@ const SCENARIO_2: AskScenario = {
 
 // ─────────────────────────────────────────────────────────────────────────
 // Scenario 3 — "What is la-sawfa promising — and to whom?" (93:5). The
-// canonical answer engages the famous *arjā āya* tradition; the variant
+// canonical answer engages the famous *arja aya* tradition; the variant
 // covers a partial/ambiguous referent ("does this verse apply to me?");
 // the deferral covers a numeric/historical question the tafsir corpus
 // can answer only obliquely.
@@ -465,16 +481,16 @@ const SCENARIO_2: AskScenario = {
 
 const S3_CANONICAL: Answer = {
   question: "What is la-sawfa promising — and to whom?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
         { kind: "text", value: "The verse — " },
-        { kind: "emphasis", value: "wa la-sawfa yuʿṭīka rabbuka fa-tarḍā" },
+        { kind: "emphasis", value: "wa la-sawfa yutika rabbuka fa-tarda" },
         {
           kind: "text",
           value:
-            " — uses an emphasised, unhurried future. Not just *will give* but *most certainly will give, in His own time*. As-Saʿdī notes that the gift is left ",
+            " — uses an emphasised, unhurried future. Not just *will give* but *most certainly will give, in His own time*. As-Sadi notes that the gift is left ",
         },
         { kind: "emphasis", value: "unspecified" },
         {
@@ -489,11 +505,11 @@ const S3_CANONICAL: Answer = {
     {
       segments: [
         { kind: "text", value: "The closing condition is " },
-        { kind: "emphasis", value: "fa-tarḍā" },
+        { kind: "emphasis", value: "fa-tarda" },
         {
           kind: "text",
           value:
-            " — *and you will be content*. Not until *the giving runs out*; until *you* are pleased. Aṭ-Ṭabarī calls this the *most hopeful verse* in the Quran, on the strength of the Prophet ﷺ's saying: ",
+            " — *and you will be content*. Not until *the giving runs out*; until *you* are pleased. At-Tabari calls this the *most hopeful verse* in the Quran, on the strength of the Prophet ﷺ's saying: ",
         },
         {
           kind: "emphasis",
@@ -519,8 +535,8 @@ const S3_CANONICAL: Answer = {
   citations: [
     {
       number: 1,
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi",
       ref: "93:5",
       arabic:
         "هذا يشمل جميع ما أعطاه الله من الخير في الدنيا والآخرة، فإنه ﷺ أعطي من الفضائل والمناقب ما لم يعطه أحد من الأولين والآخرين",
@@ -529,16 +545,16 @@ const S3_CANONICAL: Answer = {
     },
     {
       number: 2,
-      source: "Tafsir aṭ-Ṭabarī (via al-Qurṭubī)",
-      author: "Muḥammad ibn Jarīr aṭ-Ṭabarī",
+      source: "Tafsir at-Tabari (via al-Qurtubi)",
+      author: "Muhammad ibn Jarir at-Tabari",
       ref: "93:5",
       arabic: "هذه أرجى آية في كتاب الله",
       english: "This is the most hopeful verse in the Book of God.",
     },
     {
       number: 3,
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir",
       ref: "93:5",
       arabic: "عُرض على رسول الله ﷺ ما هو فاتح على أمته من بعده كفراً كفراً، فسرَّه ذلك",
       english:
@@ -546,10 +562,10 @@ const S3_CANONICAL: Answer = {
     },
   ],
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "3 passages" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "2 passages" },
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "2 passages" },
-    { source: "Tafsir aṭ-Ṭabarī", status: "done", meta: "2 passages" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "3 passages" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "2 passages" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "2 passages" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "2 passages" },
   ],
   confidence: { level: "high", sources: 4, total: 4 },
   durationMs: 1820,
@@ -559,24 +575,31 @@ const S3_PARTIAL_DEFERRAL: Deferral = {
   // Edge variant — partial/ambiguous referent. User asks "does this apply
   // to me," which the corpus answers only with a careful caveat.
   question: "does 93:5 apply to me",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   retrieval: [
-    { source: "Tafsir As-Saʿdī", status: "done", meta: "1 oblique" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "1 oblique" },
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "0 direct" },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (community scope)" },
+    { source: "Tafsir As-Sadi", status: "done", meta: "1 oblique" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "1 oblique" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "0 direct" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct" },
   ],
   confidence: { level: "med", sources: 2, total: 4 },
   body: [
-    "**93:5 has a primary addressee: the Prophet ﷺ.** The classical commentaries are unanimous that the *la-sawfa yuʿṭīka rabbuka* (will most certainly give *you*) refers to him directly — and they tie its scope to his specific gifts (intercession, revelation, the opening of regions for his community).",
-    "**Whether the verse 'applies' to you is a more careful question.** The traditional reading is that the Prophet's ﷺ contentment in *fa-tarḍā* is wide enough to include his community — Aṭ-Ṭabarī cites the hadith *'I shall not be content while one of my community is in the Fire'* as the basis for treating the verse as having communal scope. So the *promise* is to him; the *consolation* of the promise reaches anyone who is part of the community he loves.",
+    "**93:5 has a primary addressee: the Prophet ﷺ.** The classical commentaries are unanimous that the *la-sawfa yutika rabbuka* (will most certainly give *you*) refers to him directly — and they tie its scope to his specific gifts (intercession, revelation, the opening of regions for his community).",
+    "**Whether the verse 'applies' to you is a more careful question.** The traditional reading is that the Prophet's ﷺ contentment in *fa-tarda* is wide enough to include his community — At-Tabari cites the hadith *'I shall not be content while one of my community is in the Fire'* as the basis for treating the verse as having communal scope. So the *promise* is to him; the *consolation* of the promise reaches anyone who is part of the community he loves.",
     "I'd be cautious about reading the verse as a personal *guarantee* of any specific outcome in your life — that's not what the tafsirs do with it. But as an anchor for hope, in the way the Prophet ﷺ used it himself, it is well within scope.",
+  ],
+  nextSteps: [
+    {
+      kind: "rephrase",
+      label: "Ask: how do classical scholars apply 93:5 to the community?",
+    },
+    { kind: "widen-scope", label: "Widen scope to all of Surah Ad-Duha" },
   ],
 };
 
 const S3_HISTORICAL_VARIANT: Answer = {
   question: "How long did the pause in revelation actually last?",
-  scope: "Aḍ-Ḍuḥā 93:1–11",
+  scope: "Ad-Duha 93:1–11",
   paragraphs: [
     {
       segments: [
@@ -592,9 +615,9 @@ const S3_HISTORICAL_VARIANT: Answer = {
         { kind: "text", value: "• " },
         { kind: "emphasis", value: "Ibn Jurayj" },
         { kind: "text", value: " — twelve days. " },
-        { kind: "emphasis", value: "al-Kalbī" },
+        { kind: "emphasis", value: "al-Kalbi" },
         { kind: "text", value: " — fifteen days (and " },
-        { kind: "emphasis", value: "al-Qurṭubī" },
+        { kind: "emphasis", value: "al-Qurtubi" },
         { kind: "text", value: " calls this the majority position)." },
         { kind: "cite", value: "[1]", citation: 1 },
       ],
@@ -602,9 +625,9 @@ const S3_HISTORICAL_VARIANT: Answer = {
     {
       segments: [
         { kind: "text", value: "• " },
-        { kind: "emphasis", value: "Ibn ʿAbbās" },
+        { kind: "emphasis", value: "Ibn Abbas" },
         { kind: "text", value: " — twenty-five days. " },
-        { kind: "emphasis", value: "as-Suddī and Muqātil" },
+        { kind: "emphasis", value: "as-Suddi and Muqatil" },
         { kind: "text", value: " — forty days." },
         { kind: "cite", value: "[2]", citation: 2 },
       ],
@@ -614,7 +637,7 @@ const S3_HISTORICAL_VARIANT: Answer = {
         {
           kind: "text",
           value:
-            "Ibn Kathīr notes that the divergence in the asbāb al-nuzūl literature on this point is real, and that the surah itself does not specify the duration — only that the pause occurred and that this surah ended it",
+            "Ibn Kathir notes that the divergence in the asbab al-nuzul literature on this point is real, and that the surah itself does not specify the duration — only that the pause occurred and that this surah ended it",
         },
         { kind: "cite", value: "[3]", citation: 3 },
         { kind: "text", value: "." },
@@ -626,8 +649,8 @@ const S3_HISTORICAL_VARIANT: Answer = {
   citations: [
     {
       number: 1,
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi",
       ref: "93:1",
       arabic: "احتبس الوحي عن رسول الله ﷺ خمسة عشر يوماً، وقيل اثني عشر يوماً",
       english:
@@ -635,16 +658,16 @@ const S3_HISTORICAL_VARIANT: Answer = {
     },
     {
       number: 2,
-      source: "Asbāb al-Nuzūl by al-Wāḥidī",
-      author: "ʿAlī b. Aḥmad al-Wāḥidī",
+      source: "Asbab al-Nuzul by al-Wahidi",
+      author: "Ali b. Ahmad al-Wahidi",
       ref: "93:1-3",
       arabic: "وقال ابن عباس: خمساً وعشرين يوماً. وقال السدي ومقاتل: أربعين يوماً",
-      english: "Ibn ʿAbbās said: twenty-five days. As-Suddī and Muqātil said: forty days.",
+      english: "Ibn Abbas said: twenty-five days. As-Suddi and Muqatil said: forty days.",
     },
     {
       number: 3,
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir",
       ref: "93:1",
       arabic: "احتبس الوحي عن النبي ﷺ أيامًا، فقالت قريش: قد ودَّعه ربه وقلاه",
       english:
@@ -652,9 +675,9 @@ const S3_HISTORICAL_VARIANT: Answer = {
     },
   ],
   retrieval: [
-    { source: "Tafsir al-Qurṭubī", status: "done", meta: "3 passages" },
-    { source: "Tafsir Ibn Kathīr", status: "done", meta: "2 passages" },
-    { source: "Asbāb al-Nuzūl (al-Wāḥidī)", status: "done", meta: "1 passage" },
+    { source: "Tafsir al-Qurtubi", status: "done", meta: "3 passages" },
+    { source: "Tafsir Ibn Kathir", status: "done", meta: "2 passages" },
+    { source: "Asbab al-Nuzul (al-Wahidi)", status: "done", meta: "1 passage" },
   ],
   confidence: { level: "med", sources: 3, total: 3 },
   durationMs: 1280,
@@ -701,14 +724,14 @@ export const SAMPLE_ANSWER: Answer = S1_CANONICAL;
 export const SAMPLE_DEFERRAL: Deferral = S1_SPECULATIVE_DEFERRAL;
 
 export const STREAMING_RETRIEVAL: readonly RetrievalStep[] = [
-  { source: "Tafsir As-Saʿdī", status: "done", meta: "4 passages" },
-  { source: "Tafsir Ibn Kathīr", status: "done", meta: "3 passages" },
-  { source: "Tafsir al-Qurṭubī", status: "active", meta: "searching…" },
-  { source: "Sunnah corpus", status: "pending", meta: "queued" },
+  { source: "Tafsir As-Sadi", status: "done", meta: "4 passages" },
+  { source: "Tafsir Ibn Kathir", status: "done", meta: "3 passages" },
+  { source: "Tafsir al-Qurtubi", status: "active", meta: "searching…" },
+  { source: "Tafsir at-Tabari", status: "pending", meta: "queued" },
 ];
 
 export const STREAMING_TEXT =
-  "The phrase mā waddaʿaka rabbuka — 'your Lord has not forsaken you' — uses a verb (waddaʿa) whose ordinary use is parting between two who love each other. The classical commentators read this carefully: the negation is not just 'God hasn't left,' it's 'God hasn't even";
+  "The phrase ma waddaaka rabbuka — 'your Lord has not forsaken you' — uses a verb (waddaa) whose ordinary use is parting between two who love each other. The classical commentators read this carefully: the negation is not just 'God hasn't left,' it's 'God hasn't even";
 
 // Helpers for callers (e.g. DemoStateBar) that want to cycle scenarios.
 export function findScenario(id: string): AskScenario | undefined {

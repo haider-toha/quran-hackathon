@@ -14,7 +14,7 @@ export function NotificationsSection() {
     <section className="settings-section">
       <header className="settings-section-hd">
         <h2>Notifications</h2>
-        <p>How and when Mishkāt may quietly let you know something happened.</p>
+        <p>How and when Mishkat may quietly let you know something happened.</p>
       </header>
       <div className="set-section">
         <div className="set-row">

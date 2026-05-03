@@ -23,7 +23,7 @@ const WELCOME_NOTE_BODY = [
   "- `/ayah` — pull in a verse with full citation",
   "- `/template` — insert a structured note template",
   "",
-  "Mishkāt is quiet on purpose. Nothing here is urgent. Begin where you are.",
+  "Mishkat is quiet on purpose. Nothing here is urgent. Begin where you are.",
 ].join("\n");
 
 const WELCOME_NOTE_PREVIEW =
@@ -33,7 +33,7 @@ function buildWelcomeNote(): Note {
   const now = new Date();
   return {
     id: "welcome-mishkat",
-    title: "Welcome to Mishkāt",
+    title: "Welcome to Mishkat",
     preview: WELCOME_NOTE_PREVIEW,
     body: WELCOME_NOTE_BODY,
     link: "",

@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { Reader } from "@/components/Reader";
 import { AD_DUHA, findSurah } from "@/lib/mock-data";
 
@@ -14,8 +16,13 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   // Next.js 16: searchParams is a Promise and must be awaited before access.
   const params = await searchParams;
   const requested = pickSurahNumber(params.surah);
-  // findSurah returns undefined for any surah outside the hardcoded Juz Amma
-  // registry; fall back to the canonical default Surah Aḍ-Ḍuḥā.
+  // If `?surah=N` points outside the v3 registry, redirect to `/` instead of
+  // silently rendering the default. Without this, the URL keeps the bogus
+  // `?surah=78` and the breadcrumb (which reads from the URL) shows
+  // "Surah 78" while the page actually renders Ad-Duha — a confusing desync.
+  if (requested !== null && !findSurah(requested)) {
+    redirect("/");
+  }
   const surah = (requested !== null ? findSurah(requested) : undefined) ?? AD_DUHA;
   return <Reader surah={surah} />;
 }

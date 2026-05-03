@@ -1,35 +1,35 @@
 import type { TafsirEntry } from "@/types";
 
-// Per-verse tafsir entries for Surat Ad-Ḍuḥā (93). The exegesis is drawn
-// from the canonical corpus (As-Saʿdī, Ibn Kathīr, al-Qurṭubī, aṭ-Ṭabarī)
-// and reflects the asbāb al-nuzūl narration in al-Bukhārī 4983 / Muslim
-// 1797 from Jundub b. Sufyān: revelation paused, the wife of Abū Lahab
+// Per-verse tafsir entries for Surat Ad-Duha (93). The exegesis is drawn
+// from the canonical corpus (As-Sadi, Ibn Kathir, al-Qurtubi, at-Tabari)
+// and reflects the asbab al-nuzul narration in al-Bukhari 4983 / Muslim
+// 1797 from Jundub b. Sufyan: revelation paused, the wife of Abu Lahab
 // taunted the Prophet ﷺ, and this surah arrived as the answer.
 //
 // Each entry is an authored expansion in the same voice as the existing
 // 93:3 reference entry — `summary`, `takeaways`, `reflection`, three
-// citations (As-Saʿdī, Ibn Kathīr, al-Qurṭubī) per verse.
+// citations (As-Sadi, Ibn Kathir, al-Qurtubi) per verse.
 
 const V1: TafsirEntry = {
   ref: "93:1",
   arabic: "وَٱلضُّحَىٰ",
   translation: "By the morning brightness,",
   summary: [
-    "The surah opens with a divine oath — *waḍ-ḍuḥā*, by the forenoon. Aḍ-ḍuḥā is the bright stretch of mid-morning, after the sun has fully risen but before its noon heat. The classical commentators read the choice carefully: it is not the dawn (*fajr*) and not the zenith (*ẓuhr*) — it is the moment when light feels at its most generous.",
-    "The oath establishes the register of the surah. As-Saʿdī notes that God swears by what is most visible and most warming in the day to anchor what follows: a reassurance to the Prophet ﷺ that the *light* of revelation has not been withdrawn. Ibn Kathīr ties the morning to the resumption of *waḥy* itself — what felt like darkness was, by God's measure, only the night that always precedes the *ḍuḥā*.",
+    "The surah opens with a divine oath — wad-duha, by the forenoon. Ad-duha is the bright stretch of mid-morning, after the sun has fully risen but before its noon heat. The classical commentators read the choice carefully: it is not the dawn (*fajr*) and not the zenith (zuhr) — it is the moment when light feels at its most generous.",
+    "The oath establishes the register of the surah. As-Sadi notes that God swears by what is most visible and most warming in the day to anchor what follows: a reassurance to the Prophet ﷺ that the *light* of revelation has not been withdrawn. Ibn Kathir ties the morning to the resumption of wahy itself — what felt like darkness was, by God's measure, only the night that always precedes the duha.",
   ],
   takeaways: [
     "**The oath is a key.** God swears by the morning to set the surah's tone — a movement from anxiety toward warmth.",
-    "**Aḍ-ḍuḥā is not dawn.** It is light at its full midmorning generosity, deliberately chosen.",
+    "**Ad-duha is not dawn.** It is light at its full midmorning generosity, deliberately chosen.",
     "**Light returns.** The first word of the surah promises, in oath-form, that the night of *fatra* is over.",
   ],
   reflection:
-    "What is the *ḍuḥā* in your own life right now — the warmth that is still here, even if you haven't named it?",
+    "What is the duha in your own life right now — the warmth that is still here, even if you haven't named it?",
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أقسم تعالى بأول النهار حين يرتفع، وبالليل إذا سجى، أي ادلهمَّ ظلامه واستقر، على أن الله ما ودَّع رسوله، وما قلاه.",
       english:
@@ -37,8 +37,8 @@ const V1: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أقسم تعالى بالضحى وما جعل فيه من الضياء، وبالليل وما يكون فيه من سكون، فدلَّ ذلك على قدرته بإيجاد هذا وهذا.",
       english:
@@ -46,12 +46,12 @@ const V1: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "الضحى: ارتفاع النهار. وقيل: النهار كله. والمعنى أن الله أقسم بهذا الوقت لشرفه ولما فيه من إحياء الأرض ودبيب الحركة في الخلق.",
       english:
-        "Aḍ-ḍuḥā is the rising of the day — and it has been said: the whole of the day. The oath is by this hour for its honour, and for the way the earth and creation come back to motion within it.",
+        "Ad-duha is the rising of the day — and it has been said: the whole of the day. The oath is by this hour for its honour, and for the way the earth and creation come back to motion within it.",
     },
   ],
 };
@@ -61,11 +61,11 @@ const V2: TafsirEntry = {
   arabic: "وَٱلَّيْلِ إِذَا سَجَىٰ",
   translation: "and by the night when it grows still,",
   summary: [
-    "The second oath pairs the morning with its opposite — *wal-layli idhā sajā*, the night when it grows still. *Sajā* is a precise word: not just *darkness*, but darkness that has *settled*. As-Saʿdī notes that the verb is used of the sea when its waves still, and of a wound when it stops bleeding — a darkness that has come to rest.",
-    "The pairing is structural. Just as the morning rises *because* the night has settled, so revelation returns *because* the pause has run its course. Al-Qurṭubī reads the oath as a teaching: the same hand that sends the night also sends the morning, and what feels like withdrawal is part of the same providence.",
+    "The second oath pairs the morning with its opposite — wal-layli idha saja, the night when it grows still. Saja is a precise word: not just *darkness*, but darkness that has *settled*. As-Sadi notes that the verb is used of the sea when its waves still, and of a wound when it stops bleeding — a darkness that has come to rest.",
+    "The pairing is structural. Just as the morning rises *because* the night has settled, so revelation returns *because* the pause has run its course. Al-Qurtubi reads the oath as a teaching: the same hand that sends the night also sends the morning, and what feels like withdrawal is part of the same providence.",
   ],
   takeaways: [
-    "**Sajā is settled darkness.** The night here is not chaos — it is stillness that prepares for what is coming.",
+    "**Saja is settled darkness.** The night here is not chaos — it is stillness that prepares for what is coming.",
     "**The pairing matters.** Day and night are not enemies; they are one rhythm. So is revelation and its pause.",
     "**The same hand sends both.** The Provider of the morning is the Provider of the night.",
   ],
@@ -74,24 +74,24 @@ const V2: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic: "إذا سجى: إذا غطَّى الناسَ بظلامه وسكن، فهو وقت السكون والراحة.",
       english:
         "When it grows still — when it covers people with its darkness and settles — it is the hour of stillness and of rest.",
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic: "سجى أي: سكن، فأظلم وادلهمَّ. هكذا قاله مجاهد وقتادة والضحاك وابن زيد.",
       english:
-        "Sajā means: it settled, so its darkness deepened and grew dense. So said Mujāhid, Qatāda, aḍ-Ḍaḥḥāk, and Ibn Zayd.",
+        "Saja means: it settled, so its darkness deepened and grew dense. So said Mujahid, Qatada, ad-Dahhak, and Ibn Zayd.",
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic: "السجو: السكون. ومنه: بحرٌ ساجٍ، أي: ساكن. وليلٌ ساجٍ: ساكن لا ريح فيه.",
       english:
         "As-sajw is stillness. From it: a calm sea — i.e., one at rest; and a still night — windless, settled.",
@@ -104,12 +104,12 @@ const V3: TafsirEntry = {
   arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ",
   translation: "Your Lord has neither forsaken you nor does He hate you.",
   summary: [
-    "After a pause in revelation, some among the Prophet ﷺ's adversaries mocked him, claiming his Lord had abandoned him. This verse arrives as a direct rebuttal — God neither bid him farewell nor turned away in anger. The Arabic *waddaʿaka* carries the warmth of a parting, while *qalā* carries the heat of hatred; both are negated.",
-    "The classical commentators emphasize that silence from God is not absence. As-Saʿdī notes that the delay in revelation was itself a mercy — it let the Prophet ﷺ feel longing, which deepened his love for what was coming. Ibn Kathīr ties this to the broader Quranic principle: tests intensify nearness rather than diminish it.",
+    "After a pause in revelation, some among the Prophet ﷺ's adversaries mocked him, claiming his Lord had abandoned him. This verse arrives as a direct rebuttal — God neither bid him farewell nor turned away in anger. The Arabic waddaaka carries the warmth of a parting, while qala carries the heat of hatred; both are negated.",
+    "The classical commentators emphasize that silence from God is not absence. As-Sadi notes that the delay in revelation was itself a mercy — it let the Prophet ﷺ feel longing, which deepened his love for what was coming. Ibn Kathir ties this to the broader Quranic principle: tests intensify nearness rather than diminish it.",
   ],
   takeaways: [
     "**The pause was deliberate.** Revelation paused not because of fault, but because God's gifts are timed.",
-    "**Two negations, two reassurances.** Forsakenness (*tawdīʿ*) speaks to absence; hatred (*qilā*) speaks to displeasure. Both are denied.",
+    "**Two negations, two reassurances.** Forsakenness (tawdi) speaks to absence; hatred (qila) speaks to displeasure. Both are denied.",
     "**Silence is not abandonment.** A central principle for those passing through dry seasons of the heart.",
   ],
   reflection:
@@ -117,8 +117,8 @@ const V3: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أي: ما تركك منذ اعتنى بك، وما أبغضك منذ أحبك، بل لم يزل جل وعلا يربيك أحسن تربية، ويعلي درجتك حالاً بعد حال.",
       english:
@@ -126,17 +126,17 @@ const V3: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي: ما تركك ربك يا محمد، وما أبغضك. وقد ثبت أن جبريل عليه السلام احتبس عن النبي صلى الله عليه وسلم أيامًا، فقالت قريش: قد ودَّعه ربه وقلاه. فأنزل الله هذه السورة.",
       english:
-        "Your Lord has not left you, O Muḥammad, nor has He hated you. It is established that Jibrīl ﷺ was withheld from the Prophet ﷺ for several days, so Quraysh said: 'His Lord has bid him farewell and hates him.' So God sent down this surah.",
+        "Your Lord has not left you, O Muhammad, nor has He hated you. It is established that Jibril ﷺ was withheld from the Prophet ﷺ for several days, so Quraysh said: 'His Lord has bid him farewell and hates him.' So God sent down this surah.",
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "قال جمهور المفسرين: احتبس الوحي عن رسول الله صلى الله عليه وسلم خمسة عشر يوماً، وقيل أربعين يوماً، فقال المشركون: ودَّعه ربه وقلاه.",
       english:
@@ -150,11 +150,11 @@ const V4: TafsirEntry = {
   arabic: "وَلَلْءَاخِرَةُ خَيْرٌ لَّكَ مِنَ ٱلْأُولَىٰ",
   translation: "And what is to come will be better for you than what has gone by.",
   summary: [
-    "*Al-ākhira* here is read by most commentators in two registers at once: the next *life*, and the next *phase* of this one. As-Saʿdī notes that for the Prophet ﷺ, every later state was an elevation of the earlier — Mecca to Medina, hardship to ease, opposition to victory, this world to the next.",
-    "The promise is structural: the trajectory is forward. Ibn Kathīr glosses *khayr* (better) not as a comparative judgement on the past — which was already honored by God — but as the consistent direction of His giving. Whatever has come, more is coming.",
+    "Al-akhira here is read by most commentators in two registers at once: the next *life*, and the next *phase* of this one. As-Sadi notes that for the Prophet ﷺ, every later state was an elevation of the earlier — Mecca to Medina, hardship to ease, opposition to victory, this world to the next.",
+    "The promise is structural: the trajectory is forward. Ibn Kathir glosses *khayr* (better) not as a comparative judgement on the past — which was already honored by God — but as the consistent direction of His giving. Whatever has come, more is coming.",
   ],
   takeaways: [
-    "**Two readings, both true.** *Al-ākhira* is the hereafter and the next stage; the verse holds both.",
+    "**Two readings, both true.** Al-akhira is the hereafter and the next stage; the verse holds both.",
     "**The trajectory is forward.** The pattern of God's giving is increase, not retreat.",
     "**Better is structural, not comparative.** The verse is not saying the past was bad — it is saying the future is greater.",
   ],
@@ -163,8 +163,8 @@ const V4: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أي: ولكل حال أعظم وأجل من الحال التي قبلها، فلم يزل صلى الله عليه وسلم يصعد في درج المعالي.",
       english:
@@ -172,8 +172,8 @@ const V4: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي: الدار الآخرة خير لك من هذه الدار. ولهذا كان رسول الله صلى الله عليه وسلم أزهد الناس في الدنيا، وأعظمهم لها إعراضاً.",
       english:
@@ -181,12 +181,12 @@ const V4: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "قال ابن عباس: الآخرة هاهنا الجنة. وقيل: ما عندك في الآخرة من الكرامة خير لك مما أعطيتك في الدنيا.",
       english:
-        "Ibn ʿAbbās said: *al-ākhira* here is Paradise. It has also been said: what awaits you in the Hereafter of honour is better than what I have given you in the world.",
+        "Ibn Abbas said: al-akhira here is Paradise. It has also been said: what awaits you in the Hereafter of honour is better than what I have given you in the world.",
     },
   ],
 };
@@ -196,8 +196,8 @@ const V5: TafsirEntry = {
   arabic: "وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ",
   translation: "And your Lord is going to give you, and you will be satisfied.",
   summary: [
-    "The verse is one of the most expansive promises in the Quran. *La-sawfa* is not the ordinary future — it is the emphasised, unhurried future: *He will most certainly give you*. As-Saʿdī notes that the giving is left unspecified, and that this open-endedness is itself the gift: every promise to the Prophet ﷺ falls within its scope.",
-    "*Fa-tarḍā* — *and you will be pleased* — names the only condition: the giving will continue until contentment is reached. Ibn Kathīr cites the famous narration that on the Day of Judgement, when the Prophet ﷺ sees what has been prepared for his community, *he will be content* — and that this verse anchors the *intercession* tradition.",
+    "The verse is one of the most expansive promises in the Quran. *La-sawfa* is not the ordinary future — it is the emphasised, unhurried future: *He will most certainly give you*. As-Sadi notes that the giving is left unspecified, and that this open-endedness is itself the gift: every promise to the Prophet ﷺ falls within its scope.",
+    "Fa-tarda — *and you will be pleased* — names the only condition: the giving will continue until contentment is reached. Ibn Kathir cites the famous narration that on the Day of Judgement, when the Prophet ﷺ sees what has been prepared for his community, *he will be content* — and that this verse anchors the *intercession* tradition.",
   ],
   takeaways: [
     "**La-sawfa is emphatic.** Not just 'will give' — *most certainly will give*, and not in a hurry.",
@@ -209,8 +209,8 @@ const V5: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "وهذا يشمل جميع ما أعطاه الله من الخير في الدنيا والآخرة، فإنه صلى الله عليه وسلم أعطي من الفضائل والمناقب ما لم يعطه أحد من الأولين والآخرين.",
       english:
@@ -218,21 +218,21 @@ const V5: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "روى ابن جرير عن ابن عباس قال: عُرض على رسول الله ﷺ ما هو فاتح على أمته من بعده كفراً كفراً، فسرَّه ذلك. فأنزل الله: ولسوف يعطيك ربك فترضى.",
       english:
-        "Ibn Jarīr reports from Ibn ʿAbbās: the Messenger ﷺ was shown what would open for his community after him, region by region, and it pleased him. So God revealed: *And your Lord is going to give you, and you will be satisfied.*",
+        "Ibn Jarir reports from Ibn Abbas: the Messenger ﷺ was shown what would open for his community after him, region by region, and it pleased him. So God revealed: *And your Lord is going to give you, and you will be satisfied.*",
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "قال أبو جعفر الطبري: هذه أرجى آية في كتاب الله، لقول النبي ﷺ: «لا أرضى وأحدٌ من أمتي في النار».",
       english:
-        "Abū Jaʿfar aṭ-Ṭabarī said: this is the most hopeful verse in God's Book, on account of the Prophet ﷺ's saying: 'I shall not be content while a single one of my community is in the Fire.'",
+        "Abu Jafar at-Tabari said: this is the most hopeful verse in God's Book, on account of the Prophet ﷺ's saying: 'I shall not be content while a single one of my community is in the Fire.'",
     },
   ],
 };
@@ -242,38 +242,38 @@ const V6: TafsirEntry = {
   arabic: "أَلَمْ يَجِدْكَ يَتِيمًا فَـَٔاوَىٰ",
   translation: "Did He not find you an orphan and shelter you?",
   summary: [
-    "The first of three *wajadaka* clauses — *He found you*. The Prophet ﷺ's father ʿAbdallāh died before he was born; his mother Āmina died when he was six; his grandfather ʿAbd al-Muṭṭalib when he was eight; thereafter his uncle Abū Ṭālib raised him. As-Saʿdī reads *fa-āwā* — *He sheltered you* — as a name for that whole sequence: God moved a child from one guardian to the next, never leaving him without one.",
-    "Ibn Kathīr underscores that *yatīm* in Quranic usage is not just *fatherless* — it is *alone in a way that asks for protection*. The verse names that aloneness directly, and answers it with the verb *āwā*, which is the same root used for the Prophet ﷺ's later refuge in Medina (*dār al-hijra*) and for God's *throne* (*ʿarsh*). The shelter offered is divine in scale.",
+    "The first of three *wajadaka* clauses — *He found you*. The Prophet ﷺ's father Abdallah died before he was born; his mother Amina died when he was six; his grandfather Abd al-Muttalib when he was eight; thereafter his uncle Abu Talib raised him. As-Sadi reads fa-awa — *He sheltered you* — as a name for that whole sequence: God moved a child from one guardian to the next, never leaving him without one.",
+    "Ibn Kathir underscores that yatim in Quranic usage is not just *fatherless* — it is *alone in a way that asks for protection*. The verse names that aloneness directly, and answers it with the verb awa, which is the same root used for the Prophet ﷺ's later refuge in Medina (dar al-hijra) and for God's *throne* (arsh). The shelter offered is divine in scale.",
   ],
   takeaways: [
     "**Wajadaka — *He found you*.** The verb is the structural key of the next three verses.",
-    "**Yatīm names a specific aloneness.** It is the lack that calls for protection, and the verse names it directly.",
-    "**Āwā is shelter at scale.** The same root names refuge in Medina and the divine throne.",
+    "**Yatim names a specific aloneness.** It is the lack that calls for protection, and the verse names it directly.",
+    "**Awa is shelter at scale.** The same root names refuge in Medina and the divine throne.",
   ],
   reflection:
     "Read the verse for the *first finding* in your own life — when you were alone in a way that asked for protection, and protection came.",
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic: "ألم يجدك يتيماً فآوى: مات أبوك وأمك ولم يكفلاك، فآواك الله وكفل بك جدَّك ثم عمَّك.",
       english:
         "Did He not find you an orphan and shelter you? Your father and mother died and did not raise you to maturity — so God sheltered you, placing you in the care of your grandfather and then your uncle.",
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "وذلك أن أباه توفي وأمه حامل به، وقيل: بعد أن ولد. وماتت أمه وهو ابن ست سنين. ثم كان في كفالة جده عبد المطلب حتى مات وله ثمان سنين، فكفله عمه أبو طالب، وأعانه ونصره.",
       english:
-        "His father died while his mother was still carrying him — and it has been said: after he was born. His mother died when he was six. Then he was under the care of his grandfather ʿAbd al-Muṭṭalib until the latter's death when he was eight, after which his uncle Abū Ṭālib took him in, supported him, and defended him.",
+        "His father died while his mother was still carrying him — and it has been said: after he was born. His mother died when he was six. Then he was under the care of his grandfather Abd al-Muttalib until the latter's death when he was eight, after which his uncle Abu Talib took him in, supported him, and defended him.",
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic: "أي: وحيداً منفرداً فآواك إلى من يكفلك.",
       english: "Meaning: alone, on your own — so He sheltered you with one who would care for you.",
     },
@@ -285,12 +285,12 @@ const V7: TafsirEntry = {
   arabic: "وَوَجَدَكَ ضَآلًّا فَهَدَىٰ",
   translation: "And He found you lost, and guided you.",
   summary: [
-    "The second *wajadaka*. Classical commentators are unanimous that *ḍāllan* here does *not* mean *astray* in the sense of disbelief or misguidance — the Prophet ﷺ never worshipped an idol. As-Saʿdī reads it as *unaware*: before revelation, he ﷺ was a man of upright fitra in a society of widespread misguidance, but the *what* and *how* of pure tawḥīd were not yet known to him. *Hadā* — *He guided* — names the gift of revelation itself.",
-    "Ibn Kathīr widens the reading: *ḍāllan* also bears the Arabic sense of *seeking and not yet finding* — as a tree is *ḍāllatun* in a great forest, lost to the eye but not gone. The verse maps onto the longing of the *fatra*: he ﷺ was a seeker, and what he sought came.",
+    "The second *wajadaka*. Classical commentators are unanimous that dallan here does *not* mean *astray* in the sense of disbelief or misguidance — the Prophet ﷺ never worshipped an idol. As-Sadi reads it as *unaware*: before revelation, he ﷺ was a man of upright fitra in a society of widespread misguidance, but the *what* and *how* of pure tawhid were not yet known to him. Hada — *He guided* — names the gift of revelation itself.",
+    "Ibn Kathir widens the reading: dallan also bears the Arabic sense of *seeking and not yet finding* — as a tree is dallatun in a great forest, lost to the eye but not gone. The verse maps onto the longing of the *fatra*: he ﷺ was a seeker, and what he sought came.",
   ],
   takeaways: [
-    "**Ḍāllan is not misguided.** Classical commentators read it as *unaware*, *seeking*, *not yet found*.",
-    "**Hadā names revelation.** The guidance offered is the Quran itself.",
+    "**Dallan is not misguided.** Classical commentators read it as *unaware*, *seeking*, *not yet found*.",
+    "**Hada names revelation.** The guidance offered is the Quran itself.",
     "**Seeking and finding are paired.** The verse honors the seeking that preceded the gift.",
   ],
   reflection:
@@ -298,8 +298,8 @@ const V7: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "ووجدك ضالاً عن الإيمان، فهداك إليه. وقيل: ضالاً عن العلم بشرائع الدين، فعرَّفك بها وعلَّمك إياها.",
       english:
@@ -307,8 +307,8 @@ const V7: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي: كنت لا تدري ما الكتاب ولا الإيمان، كما قال تعالى: «وكذلك أوحينا إليك روحاً من أمرنا ما كنت تدري ما الكتاب ولا الإيمان».",
       english:
@@ -316,11 +316,11 @@ const V7: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic: "أي ضالاً عن النبوة، فهداك إليها. ومنه قول العرب للضالة: ضالة، أي: غير معلوم مكانها.",
       english:
-        "Meaning: unaware of prophethood, and He guided you to it. From this the Arabs call a lost camel a *ḍālla* — its location not yet known.",
+        "Meaning: unaware of prophethood, and He guided you to it. From this the Arabs call a lost camel a dalla — its location not yet known.",
     },
   ],
 };
@@ -330,21 +330,21 @@ const V8: TafsirEntry = {
   arabic: "وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ",
   translation: "And He found you in want, and made you self-sufficient.",
   summary: [
-    "The third *wajadaka*. *ʿĀʾilan* is from *ʿayl* — *family that one is responsible for*, and by extension *the strain of providing for them*. As-Saʿdī reads *aghnā* not as *made you wealthy*, but as *made you sufficient* — the gap between need and provision was closed. The Prophet ﷺ's first sustenance came through Khadīja's wealth and the trade he conducted with her, and then through the *barakah* of the message itself.",
-    "Al-Qurṭubī notes the carefulness of *aghnā* over *aʿṭā* (gave). To give is to transfer; to make sufficient is to remove the *need*. The verse promises a sufficiency that is internal — the heart that no longer feels poor — not just the hand that holds more.",
+    "The third *wajadaka*. Ailan is from ayl — *family that one is responsible for*, and by extension *the strain of providing for them*. As-Sadi reads aghna not as *made you wealthy*, but as *made you sufficient* — the gap between need and provision was closed. The Prophet ﷺ's first sustenance came through Khadija's wealth and the trade he conducted with her, and then through the *barakah* of the message itself.",
+    "Al-Qurtubi notes the carefulness of aghna over ata (gave). To give is to transfer; to make sufficient is to remove the *need*. The verse promises a sufficiency that is internal — the heart that no longer feels poor — not just the hand that holds more.",
   ],
   takeaways: [
-    "**ʿĀʾil is need that has weight.** Not abstract poverty — the strain of carrying responsibility.",
-    "**Aghnā is sufficiency, not wealth.** Closer to *no longer in need* than to *now affluent*.",
+    "**Ail is need that has weight.** Not abstract poverty — the strain of carrying responsibility.",
+    "**Aghna is sufficiency, not wealth.** Closer to *no longer in need* than to *now affluent*.",
     "**The gift is internal.** What changes is the heart's relation to the lack, not just the lack itself.",
   ],
   reflection:
-    "Where in your life would you say you are *aghnā* — not wealthy, just no longer in need? What has filled the gap?",
+    "Where in your life would you say you are aghna — not wealthy, just no longer in need? What has filled the gap?",
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أي فقيراً، فأغناك بما فتح عليك من البلاد التي جبيت لك أموالها وخراجها، وبما رزقك الله من القناعة، وهي خير الغنى.",
       english:
@@ -352,8 +352,8 @@ const V8: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي وجدك فقيراً ذا عيال فأغناك الله عمن سواه، فجمع له بين مقامي الفقير الصابر والغني الشاكر.",
       english:
@@ -361,11 +361,11 @@ const V8: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic: "العائل: الفقير، يقال: عال يعيل عيلة، إذا افتقر. وأغنى: من الغنى، وهو سَعَة الحال.",
       english:
-        "Al-ʿāʾil is the poor person — one says *ʿāla yaʿīlu ʿaylatan* of one who has fallen into need. *Aghnā* is from *al-ghinā*, the broadening of one's circumstance.",
+        "Al-ail is the poor person — one says ala yailu aylatan of one who has fallen into need. Aghna is from al-ghina, the broadening of one's circumstance.",
     },
   ],
 };
@@ -375,8 +375,8 @@ const V9: TafsirEntry = {
   arabic: "فَأَمَّا ٱلْيَتِيمَ فَلَا تَقْهَرْ",
   translation: "So as for the orphan, do not oppress him.",
   summary: [
-    "The verse turns from the three findings to three commands. Each command corresponds to a finding: *He found you an orphan* → *do not oppress the orphan*. As-Saʿdī reads the structure as a teaching of *gratitude as ethics*: what God did for you, do for those in your care.",
-    "*Lā taqhar* is sharper than *be kind* — *qahr* is *to overpower*, *to crush down*. The verse is not just asking for warmth toward orphans; it is forbidding the use of one's position over them. Ibn Kathīr ties this to a wider Quranic ethics: those who have been protected become the protectors, and the deepest test of remembered mercy is how one treats those still inside the lack one has left.",
+    "The verse turns from the three findings to three commands. Each command corresponds to a finding: *He found you an orphan* → *do not oppress the orphan*. As-Sadi reads the structure as a teaching of *gratitude as ethics*: what God did for you, do for those in your care.",
+    "La taqhar is sharper than *be kind* — *qahr* is *to overpower*, *to crush down*. The verse is not just asking for warmth toward orphans; it is forbidding the use of one's position over them. Ibn Kathir ties this to a wider Quranic ethics: those who have been protected become the protectors, and the deepest test of remembered mercy is how one treats those still inside the lack one has left.",
   ],
   takeaways: [
     "**The structure mirrors.** Each *wajadaka* yields a corresponding command.",
@@ -388,8 +388,8 @@ const V9: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أي: لا تسئ معاملته، ولا تنهره، بل أكرمه، وأعطه ما تيسر، وافعل به كما تحب أن يفعل بولدك من بعدك.",
       english:
@@ -397,8 +397,8 @@ const V9: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي: كما كنت يتيماً فآواك الله، فلا تقهر اليتيم. أي: لا تذلَّه ولا تنهره، ولا تهنه. بل أحسن إليه وتلطف به.",
       english:
@@ -406,8 +406,8 @@ const V9: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "القهر: الغلبة مع الإذلال. ومنه قول العرب: قهرته فهو مقهور. والمعنى: لا تذلَّ اليتيم استضعافاً بيتمه.",
       english:
@@ -421,12 +421,12 @@ const V10: TafsirEntry = {
   arabic: "وَأَمَّا ٱلسَّآئِلَ فَلَا تَنْهَرْ",
   translation: "And as for the petitioner, do not repel him.",
   summary: [
-    "The second command — corresponding to *He found you lost (seeking) and guided you*. *As-sāʾil* is the *one who asks*. Classical commentators read it in two registers: the one asking for material help (the beggar), and the one asking for knowledge (the seeker). As-Saʿdī takes both and notes that, having been found *seeking* yourself, you are no longer permitted to turn the seeker away.",
-    "*Lā tanhar* — *do not rebuke* — names the specific offence the verse forbids: not failing to give, but *rebuking the asking*. Ibn Kathīr ties this to the asbāb al-nuzūl on a wider scale: this surah began with the rebuke of pagans — *your Lord has abandoned you* — being denied. To rebuke the asking of others would be to do to them what was, in this very surah, denied to you.",
+    "The second command — corresponding to *He found you lost (seeking) and guided you*. As-sail is the *one who asks*. Classical commentators read it in two registers: the one asking for material help (the beggar), and the one asking for knowledge (the seeker). As-Sadi takes both and notes that, having been found *seeking* yourself, you are no longer permitted to turn the seeker away.",
+    "La tanhar — *do not rebuke* — names the specific offence the verse forbids: not failing to give, but *rebuking the asking*. Ibn Kathir ties this to the asbab al-nuzul on a wider scale: this surah began with the rebuke of pagans — *your Lord has abandoned you* — being denied. To rebuke the asking of others would be to do to them what was, in this very surah, denied to you.",
   ],
   takeaways: [
-    "**Two registers, both real.** *Sāʾil* names both the one who asks for bread and the one who asks for knowledge.",
-    "**Lā tanhar is precise.** The verse forbids the *rebuke*, not the (sometimes necessary) declining.",
+    "**Two registers, both real.** Sail names both the one who asks for bread and the one who asks for knowledge.",
+    "**La tanhar is precise.** The verse forbids the *rebuke*, not the (sometimes necessary) declining.",
     "**The mirror is structural.** What you were spared (rebuke), you are not to inflict.",
   ],
   reflection:
@@ -434,8 +434,8 @@ const V10: TafsirEntry = {
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "والسائل يشمل السائل للمال والسائل للعلم. ولهذا ينبغي أن يطعم السائل، أو يرد بمعروف، فإذا كان قد نهى عن نهره، فردُّه من غير منَّ ولا أذى أولى وأولى.",
       english:
@@ -443,16 +443,16 @@ const V10: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic: "أي: كما كنت ضالاً فهداك الله، فلا تنهر السائل عن العلم المسترشد.",
       english:
         "Just as you were unaware and God guided you — do not rebuke the one who asks for knowledge, seeking guidance.",
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic: "النهر: الزجر بإغلاظ. والمعنى: لا تزجره، فإن لم تجد ما تعطيه، فردَّه ردًّا لطيفاً.",
       english:
         "An-nahr is to rebuke harshly. Meaning: do not snap at him; if you have nothing to give, send him away with kindness.",
@@ -465,21 +465,21 @@ const V11: TafsirEntry = {
   arabic: "وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ",
   translation: "And as for the favor of your Lord, proclaim it.",
   summary: [
-    "The third command — corresponding to *He found you in want, and made you self-sufficient*. *Bi-niʿmati rabbika* — *the favour of your Lord* — is left singular but generic: the whole tide of His giving. As-Saʿdī reads *fa-ḥaddith* as a directive: the gift is not yours alone; the *speaking* of it is part of the *receiving* of it.",
-    "Ibn Kathīr emphasises that *taḥdīth* — *to narrate, to tell* — is the verb used in hadith literature itself. To carry a niʿmah is to be a transmitter. Al-Qurṭubī widens this: the verse asks us to *tell* the favour both in speech (gratitude on the tongue) and in posture (gratitude visible in how one lives) — not as boasting, but as testimony.",
+    "The third command — corresponding to *He found you in want, and made you self-sufficient*. Bi-nimati rabbika — *the favour of your Lord* — is left singular but generic: the whole tide of His giving. As-Sadi reads fa-haddith as a directive: the gift is not yours alone; the *speaking* of it is part of the *receiving* of it.",
+    "Ibn Kathir emphasises that tahdith — *to narrate, to tell* — is the verb used in hadith literature itself. To carry a nimah is to be a transmitter. Al-Qurtubi widens this: the verse asks us to *tell* the favour both in speech (gratitude on the tongue) and in posture (gratitude visible in how one lives) — not as boasting, but as testimony.",
   ],
   takeaways: [
-    "**Niʿmah is the whole tide of giving.** The singular noun stands for everything God has given.",
-    "**Ḥaddith is the verb of transmission.** To speak of the gift is part of receiving it.",
+    "**Nimah is the whole tide of giving.** The singular noun stands for everything God has given.",
+    "**Haddith is the verb of transmission.** To speak of the gift is part of receiving it.",
     "**Three forms of telling.** Tongue (gratitude), conduct (visible blessing), and teaching (passing the gift on).",
   ],
   reflection:
-    "Name one *niʿmah* you have not yet *spoken* — to yourself, to a friend, to God in du'a. What would change if you did?",
+    "Name one nimah you have not yet *spoken* — to yourself, to a friend, to God in du'a. What would change if you did?",
   citations: [
     {
       id: "sadi",
-      source: "Tafsir As-Saʿdī",
-      author: "ʿAbd ar-Raḥmān as-Saʿdī (d. 1956)",
+      source: "Tafsir As-Sadi",
+      author: "Abd ar-Rahman as-Sadi (d. 1956)",
       arabic:
         "أي: تحدَّث بنعم الله عليك، الظاهرة والباطنة، فإن التحدث بنعم الله داعٍ لشكرها، وموجبٌ لتأليف القلوب على من أنعم بها.",
       english:
@@ -487,8 +487,8 @@ const V11: TafsirEntry = {
     },
     {
       id: "kathir",
-      source: "Tafsir Ibn Kathīr",
-      author: "Ismāʿīl ibn Kathīr (d. 1373)",
+      source: "Tafsir Ibn Kathir",
+      author: "Ismail ibn Kathir (d. 1373)",
       arabic:
         "أي: كما كنت عائلاً فقيراً فأغناك الله، فحدِّث بنعمة الله عليك. وقد ورد في الحديث: «من لم يشكر القليل لم يشكر الكثير، ومن لم يشكر الناس لم يشكر الله، التحدث بنعمة الله شكر، وتركها كفر».",
       english:
@@ -496,12 +496,12 @@ const V11: TafsirEntry = {
     },
     {
       id: "qurtubi",
-      source: "Tafsir al-Qurṭubī",
-      author: "Muḥammad al-Qurṭubī (d. 1273)",
+      source: "Tafsir al-Qurtubi",
+      author: "Muhammad al-Qurtubi (d. 1273)",
       arabic:
         "أي: اشكرها وأظهرها للناس. قال مجاهد: تلك النعمة هي النبوة. وقال غيره: عام في كل نعمة.",
       english:
-        "Meaning: be grateful and make it visible to people. Mujāhid said: that favour is the prophethood. Others said: it is general — every favour.",
+        "Meaning: be grateful and make it visible to people. Mujahid said: that favour is the prophethood. Others said: it is general — every favour.",
     },
   ],
 };

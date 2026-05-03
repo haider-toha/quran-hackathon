@@ -104,7 +104,7 @@ function makeSeed(): Notification[] {
     {
       id: "seed-info-1",
       kind: "info",
-      title: "Welcome to Mishkāt",
+      title: "Welcome to Mishkat",
       body: "Notifications surface here when long-running searches finish.",
       href: null,
       createdAt: now - 1000 * 60 * 60 * 2,

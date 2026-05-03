@@ -1,6 +1,6 @@
 import type { Note } from "@/types";
 
-// 14 notes across the depth of Surat Aḍ-Ḍuḥā. Variety chosen for QA:
+// 14 notes across the depth of Surat Ad-Duha. Variety chosen for QA:
 //   • two notes have full markdown bodies (n1, n5) — exercises NoteBody
 //   • one is a long letter-to-self (n5) — exercises overflow / scroll
 //   • two are AI-assisted (n1, n9) — exercises hasAi/aiAssisted chips
@@ -10,8 +10,8 @@ import type { Note } from "@/types";
 //   • one has zero tags (n13) — exercises empty-tag rendering
 //   • range of relative dates from "4m ago" to "3 weeks ago" — exercises
 //     DateFilter today/week/month/all bands
-//   • tags chosen to overlap (grief, mercy, language, pattern) so
-//     TagFilter has multi-match candidates and unique-tag candidates
+//   • tags chosen to overlap (grief, mercy, language, pattern) so the
+//     tag popover has multi-match candidates and unique-tag candidates
 
 export const SAMPLE_NOTES: readonly Note[] = [
   {
@@ -21,7 +21,7 @@ export const SAMPLE_NOTES: readonly Note[] = [
       "The verse reframes silence — the pause in revelation was not absence but preparation. There's something here about how grief teaches the same lesson, except we resist it.",
     body: GRIEF_BODY(),
     link: "93:3",
-    tags: ["grief", "tawakkul", "patience", "mā-waddaʿaka"],
+    tags: ["grief", "tawakkul", "patience", "ma-waddaaka"],
     editedRelative: "4m ago",
     editedAbsolute: "3 May, 18:42",
     editedAt: "2026-05-03T18:42:00Z",
@@ -50,7 +50,7 @@ export const SAMPLE_NOTES: readonly Note[] = [
     id: "n3",
     title: "What does it mean to be self-sufficient?",
     preview:
-      "Aghnā doesn't mean wealthy in the way modern English implies. It's closer to 'no longer in need' — a sufficiency, not an accumulation. This distinction matters enormously when reading verse 8.",
+      "Aghna doesn't mean wealthy in the way modern English implies. It's closer to 'no longer in need' — a sufficiency, not an accumulation. This distinction matters enormously when reading verse 8.",
     body: "",
     link: "93:8",
     tags: ["contentment", "language"],
@@ -66,7 +66,7 @@ export const SAMPLE_NOTES: readonly Note[] = [
     id: "n4",
     title: "Why dawn and night together",
     preview:
-      "The oath pairs ḍuḥā and layl — brightness and stillness. Reading As-Saʿdī, I see he reads them as opposites that both belong to the same hand. The point isn't 'good times and bad times'…",
+      "The oath pairs duha and layl — brightness and stillness. Reading As-Sadi, I see he reads them as opposites that both belong to the same hand. The point isn't 'good times and bad times'…",
     body: "",
     link: "93:1-2",
     tags: ["contemplation", "oaths", "structure"],
@@ -96,12 +96,12 @@ export const SAMPLE_NOTES: readonly Note[] = [
   },
   {
     id: "n6",
-    title: "Reading 'qalā' carefully",
+    title: "Reading 'qala' carefully",
     preview:
-      "The word qalā is heat — not mere displeasure, but a flaring inside the chest. To negate it so explicitly is to say: not even a flicker of that exists between you and your Lord.",
+      "The word qala is heat — not mere displeasure, but a flaring inside the chest. To negate it so explicitly is to say: not even a flicker of that exists between you and your Lord.",
     body: "",
     link: "93:3",
-    tags: ["language", "mercy", "mā-waddaʿaka"],
+    tags: ["language", "mercy", "ma-waddaaka"],
     editedRelative: "3 days ago",
     editedAbsolute: "30 Apr, 16:45",
     editedAt: "2026-04-30T16:45:00Z",
@@ -144,9 +144,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
   },
   {
     id: "n9",
-    title: "Comparative tafsir on 93:5 — As-Saʿdī, Ibn Kathīr, al-Qurṭubī",
+    title: "Comparative tafsir on 93:5 — As-Sadi, Ibn Kathir, al-Qurtubi",
     preview:
-      "Started this from the Comparative Tafsir template. Reading the three commentaries side by side on la-sawfa yuʿṭīka makes the open-endedness of the gift very visible — none of them name what is being given, all of them gesture at why the silence is holding it.",
+      "Started this from the Comparative Tafsir template. Reading the three commentaries side by side on la-sawfa yutika makes the open-endedness of the gift very visible — none of them name what is being given, all of them gesture at why the silence is holding it.",
     body: COMPARATIVE_BODY(),
     link: "93:5",
     tags: ["comparative", "language", "calendar"],
@@ -162,7 +162,7 @@ export const SAMPLE_NOTES: readonly Note[] = [
     id: "n10",
     title: "Don't repel — what 'rebuke' means in 93:10",
     preview:
-      "Lā tanhar — do not rebuke. The verb is sharper than 'be kind.' It names the specific tone-of-voice the verse forbids, even when the answer to the asker is no. A note on the gap between declining and rebuking.",
+      "La tanhar — do not rebuke. The verb is sharper than 'be kind.' It names the specific tone-of-voice the verse forbids, even when the answer to the asker is no. A note on the gap between declining and rebuking.",
     body: "",
     link: "93:10",
     tags: ["ethics", "language", "command"],
@@ -208,7 +208,7 @@ export const SAMPLE_NOTES: readonly Note[] = [
   },
   {
     id: "n13",
-    title: "Random thought on al-ākhiratu khayr",
+    title: "Random thought on al-akhiratu khayr",
     preview: "Just want to remember this. Coming back later.",
     body: "",
     link: "93:4",
@@ -223,9 +223,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
   },
   {
     id: "n14",
-    title: "The asbāb al-nuzūl in Bukhārī 4983",
+    title: "The asbab al-nuzul in Bukhari 4983",
     preview:
-      "Jundub b. Sufyān reports the wife of Abū Lahab — Umm Jamīl — saying 'I see only that your shayṭān has bid you farewell.' The word she uses for *bid farewell* is the same root that the surah negates two verses later. The Quran answers her in her own vocabulary.",
+      "Jundub b. Sufyan reports the wife of Abu Lahab — Umm Jamil — saying 'I see only that your shaytan has bid you farewell.' The word she uses for *bid farewell* is the same root that the surah negates two verses later. The Quran answers her in her own vocabulary.",
     body: "",
     link: "93:1",
     tags: ["asbab-al-nuzul", "language", "history"],
@@ -245,16 +245,16 @@ function GRIEF_BODY(): string {
     "",
     "## What the silence is, and isn't",
     "",
-    "As-Saʿdī reads the pause as deliberate — preparation, not punishment. He uses the word *tarbiyya*, nurturing, the kind a parent does when they step back so the child can take a step alone. That's a different category of silence than I was carrying.",
+    "As-Sadi reads the pause as deliberate — preparation, not punishment. He uses the word *tarbiyya*, nurturing, the kind a parent does when they step back so the child can take a step alone. That's a different category of silence than I was carrying.",
     "",
-    "> Your Lord has not left you, O Muḥammad, nor has He hated you.",
-    "> — Tafsir Ibn Kathīr, on 93:3",
+    "> Your Lord has not left you, O Muhammad, nor has He hated you.",
+    "> — Tafsir Ibn Kathir, on 93:3",
     "",
     "What I want to remember: **silence is not the same as abandonment.** The verse states this directly. It is the kind of sentence you can put on a wall.",
     "",
     "## What grief does to this",
     "",
-    "Grief makes the silence feel diagnostic — as though the absence is *about* me, *of* me. The tafsir corpus on 93:3 does not let that reading stand. *Mā waddaʿaka* — *he has not bid you farewell* — is the negation of a *relational* event, not a *judgmental* one. The verse is denying that something happened, not justifying that something is.",
+    "Grief makes the silence feel diagnostic — as though the absence is *about* me, *of* me. The tafsir corpus on 93:3 does not let that reading stand. *Ma waddaaka* — *he has not bid you farewell* — is the negation of a *relational* event, not a *judgmental* one. The verse is denying that something happened, not justifying that something is.",
     "",
     "Reading it that way takes the weight of the silence off my interpretation and puts it back on the calendar of God's giving — which I do not see, and which is not my job to read.",
   ].join("\n");
@@ -270,13 +270,13 @@ function LETTER_BODY(): string {
     "",
     "1. **The pause was real.** The Prophet ﷺ — the Prophet ﷺ — went through a *fatra*, a pause in revelation, somewhere between fifteen and forty days long. The classical sources don't agree on the duration; what they agree on is that it happened. You are not the first person on the road who has felt this way.",
     "",
-    "2. **The pause was not punishment.** Read 93:3 carefully. The verse negates *farewell* (*waddaʿaka*) and *active dislike* (*qalā*). Both. The text closes both possibilities at once.",
+    "2. **The pause was not punishment.** Read 93:3 carefully. The verse negates *farewell* (*waddaaka*) and *active dislike* (*qala*). Both. The text closes both possibilities at once.",
     "",
-    "3. **The pause was timed, not cruel.** As-Saʿdī's framing — that the longing produced in waiting deepens what is eventually given — is the framing I want you to hold onto. Not because it makes the waiting easier in the moment, but because it tells you the truth about what the waiting is *for*.",
+    "3. **The pause was timed, not cruel.** As-Sadi's framing — that the longing produced in waiting deepens what is eventually given — is the framing I want you to hold onto. Not because it makes the waiting easier in the moment, but because it tells you the truth about what the waiting is *for*.",
     "",
     "## A practical thing",
     "",
-    "When you cannot pray, at least *speak*. Even if it's just *yā Rabb, ana hunā* — *my Lord, I am here.* That is not nothing. The surah ends with *fa-ḥaddith* — *speak* — and the verb has been doing work for fourteen hundred years.",
+    "When you cannot pray, at least *speak*. Even if it's just *ya Rabb, ana huna* — *my Lord, I am here.* That is not nothing. The surah ends with *fa-haddith* — *speak* — and the verb has been doing work for fourteen hundred years.",
     "",
     "## Closing",
     "",
@@ -292,31 +292,31 @@ function COMPARATIVE_BODY(): string {
     "",
     "## The verse",
     "",
-    "**93:5** — *wa la-sawfa yuʿṭīka rabbuka fa-tarḍā* — *And your Lord is going to give you, and you will be satisfied.*",
+    "**93:5** — *wa la-sawfa yutika rabbuka fa-tarda* — *And your Lord is going to give you, and you will be satisfied.*",
     "",
-    "## As-Saʿdī",
+    "## As-Sadi",
     "",
     "Reads *la-sawfa* as the emphasised, unhurried future: *most certainly will give, in His own time*. Notes that the gift is left without a noun — and treats the open-endedness as itself the gift. Every promise to the Prophet ﷺ falls within its scope.",
     "",
-    "## Ibn Kathīr",
+    "## Ibn Kathir",
     "",
-    "Anchors the verse historically. Cites the narration from Ibn ʿAbbās that the Prophet ﷺ was shown what would *open for his community after him, region by region*, and that this *pleased him* — and then the verse came down. So *fa-tarḍā* is not abstract; it is the contentment of having been shown what will be.",
+    "Anchors the verse historically. Cites the narration from Ibn Abbas that the Prophet ﷺ was shown what would *open for his community after him, region by region*, and that this *pleased him* — and then the verse came down. So *fa-tarda* is not abstract; it is the contentment of having been shown what will be.",
     "",
-    "## Al-Qurṭubī",
+    "## Al-Qurtubi",
     "",
-    "Brings the *most-hopeful-verse* tradition. Quotes aṭ-Ṭabarī: *this is the most hopeful verse in the Book of God*, on the strength of the Prophet ﷺ's saying *I shall not be content while a single one of my community is in the Fire*. So the contentment in *fa-tarḍā* has a *floor* — it cannot land while anyone the Prophet ﷺ loves is still suffering.",
+    "Brings the *most-hopeful-verse* tradition. Quotes at-Tabari: *this is the most hopeful verse in the Book of God*, on the strength of the Prophet ﷺ's saying *I shall not be content while a single one of my community is in the Fire*. So the contentment in *fa-tarda* has a *floor* — it cannot land while anyone the Prophet ﷺ loves is still suffering.",
     "",
     "## Where they converge",
     "",
-    "All three read *la-sawfa* as emphatic, not flat. All three read *fa-tarḍā* as a *condition the giving must meet* — the gift continues until contentment. None of them try to *list* what will be given.",
+    "All three read *la-sawfa* as emphatic, not flat. All three read *fa-tarda* as a *condition the giving must meet* — the gift continues until contentment. None of them try to *list* what will be given.",
     "",
     "## Where they diverge",
     "",
-    "As-Saʿdī treats the verse atemporally. Ibn Kathīr anchors it to a specific historical revelation about the future of the umma. Al-Qurṭubī widens it to soteriology — the verse becomes a basis for hope about the community's ultimate fate.",
+    "As-Sadi treats the verse atemporally. Ibn Kathir anchors it to a specific historical revelation about the future of the umma. Al-Qurtubi widens it to soteriology — the verse becomes a basis for hope about the community's ultimate fate.",
     "",
     "## What I take",
     "",
-    "The three readings do not contradict; they nest. The atemporal frame (As-Saʿdī) holds the historical anchor (Ibn Kathīr) holds the soteriological reach (Qurṭubī). Reading the three together makes the verse feel structurally solid in a way that any one alone does not.",
+    "The three readings do not contradict; they nest. The atemporal frame (As-Sadi) holds the historical anchor (Ibn Kathir) holds the soteriological reach (Qurtubi). Reading the three together makes the verse feel structurally solid in a way that any one alone does not.",
   ].join("\n");
 }
 

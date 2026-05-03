@@ -31,7 +31,7 @@ export function ResponseStyleSection() {
     <section className="settings-section">
       <header className="settings-section-hd">
         <h2>Response style</h2>
-        <p>How Mishkāt shapes its answers. You can switch styles for an individual question too.</p>
+        <p>How Mishkat shapes its answers. You can switch styles for an individual question too.</p>
       </header>
       <div className="settings-radio-group" role="radiogroup" aria-label="Response style">
         {OPTIONS.map((opt) => {

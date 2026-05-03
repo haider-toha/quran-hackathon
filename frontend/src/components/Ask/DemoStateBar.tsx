@@ -5,7 +5,11 @@ import type { CSSProperties } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import type { AskScenario, AskState } from "@/types";
 
-type DemoState = Extract<AskState, "input" | "streaming" | "answered" | "low">;
+// "consulting" is the brief pre-streaming surface that names the sources
+// being searched. It's a demo-bar–reachable state so QA can dwell on it.
+export type DemoState =
+  | Extract<AskState, "input" | "streaming" | "answered" | "low">
+  | "consulting";
 
 type Props = {
   state: DemoState;
@@ -19,6 +23,7 @@ type Props = {
 
 const DEFAULT_OPTIONS: ReadonlyArray<{ key: DemoState; label: string }> = [
   { key: "input", label: "Input" },
+  { key: "consulting", label: "Consulting" },
   { key: "streaming", label: "Streaming" },
   { key: "answered", label: "Answered" },
 ];

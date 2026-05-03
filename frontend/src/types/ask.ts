@@ -49,6 +49,21 @@ export type Answer = {
   durationMs: number;
 };
 
+// Concrete next-step suggestion shown beneath a deferred answer. The
+// model proposes a small set of "what would unstick this question"
+// actions — e.g. enabling another tafsir source or widening scope.
+// `kind` is a discriminator the UI uses to pick an icon and tone; the
+// label is what's actually rendered on the button.
+export type DeferralNextStepKind = "enable-source" | "widen-scope" | "rephrase" | "external";
+
+export type DeferralNextStep = {
+  kind: DeferralNextStepKind;
+  label: string;
+  // When the mock has a target source it's stashed here so the UI can
+  // surface "Enable Tafsir al-Razi" rather than a generic prompt.
+  target?: string;
+};
+
 export type Deferral = {
   question: string;
   scope: string;
@@ -59,6 +74,9 @@ export type Deferral = {
     total: number;
   };
   body: readonly string[];
+  // Optional concrete suggestions the model thinks would help. Surfaced
+  // as small action buttons under the deferral body.
+  nextSteps?: readonly DeferralNextStep[];
 };
 
 // Scenario / variant types let mock data carry several phrasings of the

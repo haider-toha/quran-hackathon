@@ -13,11 +13,6 @@ const READER_MODE_OPTIONS: ReadonlyArray<{ value: ReaderMode; label: string; des
   },
   { value: "mushaf", label: "Mushaf", desc: "Arabic only, classic mushaf-style reading." },
   { value: "translation", label: "Translation", desc: "English-only, for quiet reading." },
-  {
-    value: "side-by-side",
-    label: "Side by side",
-    desc: "Arabic and translation in parallel columns.",
-  },
 ];
 
 export function ReadingSection() {

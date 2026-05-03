@@ -1,10 +1,18 @@
-import type { SlashCommand, SlashCommandResult } from "@/types";
+import type { SlashCommand } from "@/types";
 
-// 5 commands from spec §8.2. The Journal slash menu opens on `/`.
+// Slash-command registry. Discovery + filtering source of truth for both the
+// Journal slash menu (`SlashCommandMenu`) and the Ask slash menu (`SlashMenu`
+// in `components/Ask/Ask.tsx`), which whitelists a different subset via the
+// `allowedIds` prop.
 //
 // Convention: `trigger` is the typed string after `/`. `name` is the human
 // label rendered in the menu. `iconName` lets the menu render via the
 // Icon component map without dragging a React import into the registry.
+//
+// The Ask power commands (scope/sources/compare/clear) are side-effects:
+// the consumer inspects the id and routes to the matching store action
+// rather than going through a runner. They live here so the registry stays
+// the single source of truth.
 
 export const SLASH_COMMANDS: readonly SlashCommand[] = [
   {
@@ -47,89 +55,36 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     iconName: "reflect",
     category: "generate",
   },
+  {
+    id: "scope",
+    trigger: "scope",
+    name: "/scope",
+    description: "Change the active scope (surah / verse range).",
+    iconName: "compass",
+    category: "transform",
+  },
+  {
+    id: "sources",
+    trigger: "sources",
+    name: "/sources",
+    description: "Open the active sources panel.",
+    iconName: "layers",
+    category: "transform",
+  },
+  {
+    id: "compare",
+    trigger: "compare",
+    name: "/compare",
+    description: "Toggle between synthesized and by-source answer views.",
+    iconName: "library",
+    category: "transform",
+  },
+  {
+    id: "clear",
+    trigger: "clear",
+    name: "/clear",
+    description: "Clear the current conversation.",
+    iconName: "x",
+    category: "transform",
+  },
 ];
-
-// Mock async handler — pretends to talk to a backend so the UI feels real.
-// 600ms delay matches the prototype's perceived latency. Returns plausible
-// content with real Quran citations.
-
-const DELAY_MS = 600;
-
-function delay<T>(value: T, ms: number = DELAY_MS): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
-}
-
-const SEARCH_RESULT: SlashCommandResult = {
-  type: "search-result",
-  content:
-    "Three matches across the corpus: 3:103 (the rope of Allah), 25:74 (the prayer for righteous offspring), 17:24 (lowering the wing of humility to one's parents).",
-  source: { name: "Quran corpus", ref: "3:103, 25:74, 17:24" },
-  aiGenerated: false,
-};
-
-const AYAH_93_3: SlashCommandResult = {
-  type: "verse",
-  content:
-    "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ\n\nYour Lord has not forsaken you, nor does He hate you.",
-  source: { name: "Surat Ad-Ḍuḥā", ref: "93:3" },
-  aiGenerated: false,
-};
-
-const SUMMARY_RESULT: SlashCommandResult = {
-  type: "summary",
-  content:
-    "After a pause in revelation, the surah arrives as a direct response. The negation in verse 3 closes both possibilities — neither farewell nor displeasure — and reframes silence as preparation rather than absence.",
-  source: { name: "Tafsir As-Saʿdī", ref: "93:3" },
-  aiGenerated: true,
-};
-
-const REFLECT_RESULT: SlashCommandResult = {
-  type: "reflection",
-  content: "What does the silence in your own life teach you that words cannot?",
-  source: null,
-  aiGenerated: true,
-};
-
-/**
- * Run a slash command against mock content. The result type depends on the
- * command id, not the args (for now). Once a real backend is wired up, this
- * function becomes the single client-side entry point — its shape stays.
- */
-export async function runSlashCommand(
-  cmd: SlashCommand,
-  args: string,
-): Promise<SlashCommandResult> {
-  const trimmed = args.trim();
-  switch (cmd.id) {
-    case "search":
-      return delay(SEARCH_RESULT);
-    case "ayah":
-      // /ayah 93:3 returns the canonical Ad-Ḍuḥā verse. Other refs return a
-      // generic placeholder — wave-2 wires this to real surah data.
-      if (trimmed === "93:3") return delay(AYAH_93_3);
-      return delay({
-        type: "verse",
-        content: trimmed.length > 0 ? `(verse ${trimmed} would render here)` : AYAH_93_3.content,
-        source: trimmed.length > 0 ? { name: "Quran corpus", ref: trimmed } : AYAH_93_3.source,
-        aiGenerated: false,
-      });
-    case "template":
-      return delay({
-        type: "summary",
-        content: "Pick a template from the inserter.",
-        source: null,
-        aiGenerated: false,
-      });
-    case "summarise":
-      return delay(SUMMARY_RESULT);
-    case "reflect":
-      return delay(REFLECT_RESULT);
-    default:
-      return delay({
-        type: "summary",
-        content: "Command not implemented in the v3 mock.",
-        source: null,
-        aiGenerated: false,
-      });
-  }
-}

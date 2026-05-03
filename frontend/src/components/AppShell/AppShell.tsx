@@ -19,19 +19,40 @@
 
 import { Suspense, type ReactNode } from "react";
 
+import { GlobalCommandPalette } from "@/components/CommandPalette";
+import { JournalChromeProvider } from "@/components/Journal/JournalChromeContext";
+import { Toaster } from "@/components/Toaster";
+
 import { ChromeMain } from "./ChromeMain";
+import { HelpOverlay } from "./HelpOverlay";
 import { OnboardingFrame } from "./OnboardingFrame";
 import { OnboardingGate } from "./OnboardingGate";
 import { SidebarWithCollapse } from "./SidebarWithCollapse";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  // `JournalChromeProvider` lives at the shell root so the Sidebar (a
+  // sibling of `{children}`) and Topbar (rendered inside `ChromeMain`)
+  // share a single source of truth for the journal's compose-mode chrome
+  // override. Outside `/journal` (or with the v2 flag off) the provider
+  // simply holds its inert default value — `useChromeBinding` is a no-op
+  // until JournalV2 mounts.
   return (
-    <>
+    <JournalChromeProvider>
       <OnboardingGate />
       <OnboardingFrame
         shell={
           <div className="shell">
-            <SidebarWithCollapse />
+            {/*
+              Both the sidebar (ChatHistorySection reads `?thread=`) and the
+              chrome-main subtree (SurahCrumb reads `?surah=`) call
+              useSearchParams. Next.js requires those calls to sit behind a
+              Suspense boundary when the route is statically prerendered;
+              keep the boundaries scoped tightly so each subtree streams
+              independently rather than stalling on the slowest sibling.
+            */}
+            <Suspense fallback={null}>
+              <SidebarWithCollapse />
+            </Suspense>
             <Suspense fallback={null}>
               <ChromeMain>{children}</ChromeMain>
             </Suspense>
@@ -39,6 +60,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         }
         onboarding={<div className="onboarding-root">{children}</div>}
       />
-    </>
+      <Toaster />
+      <HelpOverlay />
+      {/* Phase 6 — palette mounts globally so ⌘K and the sidebar search
+          button work from every route, including onboarding. The palette
+          itself returns `null` when its store is closed. */}
+      <GlobalCommandPalette />
+    </JournalChromeProvider>
   );
 }

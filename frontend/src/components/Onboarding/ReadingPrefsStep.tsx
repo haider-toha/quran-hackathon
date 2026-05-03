@@ -27,11 +27,6 @@ const READER_MODE_OPTIONS: ReadonlyArray<{ value: ReaderMode; label: string; des
     label: "Translation",
     desc: "English-only, for quiet reading.",
   },
-  {
-    value: "side-by-side",
-    label: "Side by side",
-    desc: "Arabic and translation in parallel columns.",
-  },
 ];
 
 const RESPONSE_STYLE_OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: string; desc: string }> =
@@ -85,7 +80,7 @@ export function ReadingPrefsStep({ onContinue, onBack }: Props) {
         <section className="onboard-section">
           <header className="onboard-section-hd">
             <span className="lbl">Response style</span>
-            <span className="desc">How Mishkāt shapes its answers.</span>
+            <span className="desc">How Mishkat shapes its answers.</span>
           </header>
           <div className="onboard-grid onboard-grid-3">
             {RESPONSE_STYLE_OPTIONS.map((opt) => (

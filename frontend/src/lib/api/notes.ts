@@ -78,12 +78,21 @@ export async function createNote(input: CreateNoteInput): Promise<Note> {
  * Patch an existing user note. No-op for sample notes (which are read-only
  * in the v3 mock). Returns the updated note, or `null` when the id isn't a
  * user note.
+ *
+ * After the local-store mutation, dispatches `mishkat:note-saved` so the
+ * SuggestionsRail (and any other listener wiring "review on save") can
+ * react. Server-side / non-window environments are skipped.
  */
 export async function updateNote(
   id: string,
   patch: Partial<Omit<Note, "id">>,
 ): Promise<Note | null> {
   updateUserNote(id, patch);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent<{ noteId: string }>("mishkat:note-saved", { detail: { noteId: id } }),
+    );
+  }
   return findUserNote(id);
 }
 

@@ -75,7 +75,7 @@ export function Onboarding() {
   return (
     <div className="onboarding">
       <header className="onboard-hd">
-        <span className="onboard-brand">Mishkāt</span>
+        <span className="onboard-brand">Mishkat</span>
         <ol className="onboard-steps" aria-label="Onboarding progress">
           {STEP_NUMBERS.map((n) => (
             <li

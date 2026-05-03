@@ -1,10 +1,9 @@
 export type Theme = "light" | "dark";
 export type Rooting = "manuscript" | "modern" | "neutral";
-export type ReaderMode = "interleaved" | "mushaf" | "translation" | "side-by-side";
+export type ReaderMode = "interleaved" | "mushaf" | "translation";
 export type ResponseStyle = "brief" | "standard" | "comparative";
 export type SuggestionsSurface = "rail" | "off";
 export type SuggestionFrequency = "high" | "low" | "off";
-export type LibraryView = "cards" | "table";
 
 export type LastRead = {
   surah: number;
@@ -29,8 +28,10 @@ export type Preferences = {
   // writing
   suggestionsSurface: SuggestionsSurface;
   suggestionFrequency: SuggestionFrequency;
-  // library default view
-  libraryView: LibraryView;
+  /** When true, the SuggestionsRail body suppresses cards until the user
+   * pauses (no keystrokes for 30s) or saves the note. The header count still
+   * reflects the real number of available suggestions. */
+  reviewOnSave: boolean;
   // continue-from-last-read
   lastRead: LastRead;
 };
@@ -48,6 +49,6 @@ export const DEFAULT_PREFERENCES: Preferences = {
   recitationEnabled: false,
   suggestionsSurface: "rail",
   suggestionFrequency: "high",
-  libraryView: "cards",
+  reviewOnSave: false,
   lastRead: null,
 };

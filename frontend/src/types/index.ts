@@ -1,7 +1,7 @@
 export type { Revelation, SurahSummary, Verse, Surah, VerseRef, VerseRange } from "./quran";
 export type { TafsirLanguage, TafsirSource, TafsirCitation, TafsirEntry } from "./tafsir";
 export type { Note, NoteTag } from "./notes";
-export type { ResearchType, TrustLevel, ResearchResult } from "./research";
+export type { ResearchType, TrustLevel, ResearchResult, ResearchSynthesisGroup } from "./research";
 export type {
   Theme,
   Rooting,
@@ -9,7 +9,6 @@ export type {
   ResponseStyle,
   SuggestionsSurface,
   SuggestionFrequency,
-  LibraryView,
   LastRead,
   Preferences,
 } from "./preferences";
@@ -24,6 +23,8 @@ export type {
   AnswerParagraph,
   Answer,
   Deferral,
+  DeferralNextStep,
+  DeferralNextStepKind,
   AskIntent,
   AskScenario,
   AskScenarioVariant,
@@ -31,11 +32,6 @@ export type {
 } from "./ask";
 export type { AppRoute } from "./routes";
 export type { Template, TemplateSection, TemplateSectionType } from "./templates";
-export type {
-  SlashCommand,
-  SlashCommandCategory,
-  SlashCommandResult,
-  SlashCommandResultType,
-} from "./slash";
+export type { SlashCommand, SlashCommandCategory } from "./slash";
 export type { Suggestion, SuggestionKind, SuggestionFeedback } from "./suggestions";
 export type { FeatureFlags } from "./admin";

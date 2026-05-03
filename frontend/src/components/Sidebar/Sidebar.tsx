@@ -2,8 +2,8 @@
 
 import clsx from "clsx";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { type ComponentType } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, type ComponentType } from "react";
 
 import {
   BookIcon,
@@ -11,13 +11,19 @@ import {
   type IconProps,
   LibraryIcon,
   PenIcon,
+  PlusIcon,
+  SearchIcon,
   SettingsIcon,
   SidebarIcon,
   SparkleIcon,
 } from "@/components/Icon";
+import { useJournalChrome } from "@/components/Journal/JournalChromeContext";
+import { NotificationsBell } from "@/components/Topbar/NotificationsBell";
+import { openCommandPalette } from "@/hooks/useCommandPalette";
 import { kbdChord } from "@/lib/kbd";
-import { RECENT_ITEMS } from "@/lib/mock-data";
 import type { AppRoute } from "@/types";
+
+import { ChatHistorySection } from "./ChatHistorySection";
 
 type NavItem = {
   href: AppRoute;
@@ -42,16 +48,44 @@ type Props = {
 
 export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
+  const journalChrome = useJournalChrome();
   const isActive = (href: string): boolean =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // "New chat" used to live in two places — the standalone Ask chat sidebar
+  // had a button and the rail had a list-style entry below the nav. The
+  // redesigned shell drops the list entry and keeps a single button at the
+  // top of the chat-history section. Routing to /ask without a thread
+  // parameter is the canonical "start new" action.
+  const handleNewChat = useCallback(() => {
+    router.push("/ask");
+  }, [router]);
+
+  // Phase 10 — the Sources pill is relevant on the reading/research surfaces
+  // that consume tafsir sources, not on the Library archive of notes.
+  // Surface the route via a data-attribute so globals.css can hide the
+  // pill (and any future Library-only chrome tweaks) without forcing the
+  // sidebar to know which children to omit.
+  const onLibrary = pathname.startsWith("/library");
+
+  // Phase 6 — the notifications bell relocated from the topbar into the
+  // sidebar foot. While the journal is in compose mode the chrome should
+  // be entirely silent, so we hide the bell there. Connect mode (and any
+  // non-journal route) keeps it visible.
+  const hideBell = journalChrome.isComposeChrome;
+
   return (
-    <nav className={clsx("sidebar", collapsed && "collapsed-inner")} aria-label="Primary">
+    <nav
+      className={clsx("sidebar", collapsed && "collapsed-inner")}
+      aria-label="Primary"
+      data-on-library={onLibrary ? "true" : undefined}
+    >
       <div className="brand">
         <div className="brand-mark" aria-hidden lang="ar">
           م
         </div>
-        <div className="brand-name">Mishkāt</div>
+        <div className="brand-name">Mishkat</div>
         <button
           type="button"
           className="collapse-btn"
@@ -61,6 +95,24 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
           <SidebarIcon size={14} />
         </button>
       </div>
+
+      {/* Phase 6 — sidebar search button. Replaces the topbar's old search
+          input. Uses the same hover-reveal pattern as the nav-item kbd
+          hints: the ⌘K hint is hidden by default and fades in on hover.
+          When the sidebar is collapsed to icons-only, the hint stays
+          hidden via the existing `.collapsed-inner .kbd` rule. */}
+      <button
+        type="button"
+        className="sidebar-search nav-item"
+        onClick={() => openCommandPalette()}
+        aria-label="Open command palette"
+      >
+        <span className="icon">
+          <SearchIcon size={15} />
+        </span>
+        <span className="label">Search</span>
+        <span className="kbd">{kbdChord("cmd", "K")}</span>
+      </button>
 
       <div className="nav-group">
         {PRIMARY_NAV.map((item) => {
@@ -82,22 +134,29 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
         })}
       </div>
 
-      <div className="recent">
-        <div className="nav-label">Recent</div>
-        <div className="recent-list">
-          {RECENT_ITEMS.map((item) => (
-            <Link key={item.id} href="/journal" className="recent-item">
-              <span className="ref">{item.ref}</span>
-              <span className="ttl">{item.title}</span>
-            </Link>
-          ))}
+      {!collapsed ? (
+        <div className="sidebar-chat-block">
+          <button type="button" className="sidebar-new-chat-btn" onClick={handleNewChat}>
+            <PlusIcon size={12} />
+            <span>New chat</span>
+          </button>
+          <ChatHistorySection />
         </div>
-      </div>
+      ) : null}
 
       <div className="sidebar-foot">
+        {/* Phase 6 — notifications bell sits just above the source pill /
+            settings entry / user avatar. Wrapping it in a row gives the
+            popover something to anchor to and keeps the icon left-aligned
+            with the other foot rows. Hidden in journal compose mode. */}
+        {!hideBell ? (
+          <div className="sidebar-bell-row">
+            <NotificationsBell />
+          </div>
+        ) : null}
         <Link href="/settings?tab=sources" className="source-pill">
           <span className="dot" aria-hidden />
-          <span className="lbl">Sources</span>
+          <span className="lbl">Library</span>
           <span className="num">·&nbsp;{sourceCount.active} active</span>
         </Link>
         <Link href="/settings" className={clsx("nav-item", isActive("/settings") && "active")}>
@@ -108,11 +167,11 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
           <span className="kbd">{kbdChord("cmd", ",")}</span>
         </Link>
         <div className="foot-row">
-          <div className="avatar" aria-hidden lang="ar">
-            س
+          <div className="avatar" aria-hidden>
+            <span className="avatar-initial">S</span>
           </div>
           <div className="foot-detail">
-            <div className="name">Sami</div>
+            <div className="name">Sami Faruqi</div>
             <div className="meta">Juz Amma · 8 notes</div>
           </div>
         </div>
