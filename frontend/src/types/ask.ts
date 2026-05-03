@@ -1,4 +1,7 @@
-export type AskState = "idle" | "streaming" | "answered" | "low";
+// "input" is the v3 default — the user has typed nothing yet, no answer is
+// rendered. "low" is the deferral state. "idle" is retained for legacy demo
+// callers; the active set in v3 is "input | streaming | answered | low".
+export type AskState = "idle" | "input" | "streaming" | "answered" | "low";
 
 export type ConfidenceLevel = "high" | "med" | "low";
 
@@ -35,6 +38,9 @@ export type Answer = {
   closing: string;
   citations: readonly AnswerCitation[];
   retrieval: readonly RetrievalStep[];
+  // The deferral surface still receives confidence from the server; the v3
+  // UI does not render a meter, but the field stays so deferral logic can
+  // route on it.
   confidence: {
     level: ConfidenceLevel;
     sources: number;

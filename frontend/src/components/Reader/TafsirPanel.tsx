@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
-import { ConfidenceMeter } from "@/components/ConfidenceMeter";
 import { BookmarkIcon, CopyIcon, PenIcon, SparkleIcon, XIcon } from "@/components/Icon";
 import { TAFSIR_93_3 } from "@/lib/mock-data";
-import type { ResponseMode, Surah, TafsirCitation, Verse } from "@/types";
+import { usePreferences } from "@/lib/preferences-context";
+import type { Surah, TafsirCitation, Verse } from "@/types";
 
 import { parseInlineMarkdown } from "./inline-markdown";
 import { SourceCard } from "./SourceCard";
@@ -22,16 +22,12 @@ type Props = {
   onClose: () => void;
 };
 
-const MODES: readonly ResponseMode[] = ["simple", "detailed", "comparative"];
-
-const MODE_LABEL: Record<ResponseMode, string> = {
-  simple: "Simple",
-  detailed: "Detailed",
-  comparative: "Comparative",
-};
-
 export function TafsirPanel({ surah, ayah, onClose }: Props) {
-  const [mode, setMode] = useState<ResponseMode>("detailed");
+  // Read responseStyle silently — v3 renders the canonical Detailed layout
+  // regardless of style. The pref still informs server-side response shape.
+  // TODO(v3.1): branch on responseStyle for actual content variants
+  const { preferences } = usePreferences();
+
   const [openSourceId, setOpenSourceId] = useState<string | null>(
     TAFSIR_93_3.citations[0]?.id ?? null,
   );
@@ -84,30 +80,6 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
         </div>
         <div className="tp-ayah-trans">&ldquo;{ayah.english}&rdquo;</div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 18,
-          }}
-        >
-          <div className="seg" style={{ flex: 1 }}>
-            {MODES.map((m) => (
-              <button
-                key={m}
-                type="button"
-                className={mode === m ? "on" : ""}
-                onClick={() => setMode(m)}
-                aria-pressed={mode === m}
-              >
-                {MODE_LABEL[m]}
-              </button>
-            ))}
-          </div>
-          <ConfidenceMeter level="high" sources={3} total={3} />
-        </div>
-
         <div className="tp-section">
           <h3>
             <span
@@ -134,7 +106,7 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
           </div>
         </div>
 
-        {isFocal && mode !== "simple" ? (
+        {isFocal ? (
           <div className="tp-section">
             <h3>Three takeaways</h3>
             <ul className="tp-points">
@@ -147,7 +119,7 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
           </div>
         ) : null}
 
-        {isFocal ? (
+        {isFocal && preferences.showReflectionPrompts ? (
           <div className="tp-section">
             <div className="tp-marginalia">
               <span className="lbl">Reflection</span>
@@ -156,21 +128,7 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
           </div>
         ) : null}
 
-        {isFocal && mode === "comparative" ? (
-          <div className="tp-section">
-            <h3>Sources</h3>
-            {TAFSIR_93_3.citations.map((citation) => (
-              <SourceCard
-                key={citation.id}
-                citation={citation}
-                open={openSourceId === citation.id}
-                onToggle={() => toggleSource(citation.id)}
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {isFocal && mode !== "comparative" ? (
+        {isFocal ? (
           <div className="tp-section">
             <h3>Drawn from</h3>
             {drawnFromCitations.map((citation) => (

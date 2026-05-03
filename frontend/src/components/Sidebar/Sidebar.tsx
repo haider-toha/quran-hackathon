@@ -13,25 +13,25 @@ import {
   PenIcon,
   SettingsIcon,
   SidebarIcon,
-  SourceIcon,
   SparkleIcon,
 } from "@/components/Icon";
+import { kbdChord } from "@/lib/kbd";
 import { RECENT_ITEMS } from "@/lib/mock-data";
 import type { AppRoute } from "@/types";
 
 type NavItem = {
   href: AppRoute;
   label: string;
-  shortcut: string;
+  shortcutKey: string;
   icon: ComponentType<IconProps>;
 };
 
 const PRIMARY_NAV: readonly NavItem[] = [
-  { href: "/", label: "Read", shortcut: "⌘1", icon: BookIcon },
-  { href: "/ask", label: "Ask", shortcut: "⌘2", icon: SparkleIcon },
-  { href: "/journal", label: "Journal", shortcut: "⌘3", icon: PenIcon },
-  { href: "/library", label: "Library", shortcut: "⌘4", icon: LibraryIcon },
-  { href: "/research", label: "Research", shortcut: "⌘5", icon: CompassIcon },
+  { href: "/", label: "Read", shortcutKey: "1", icon: BookIcon },
+  { href: "/ask", label: "Ask", shortcutKey: "2", icon: SparkleIcon },
+  { href: "/journal", label: "Journal", shortcutKey: "3", icon: PenIcon },
+  { href: "/library", label: "Library", shortcutKey: "4", icon: LibraryIcon },
+  { href: "/research", label: "Research", shortcutKey: "5", icon: CompassIcon },
 ];
 
 type Props = {
@@ -76,7 +76,7 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
                 <Icon size={15} />
               </span>
               <span className="label">{item.label}</span>
-              <span className="kbd">{item.shortcut}</span>
+              <span className="kbd">{kbdChord("cmd", item.shortcutKey)}</span>
             </Link>
           );
         })}
@@ -95,25 +95,17 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
       </div>
 
       <div className="sidebar-foot">
-        <Link href="/settings" className="source-pill">
+        <Link href="/settings?tab=sources" className="source-pill">
           <span className="dot" aria-hidden />
           <span className="lbl">Sources</span>
-          <span className="num">
-            {sourceCount.active}/{sourceCount.total}
-          </span>
-        </Link>
-        <Link href="/settings" className={clsx("nav-item", isActive("/settings") && "active")}>
-          <span className="icon">
-            <SourceIcon size={15} />
-          </span>
-          <span className="label">Tafsir sources</span>
+          <span className="num">·&nbsp;{sourceCount.active} active</span>
         </Link>
         <Link href="/settings" className={clsx("nav-item", isActive("/settings") && "active")}>
           <span className="icon">
             <SettingsIcon size={15} />
           </span>
           <span className="label">Settings</span>
-          <span className="kbd">⌘,</span>
+          <span className="kbd">{kbdChord("cmd", ",")}</span>
         </Link>
         <div className="foot-row">
           <div className="avatar" aria-hidden lang="ar">

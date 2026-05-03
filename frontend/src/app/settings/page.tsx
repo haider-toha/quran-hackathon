@@ -1,6 +1,10 @@
 import { Settings } from "@/components/Settings";
-import { TAFSIR_SOURCES, TAFSIR_93_3 } from "@/lib/mock-data";
 
-export default function SettingsPage() {
-  return <Settings sources={TAFSIR_SOURCES} sampleEntry={TAFSIR_93_3} />;
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function SettingsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const raw = params.tab;
+  const initialTab = typeof raw === "string" ? raw : null;
+  return <Settings initialTab={initialTab} />;
 }

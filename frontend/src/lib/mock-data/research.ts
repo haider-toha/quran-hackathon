@@ -11,6 +11,8 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     duration: "42:18",
     snippet:
       "When the wahy paused, the Prophet ﷺ felt it as absence. This sermon traces how the surah responds — not by explaining the silence away, but by reframing what silence means in a relationship with God.",
+    thumbnailUrl: null,
+    readTimeMinutes: null,
   },
   {
     id: "r2",
@@ -22,6 +24,8 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     duration: null,
     snippet:
       "A reading of Ad-Duha through the lens of Islamic theology of trials. Argues that the surah's structure — oath, reassurance, recollection, charge — is itself a pedagogical model for moving through periods of perceived divine absence.",
+    thumbnailUrl: null,
+    readTimeMinutes: 8,
   },
   {
     id: "r3",
@@ -33,6 +37,8 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     duration: null,
     snippet:
       "Examines how verse 9 generalizes the address — from a specific command to the Prophet ﷺ to a universal ethical injunction. Discusses the linguistic shift between vocative and indicative modes.",
+    thumbnailUrl: null,
+    readTimeMinutes: 12,
   },
   {
     id: "r4",
@@ -44,6 +50,8 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     duration: "1:12:04",
     snippet:
       "Linguistic deep-dive into the surah. Explores why ḍuḥā and layl are paired in oath, and what the choice of waddaʿaka over taraka does theologically. Particular attention to verse 3.",
+    thumbnailUrl: null,
+    readTimeMinutes: null,
   },
   {
     id: "r5",
@@ -55,6 +63,8 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     duration: "24:32",
     snippet:
       "Pastoral reflection on the experience of feeling spiritually disconnected. Cites Ad-Duha as a textual anchor for the position that perceived divine silence is not, theologically, divine absence.",
+    thumbnailUrl: null,
+    readTimeMinutes: null,
   },
 ];
 

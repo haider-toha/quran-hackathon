@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppShell } from "@/components/AppShell";
+import { FlagsProvider } from "@/lib/flags";
 import { fontVariableClassName } from "@/lib/fonts";
 import { PREFERENCES_BOOTSTRAP_SCRIPT, PreferencesProvider } from "@/lib/preferences-context";
 
@@ -24,7 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <PreferencesProvider>
-          <AppShell>{children}</AppShell>
+          <FlagsProvider>
+            <AppShell>{children}</AppShell>
+          </FlagsProvider>
         </PreferencesProvider>
       </body>
     </html>

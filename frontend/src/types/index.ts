@@ -12,8 +12,11 @@ export type {
   Theme,
   Rooting,
   ReaderMode,
-  Suggestions,
+  ResponseStyle,
+  SuggestionsSurface,
+  SuggestionFrequency,
   LibraryView,
+  LastRead,
   Preferences,
 } from "./preferences";
 export { DEFAULT_PREFERENCES } from "./preferences";
@@ -29,3 +32,12 @@ export type {
   Deferral,
 } from "./ask";
 export type { AppRoute } from "./routes";
+export type { Template, TemplateSection, TemplateSectionType } from "./templates";
+export type {
+  SlashCommand,
+  SlashCommandCategory,
+  SlashCommandResult,
+  SlashCommandResultType,
+} from "./slash";
+export type { Suggestion, SuggestionKind, SuggestionFeedback } from "./suggestions";
+export type { FeatureFlags } from "./admin";

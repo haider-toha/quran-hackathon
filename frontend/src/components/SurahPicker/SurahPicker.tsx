@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SearchIcon, XIcon } from "@/components/Icon";
+import { JUZ_LABEL } from "@/lib/copy";
 import { JUZ_AMMA_SURAHS } from "@/lib/mock-data";
 import { useDialogFocus } from "@/lib/use-dialog-focus";
 import type { SurahSummary } from "@/types";
@@ -88,7 +89,7 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
         <SearchIcon size={14} />
         <input
           ref={inputRef}
-          placeholder="Search Juz Amma…"
+          placeholder={`Search ${JUZ_LABEL}…`}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -132,7 +133,7 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
         <span>
           {filtered.length} of {JUZ_AMMA_SURAHS.length}
         </span>
-        <span>Juz Amma</span>
+        <span>{JUZ_LABEL}</span>
       </div>
     </div>
   );

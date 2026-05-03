@@ -2,20 +2,26 @@
 
 import type { CSSProperties } from "react";
 
+import { useAdminMode } from "@/lib/flags";
 import type { AskState } from "@/types";
 
-type DemoState = Extract<AskState, "streaming" | "answered" | "low">;
+type DemoState = Extract<AskState, "input" | "streaming" | "answered" | "low">;
 
 type Props = {
   state: DemoState;
   onChange: (state: DemoState) => void;
 };
 
-const OPTIONS: ReadonlyArray<{ key: DemoState; label: string }> = [
+const DEFAULT_OPTIONS: ReadonlyArray<{ key: DemoState; label: string }> = [
+  { key: "input", label: "Input" },
   { key: "streaming", label: "Streaming" },
   { key: "answered", label: "Answered" },
-  { key: "low", label: "Low confidence" },
 ];
+
+const ADMIN_ONLY_OPTION: { key: DemoState; label: string } = {
+  key: "low",
+  label: "Low confidence",
+};
 
 const BUTTON_BASE: CSSProperties = {
   border: 0,
@@ -37,19 +43,18 @@ const BUTTON_ACTIVE: CSSProperties = {
 };
 
 /**
- * Inline three-way picker that swaps the Ask screen between its mock
- * states. Replaces the global "tweaks" panel from the original prototype.
- *
- * The bar is intentionally unobtrusive — it lives at the bottom of the
- * scroll region. The container is styled via `.demo-state-bar` in
- * `globals.css`; the per-button styling is local because no shared
- * `.demo-state-bar .opt` rule exists yet.
+ * Inline picker that swaps the Ask screen between its mock states. The
+ * "Low confidence" option is admin-only — see spec §1.3 + §3 + §4.3.
+ * Toggle admin mode with Cmd/Ctrl+Shift+. anywhere in the app.
  */
 export function DemoStateBar({ state, onChange }: Props) {
+  const { admin } = useAdminMode();
+  const options = admin ? [...DEFAULT_OPTIONS, ADMIN_ONLY_OPTION] : DEFAULT_OPTIONS;
+
   return (
     <div className="demo-state-bar" role="group" aria-label="Demo state" style={{ marginTop: 24 }}>
       <span className="lbl">Demo</span>
-      {OPTIONS.map((option) => {
+      {options.map((option) => {
         const active = state === option.key;
         return (
           <button
