@@ -86,8 +86,14 @@ function writeDismissals(store: DismissalStore): void {
   }
 }
 
-export function isDismissed(noteId: string, hash: string): boolean {
-  const store = readDismissals();
+/**
+ * Pure check against a caller-provided store snapshot. React consumers
+ * should subscribe via `useSyncExternalStore(subscribeDismissals,
+ * readDismissals, () => SERVER_DISMISSALS)` and pass the resulting snapshot
+ * here, so the calculation matches the snapshot React rendered against —
+ * including the empty server snapshot during SSR/hydration.
+ */
+export function isDismissedIn(store: DismissalStore, noteId: string, hash: string): boolean {
   const record = store[noteId]?.[hash];
   if (!record) return false;
   if (record.dismissed) return true;
