@@ -60,11 +60,7 @@ export function NoteBody({ note, onChangeBody, anchorSlot = null }: Props) {
   // — the `inline:` hash prefix keeps the two namespaces apart per spec.
   // First hydration render reads the empty `getServerDismissals` snapshot
   // so SSR and CSR DOM agree; real dismissals populate post-hydration.
-  const dismissals = useSyncExternalStore(
-    subscribeDismissals,
-    readDismissals,
-    getServerDismissals,
-  );
+  const dismissals = useSyncExternalStore(subscribeDismissals, readDismissals, getServerDismissals);
   const dismissedInlineHashes = useMemo<ReadonlySet<string>>(() => {
     const all = inlineSuggestionsFor(note.id);
     const dismissed = new Set<string>();

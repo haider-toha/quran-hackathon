@@ -37,11 +37,7 @@ export function SuggestionsRail({ note, onInsert }: Props) {
   // user dismisses or snoozes a card. The first hydration render reads the
   // empty `getServerDismissals` snapshot so the SSR and CSR DOM agree —
   // real dismissals populate post-hydration.
-  const dismissals = useSyncExternalStore(
-    subscribeDismissals,
-    readDismissals,
-    getServerDismissals,
-  );
+  const dismissals = useSyncExternalStore(subscribeDismissals, readDismissals, getServerDismissals);
 
   const visible = useMemo<readonly Suggestion[]>(() => {
     if (frequency === "off") return [];
