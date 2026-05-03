@@ -150,11 +150,7 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
   }, []);
 
   return (
-    <aside
-      className="tafsir-panel"
-      style={{ width: panelWidth }}
-      aria-label="Tafsir explanation"
-    >
+    <aside className="tafsir-panel" style={{ width: panelWidth }} aria-label="Tafsir explanation">
       <div
         className="tp-resize"
         role="separator"
