@@ -26,18 +26,12 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  // The popover is conditionally mounted by the parent — by the time this
-  // component renders, `anchor` already points at the trigger DOM node, so
-  // it's safe to read its rect at initial render time. We only re-position
-  // if the anchor *reference* changes between renders (rare).
-  const [position, setPosition] = useState<{ top: number; left: number }>(() =>
-    computePosition(anchor),
-  );
-  const [lastAnchor, setLastAnchor] = useState(anchor);
-  if (lastAnchor !== anchor) {
-    setLastAnchor(anchor);
-    setPosition(computePosition(anchor));
-  }
+  // Position is a pure derivation of `anchor`'s viewport rect. The parent
+  // mounts this popover only after the trigger is in the DOM, so reading
+  // `getBoundingClientRect()` during render is safe — no need for state at
+  // all. `useMemo` keys on the anchor reference; in the rare case the
+  // parent swaps the trigger element, we recompute.
+  const position = useMemo(() => computePosition(anchor), [anchor]);
 
   // Click outside the popover (and outside its anchoring trigger) closes it.
   // EventTarget can be a non-Node (e.g. window); guard with instanceof

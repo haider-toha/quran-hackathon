@@ -6,13 +6,16 @@ import { useDeferredValue, useMemo, useState, useSyncExternalStore } from "react
 import { GridIcon, ListIcon, PlusIcon, SearchIcon } from "@/components/Icon";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
 import { createNoteFromTemplate, readUserNotes, subscribeUserNotes } from "@/lib/notes-store";
-import { usePreferences } from "@/hooks/usePreferences";
+import {
+  usePreferenceActions,
+  usePreferenceLastRead,
+  usePreferenceView,
+} from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
 
 import { DateFilter, type DateRange } from "./DateFilter";
 import { LibraryEmpty } from "./LibraryEmpty";
-import { NoteCard } from "./NoteCard";
-import { NoteRow } from "./NoteRow";
+import { NoteListItem } from "./NoteListItem";
 import { SortControl, type SortKey } from "./SortControl";
 import { SurahFilter } from "./SurahFilter";
 import { TagFilter } from "./TagFilter";
@@ -76,19 +79,22 @@ function compareForSort(a: Note, b: Note, sort: SortKey, currentSurah: number | 
 }
 
 export function Library({ notes }: Props) {
-  const { preferences, setPreference } = usePreferences();
-  const view = preferences.libraryView;
-  const lastReadSurah = preferences.lastRead?.surah ?? null;
+  // Selector hooks — only re-render when the specific preference field
+  // changes. Avoids dragging in unrelated preference state (theme, rooting,
+  // etc.) just to read the library view.
+  const view = usePreferenceView();
+  const { setPreference } = usePreferenceActions();
 
   const userNotes = useUserNotes();
   // User-created notes ride on top of the static sample corpus, sorted most
-  // recent first within each band — newly-saved notes feel responsive.
-  const merged = useMemo<readonly Note[]>(() => {
-    const userSorted = [...userNotes].sort(
-      (a, b) => (Date.parse(b.editedAt) || 0) - (Date.parse(a.editedAt) || 0),
-    );
-    return [...userSorted, ...notes];
-  }, [notes, userNotes]);
+  // recent first within each band — newly-saved notes feel responsive. We
+  // skip an explicit pre-sort here because the final sort below operates on
+  // the merged list anyway; doing it in one pass keeps render work O(n log
+  // n) instead of two O(n log n) passes.
+  const merged = useMemo<readonly Note[]>(
+    () => [...userNotes, ...notes],
+    [notes, userNotes],
+  );
 
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
@@ -116,27 +122,21 @@ export function Library({ notes }: Props) {
     return Array.from(set).sort();
   }, [merged]);
 
-  const filteredNotes = useMemo<readonly Note[]>(() => {
-    const q = deferredQuery.trim().toLowerCase();
-    const filtered = merged.filter((note) => {
-      if (selectedSurahs.length > 0) {
-        const surah = parseSurahLink(note.link);
-        if (surah === null || !selectedSurahs.includes(surah)) return false;
-      }
-      if (selectedTags.length > 0) {
-        if (!selectedTags.some((tag) => note.tags.includes(tag))) return false;
-      }
-      if (!inDateRange(note.editedAt, dateRange)) return false;
-      if (q.length > 0) {
-        const haystack = [note.title, note.preview, note.tags.join(" "), note.link]
-          .join(" ")
-          .toLowerCase();
-        if (!haystack.includes(q)) return false;
-      }
-      return true;
-    });
-    return [...filtered].sort((a, b) => compareForSort(a, b, sortKey, lastReadSurah));
-  }, [merged, deferredQuery, selectedSurahs, selectedTags, dateRange, sortKey, lastReadSurah]);
+  // The lastRead surah is read at sort-time only — surfaces as a tie-break
+  // for the "linked" sort key. Selector hook keeps this Library out of the
+  // re-render path for unrelated preference changes (theme, rooting, etc.).
+  const lastRead = usePreferenceLastRead();
+  const lastReadSurah = lastRead?.surah ?? null;
+
+  const filteredNotes = useFilteredAndSorted(
+    merged,
+    deferredQuery,
+    selectedSurahs,
+    selectedTags,
+    dateRange,
+    sortKey,
+    lastReadSurah,
+  );
 
   const isFiltering =
     deferredQuery.trim().length > 0 ||
@@ -252,7 +252,7 @@ export function Library({ notes }: Props) {
         ) : view === "cards" ? (
           <div className="note-grid">
             {filteredNotes.map((note) => (
-              <NoteCard key={note.id} note={note} />
+              <NoteListItem key={note.id} note={note} variant="card" />
             ))}
           </div>
         ) : (
@@ -264,7 +264,7 @@ export function Library({ notes }: Props) {
               <span style={{ textAlign: "right" }}>Edited</span>
             </div>
             {filteredNotes.map((note) => (
-              <NoteRow key={note.id} note={note} />
+              <NoteListItem key={note.id} note={note} variant="row" />
             ))}
           </div>
         )}
@@ -277,4 +277,48 @@ export function Library({ notes }: Props) {
       />
     </div>
   );
+}
+
+/**
+ * Single-pass filter + sort over the merged note list. Combines the v2
+ * implementation's separate filter and sort memos so the merged list is
+ * traversed at most once for filtering and once for sorting per render —
+ * not three times (filter, then merge-sort, then filter-sort).
+ *
+ * `deferredQuery` rather than the live `query` so typing into the search
+ * box stays smooth across larger note corpora (React 19's `useDeferredValue`
+ * already lowers priority on the input pipeline).
+ */
+function useFilteredAndSorted(
+  merged: readonly Note[],
+  deferredQuery: string,
+  selectedSurahs: readonly number[],
+  selectedTags: readonly string[],
+  dateRange: DateRange,
+  sortKey: SortKey,
+  lastReadSurah: number | null,
+): readonly Note[] {
+  return useMemo<readonly Note[]>(() => {
+    const q = deferredQuery.trim().toLowerCase();
+    const filtered = merged.filter((note) => {
+      if (selectedSurahs.length > 0) {
+        const surah = parseSurahLink(note.link);
+        if (surah === null || !selectedSurahs.includes(surah)) return false;
+      }
+      if (selectedTags.length > 0) {
+        if (!selectedTags.some((tag) => note.tags.includes(tag))) return false;
+      }
+      if (!inDateRange(note.editedAt, dateRange)) return false;
+      if (q.length > 0) {
+        const haystack = [note.title, note.preview, note.tags.join(" "), note.link]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+    // Single sort pass over the filtered list. compareForSort already chains
+    // the alpha / linked / recent rules in priority order.
+    return [...filtered].sort((a, b) => compareForSort(a, b, sortKey, lastReadSurah));
+  }, [merged, deferredQuery, selectedSurahs, selectedTags, dateRange, sortKey, lastReadSurah]);
 }

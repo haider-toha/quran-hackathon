@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState, type ChangeEvent } fro
 import { LinkIcon, SparkleIcon } from "@/components/Icon";
 import { SlashMenu } from "@/components/SlashMenu/SlashMenu";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
+import { useSlashMenuInternal } from "@/hooks/useSlashMenu";
 import { renderMarkdown } from "@/lib/markdown";
 import { runSlashCommand } from "@/lib/slash-commands";
 import type { Note, SlashCommand, SlashCommandResult, Template } from "@/types";
@@ -16,15 +17,6 @@ type Props = {
   onChangeBody?: (body: string, opts: { aiAssisted?: boolean }) => void;
 };
 
-type SlashContext = {
-  /** Caret coordinate for the SlashMenu virtual anchor. */
-  anchor: { x: number; y: number };
-  /** Index in body where the leading "/" sits. */
-  startOffset: number;
-  /** Latest typed query (everything between "/" and current caret). */
-  query: string;
-};
-
 // Loading placeholder — we replace this with the actual result content once
 // the mock async runner resolves. Kept short so it doesn't visually dominate
 // the document while the user is reading.
@@ -33,25 +25,20 @@ const LOADING_TOKEN = "[loading…]";
 export function NoteBody({ note, onChangeBody }: Props) {
   const editorId = useId();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const mirrorRef = useRef<HTMLDivElement>(null);
 
   const [body, setBody] = useState<string>(note.body);
-  const [lastNoteId, setLastNoteId] = useState<string>(note.id);
-  const [slash, setSlash] = useState<SlashContext | null>(null);
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   // Tracks where to insert the template's sections when the picker resolves.
   // Set when the user runs `/template` from inline; cleared when the picker
   // closes without selection.
   const [templateInsertionAt, setTemplateInsertionAt] = useState<number | null>(null);
 
-  // Re-sync local body when the note id changes (navigating between notes).
-  // React 19 idiom: derive state during render rather than firing a layout
-  // effect. The setState call inside an `if` branch is allowed because it
-  // only fires during render of a new note id.
-  if (lastNoteId !== note.id) {
-    setLastNoteId(note.id);
-    setBody(note.body);
-  }
+  const slash = useSlashMenuInternal(textareaRef);
+
+  // Note: no effect to re-sync `body` on note.id changes. The parent
+  // (Journal.tsx) keys this component on `note.id` so a navigation between
+  // notes remounts NoteBody, letting `useState(note.body)` re-initialize
+  // cleanly. Avoids the setState-in-render anti-pattern entirely.
 
   // Auto-grow the textarea to fit its content. Done in a layout effect so
   // the height settles before paint. Kept simple — `scrollHeight` is fine
@@ -75,56 +62,12 @@ export function NoteBody({ note, onChangeBody }: Props) {
     const next = event.target.value;
     setBody(next);
     persistBody(next, {});
-    updateSlashContext(next, event.target.selectionStart ?? next.length);
-  }
-
-  /**
-   * Inspect the body around the current caret and decide whether the slash
-   * menu should be open. Trigger rules: a "/" at start-of-line OR after
-   * whitespace, with no whitespace between the "/" and the caret.
-   */
-  function updateSlashContext(text: string, caret: number) {
-    let i = caret - 1;
-    let queryStart = -1;
-    while (i >= 0) {
-      const ch = text[i];
-      if (ch === undefined) break;
-      if (/\s/u.test(ch)) {
-        // Hit whitespace before finding our slash — no open menu.
-        break;
-      }
-      if (ch === "/") {
-        const prev = i === 0 ? "" : (text[i - 1] ?? "");
-        if (prev === "" || /\s/u.test(prev)) {
-          queryStart = i;
-        }
-        break;
-      }
-      i -= 1;
-    }
-
-    if (queryStart === -1) {
-      setSlash(null);
-      return;
-    }
-
-    const rawQuery = text.slice(queryStart + 1, caret);
-    if (rawQuery.length > 32) {
-      setSlash(null);
-      return;
-    }
-
-    const anchor = caretCoordsFromTextarea(textareaRef.current, mirrorRef.current, caret);
-    setSlash({ anchor, startOffset: queryStart, query: rawQuery });
-  }
-
-  function closeSlash() {
-    setSlash(null);
+    slash.onTextChange(next, event.target.selectionStart ?? next.length);
   }
 
   function handleSelectionChange(event: React.SyntheticEvent<HTMLTextAreaElement>) {
     const target = event.currentTarget;
-    updateSlashContext(target.value, target.selectionStart ?? target.value.length);
+    slash.onTextChange(target.value, target.selectionStart ?? target.value.length);
   }
 
   /**
@@ -145,12 +88,12 @@ export function NoteBody({ note, onChangeBody }: Props) {
   }
 
   async function handleSlashSelect(command: SlashCommand) {
-    if (!slash) return;
+    if (slash.startOffset === null) return;
     const startOffset = slash.startOffset;
     const caret = textareaRef.current?.selectionStart ?? body.length;
     const args = body.slice(startOffset + 1 + command.trigger.length, caret).trim();
 
-    setSlash(null);
+    slash.close();
 
     // /template opens the picker inline; selection is appended at the slash
     // command position, not the cursor (the cursor ends up after the
@@ -250,16 +193,14 @@ export function NoteBody({ note, onChangeBody }: Props) {
             {renderMarkdown(body)}
           </div>
         ) : null}
-        {/* Hidden mirror used to compute caret pixel coordinates. */}
-        <div ref={mirrorRef} className="note-body-mirror" aria-hidden />
       </div>
 
       <SlashMenu
-        anchor={slash ? slash.anchor : null}
-        open={slash !== null}
-        query={slash?.query ?? ""}
+        anchor={slash.anchor}
+        open={slash.open}
+        query={slash.query}
         onSelect={handleSlashSelect}
-        onClose={closeSlash}
+        onClose={slash.close}
       />
 
       <TemplatePicker
@@ -272,86 +213,6 @@ export function NoteBody({ note, onChangeBody }: Props) {
       />
     </div>
   );
-}
-
-/**
- * Compute the viewport-fixed caret coordinates for a textarea. We do this
- * by mirroring the textarea's contents up to the caret in a hidden div,
- * matching font/padding/width via CSS, then reading the rect of a marker
- * span. Standard technique — works without contenteditable.
- */
-function caretCoordsFromTextarea(
-  textarea: HTMLTextAreaElement | null,
-  mirror: HTMLDivElement | null,
-  caret: number,
-): { x: number; y: number } {
-  if (!textarea || !mirror) {
-    return { x: 0, y: 0 };
-  }
-  const style = window.getComputedStyle(textarea);
-  const props: readonly string[] = [
-    "boxSizing",
-    "width",
-    "height",
-    "overflowX",
-    "overflowY",
-    "borderTopWidth",
-    "borderRightWidth",
-    "borderBottomWidth",
-    "borderLeftWidth",
-    "borderStyle",
-    "paddingTop",
-    "paddingRight",
-    "paddingBottom",
-    "paddingLeft",
-    "fontStyle",
-    "fontVariant",
-    "fontWeight",
-    "fontStretch",
-    "fontSize",
-    "fontSizeAdjust",
-    "lineHeight",
-    "fontFamily",
-    "textAlign",
-    "textTransform",
-    "textIndent",
-    "textDecoration",
-    "letterSpacing",
-    "wordSpacing",
-    "tabSize",
-    "whiteSpace",
-    "wordWrap",
-  ];
-  // Position offscreen but measurable.
-  mirror.style.position = "absolute";
-  mirror.style.visibility = "hidden";
-  mirror.style.top = "0";
-  mirror.style.left = "-9999px";
-  mirror.style.whiteSpace = "pre-wrap";
-  mirror.style.wordWrap = "break-word";
-  for (const prop of props) {
-    const value = style.getPropertyValue(camelToKebab(prop));
-    mirror.style.setProperty(camelToKebab(prop), value);
-  }
-
-  const text = textarea.value.substring(0, caret);
-  mirror.textContent = text;
-  const marker = document.createElement("span");
-  marker.textContent = textarea.value.substring(caret) || ".";
-  mirror.appendChild(marker);
-
-  const taRect = textarea.getBoundingClientRect();
-  const markerRect = marker.getBoundingClientRect();
-  const mirrorRect = mirror.getBoundingClientRect();
-
-  const x = taRect.left + (markerRect.left - mirrorRect.left) - textarea.scrollLeft;
-  const y = taRect.top + (markerRect.top - mirrorRect.top) - textarea.scrollTop + markerRect.height;
-
-  return { x, y };
-}
-
-function camelToKebab(s: string): string {
-  return s.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 }
 
 /**

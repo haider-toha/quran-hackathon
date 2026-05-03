@@ -2,20 +2,11 @@
 
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type ComponentType,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   BookIcon,
   CompassIcon,
-  type IconProps,
   LibraryIcon,
   NoteIcon,
   PenIcon,
@@ -28,23 +19,11 @@ import { TemplatePicker } from "@/components/TemplatePicker";
 import { kbdChord, kbdLabel } from "@/lib/kbd";
 import { AD_DUHA, SAMPLE_NOTES } from "@/lib/mock-data";
 import { createNoteFromTemplate } from "@/lib/notes-store";
-import { type RecentSearch, readRecents } from "@/lib/recents";
+import { readRecents } from "@/lib/recents";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { AppRoute, Template } from "@/types";
 
-type CommandKind = "nav" | "verse" | "note" | "create" | "recent";
-
-type Command = {
-  id: string;
-  kind: CommandKind;
-  icon: ComponentType<IconProps>;
-  label: string;
-  sub: string;
-  /** When set, navigation routes here. */
-  href?: AppRoute | string;
-  /** When set, runs an in-app side-effect instead of navigating. */
-  action?: () => void;
-};
+import { type Command, useCommandFilter } from "./useCommandFilter";
 
 const NAV_COMMANDS: readonly Command[] = [
   {
@@ -89,19 +68,31 @@ const NAV_COMMANDS: readonly Command[] = [
   },
 ];
 
+// Static command sets — rebuilt once per module load, not per render. Verse
+// and note commands depend on imported corpora that don't change at runtime,
+// so hoisting them out of the component avoids regenerating ~50+ objects on
+// every keystroke.
+const VERSE_COMMANDS: readonly Command[] = AD_DUHA.verses.map((verse) => ({
+  id: `v-${verse.number}`,
+  kind: "verse",
+  icon: BookIcon,
+  label: `Ad-Ḍuḥā 93:${verse.number}`,
+  sub: verse.english,
+  href: "/" satisfies AppRoute,
+}));
+
+const NOTE_COMMANDS: readonly Command[] = SAMPLE_NOTES.slice(0, 5).map((note) => ({
+  id: `n-${note.id}`,
+  kind: "note",
+  icon: NoteIcon,
+  label: note.title,
+  sub: `${note.link} · ${note.tags.slice(0, 2).join(", ")}`,
+  href: "/journal" satisfies AppRoute,
+}));
+
 type Props = {
   onClose: () => void;
 };
-
-// Subscribe to localStorage recents so the surface re-renders if entries
-// change while the palette is open. Reads return readonly RecentSearch[].
-function useRecentsSnapshot(): readonly RecentSearch[] {
-  return useSyncExternalStore(
-    () => () => {},
-    () => readRecents(),
-    () => [],
-  );
-}
 
 export function CommandPalette({ onClose }: Props) {
   const router = useRouter();
@@ -111,7 +102,10 @@ export function CommandPalette({ onClose }: Props) {
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const recents = useRecentsSnapshot();
+  // Recents are read once on mount. The palette is short-lived and recents
+  // only mutate from navigation actions that close it, so a snapshot is
+  // sufficient — no need for a faux-reactive useSyncExternalStore.
+  const [recents] = useState(() => readRecents());
 
   // React 19 "derive state from changing prop/state" pattern — reset focus
   // to the top of the result list whenever the query changes.
@@ -139,7 +133,8 @@ export function CommandPalette({ onClose }: Props) {
   );
 
   // Build the create-new commands. Each routes to a screen and (where it
-  // makes sense) prefills with the current query.
+  // makes sense) prefills with the current query. Rebuilt only when the
+  // trimmed query changes so unrelated state churn doesn't allocate.
   const createCommands = useMemo<readonly Command[]>(() => {
     const askHref = trimmedQuery.length > 0 ? `/ask?q=${encodeURIComponent(trimmedQuery)}` : "/ask";
     const researchHref =
@@ -176,7 +171,7 @@ export function CommandPalette({ onClose }: Props) {
     () =>
       recents.slice(0, 5).map((entry) => ({
         id: `recent-${entry.id}`,
-        kind: "recent" as const,
+        kind: "recent",
         icon: TimeIcon,
         label: entry.query,
         sub: entry.route === "/research" ? "Research" : "Ask",
@@ -188,50 +183,14 @@ export function CommandPalette({ onClose }: Props) {
     [recents],
   );
 
-  const groups = useMemo(() => {
-    const q = trimmedQuery.toLowerCase();
-
-    const verseCommands: readonly Command[] = AD_DUHA.verses.map((verse) => ({
-      id: `v-${verse.number}`,
-      kind: "verse" as const,
-      icon: BookIcon,
-      label: `Ad-Ḍuḥā 93:${verse.number}`,
-      sub: verse.english,
-      href: "/" as AppRoute,
-    }));
-
-    const noteCommands: readonly Command[] = SAMPLE_NOTES.slice(0, 5).map((note) => ({
-      id: `n-${note.id}`,
-      kind: "note" as const,
-      icon: NoteIcon,
-      label: note.title,
-      sub: `${note.link} · ${note.tags.slice(0, 2).join(", ")}`,
-      href: "/journal" as AppRoute,
-    }));
-
-    const matches = (item: Command): boolean => {
-      if (q.length === 0) return true;
-      return item.label.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q);
-    };
-
-    const navItems = NAV_COMMANDS.filter(matches);
-    const verseItems = verseCommands.filter(matches);
-    const noteItems = noteCommands.filter(matches);
-
-    const showRecents = q.length === 0 && recentCommands.length > 0;
-    const totalContentMatches = navItems.length + verseItems.length + noteItems.length;
-    // Show "Create new" when query is empty, when it begins with "new", or
-    // when no other items matched. Always render in the same position.
-    const showCreate = q.length === 0 || q.startsWith("new") || totalContentMatches === 0;
-
-    return [
-      showRecents ? { label: "Recent", items: recentCommands } : null,
-      navItems.length > 0 ? { label: "Navigate", items: navItems } : null,
-      verseItems.length > 0 ? { label: "Verses", items: verseItems } : null,
-      noteItems.length > 0 ? { label: "Notes", items: noteItems } : null,
-      showCreate ? { label: "Create new", items: createCommands } : null,
-    ].filter((g): g is { label: string; items: readonly Command[] } => g !== null);
-  }, [trimmedQuery, recentCommands, createCommands]);
+  const groups = useCommandFilter({
+    trimmedQuery,
+    recentCommands,
+    createCommands,
+    navCommands: NAV_COMMANDS,
+    verseCommands: VERSE_COMMANDS,
+    noteCommands: NOTE_COMMANDS,
+  });
 
   const flat = useMemo(() => groups.flatMap((g) => g.items), [groups]);
 

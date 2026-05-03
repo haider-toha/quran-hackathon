@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 
 import { PlusIcon } from "@/components/Icon";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
+import { updateNote } from "@/lib/api/notes";
 import { findNote as findSampleNote } from "@/lib/mock-data";
 import {
   createNoteFromTemplate,
   readUserNotes,
   subscribeUserNotes,
-  updateUserNote,
 } from "@/lib/notes-store";
 import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
@@ -88,6 +88,11 @@ export function Journal({ noteId }: Props) {
           style={{ flex: 1, minHeight: 0 }}
         >
           <NoteBody
+            // Remount the editor when the active note changes so local
+            // editor state (body buffer, slash-menu position, template
+            // insertion offset) starts fresh — avoids stale-state bugs and
+            // lets NoteBody initialize body from props on each mount.
+            key={note.id}
             note={note}
             onChangeBody={(nextBody, opts) => handleBodyChange(note, nextBody, opts)}
           />
@@ -113,8 +118,12 @@ function resolveNote(noteId: string, userNotes: readonly Note[]): Note | null {
 
 function handleBodyChange(note: Note, nextBody: string, opts: { aiAssisted?: boolean }): void {
   // Only user-store notes are mutable in v3. For sample notes, this is a
-  // no-op — `updateUserNote` already early-returns when the id isn't found.
-  updateUserNote(note.id, {
+  // no-op — the `lib/api/notes` updateNote wraps `updateUserNote` which
+  // early-returns when the id isn't in the user store. Fire-and-forget:
+  // the local store mutates synchronously, the live `useSyncExternalStore`
+  // subscriber re-renders, and the returned promise resolves to the
+  // updated note (or null) — we don't need it here.
+  void updateNote(note.id, {
     body: nextBody,
     ...(opts.aiAssisted ? { aiAssisted: true, hasAi: true } : {}),
   });
@@ -123,7 +132,7 @@ function handleBodyChange(note: Note, nextBody: string, opts: { aiAssisted?: boo
 function handleInsertSuggestion(note: Note, content: string): void {
   const trimmedBody = note.body.replace(/\s+$/u, "");
   const nextBody = trimmedBody.length === 0 ? content : `${trimmedBody}\n\n${content}`;
-  updateUserNote(note.id, { body: nextBody, aiAssisted: true, hasAi: true });
+  void updateNote(note.id, { body: nextBody, aiAssisted: true, hasAi: true });
 }
 
 function JournalEmpty() {

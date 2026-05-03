@@ -33,8 +33,8 @@ export function SuggestionsRail({ note, onInsert }: Props) {
   // object — same shape, no live state, no hydration drift.
   useSyncExternalStore(subscribeDismissals, readDismissals, getServerDismissals);
 
-  const visible = useMemo(() => {
-    if (frequency === "off") return [] as readonly Suggestion[];
+  const visible = useMemo<readonly Suggestion[]>(() => {
+    if (frequency === "off") return [];
     const seed = suggestionsFor(note.id);
     const live = seed.filter((s) => !isDismissed(note.id, s.hash));
     if (frequency === "low") return live.slice(0, LOW_LIMIT);
