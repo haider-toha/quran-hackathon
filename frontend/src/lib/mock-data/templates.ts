@@ -47,7 +47,7 @@ export const TEMPLATES: readonly Template[] = [
       },
       {
         heading: "Anchor verses",
-        placeholder: "Two or three ayāt that hold this theme together.",
+        placeholder: "Two or three ayat that hold this theme together.",
         type: "verse-link",
       },
       {
@@ -97,12 +97,12 @@ export const TEMPLATES: readonly Template[] = [
   },
   {
     id: "dua-extraction",
-    name: "Duʿā extraction",
-    description: "Pull a duʿā from the Quran and learn it.",
+    name: "Dua extraction",
+    description: "Pull a dua from the Quran and learn it.",
     icon: "quote",
     sections: [
       {
-        heading: "The duʿā",
+        heading: "The dua",
         placeholder: "Arabic and translation.",
         type: "verse-link",
       },
@@ -131,7 +131,7 @@ export const TEMPLATES: readonly Template[] = [
     sections: [
       {
         heading: "The name",
-        placeholder: "Ar-Raḥmān, Al-Wadūd, As-Sabūr…",
+        placeholder: "Ar-Rahman, Al-Wadud, As-Sabur…",
         type: "text",
       },
       {
@@ -191,18 +191,18 @@ export const TEMPLATES: readonly Template[] = [
         type: "verse-link",
       },
       {
-        heading: "As-Saʿdī",
-        placeholder: "What does As-Saʿdī say?",
+        heading: "As-Sadi",
+        placeholder: "What does As-Sadi say?",
         type: "tafsir-quote",
       },
       {
-        heading: "Ibn Kathīr",
-        placeholder: "What does Ibn Kathīr say?",
+        heading: "Ibn Kathir",
+        placeholder: "What does Ibn Kathir say?",
         type: "tafsir-quote",
       },
       {
-        heading: "Al-Qurṭubī",
-        placeholder: "What does Al-Qurṭubī say?",
+        heading: "Al-Qurtubi",
+        placeholder: "What does Al-Qurtubi say?",
         type: "tafsir-quote",
       },
       {

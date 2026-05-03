@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────
-   Mishkāt design tokens
+   Mishkat design tokens
    These tokens are exposed via Tailwind's @theme block, which both
    declares the CSS variables AND generates utilities (`bg-bg`,
    `text-ink`, etc.). Override the same variables under
@@ -251,8 +251,9 @@
 
   /* ── Sidebar ───────────────────────────────────────────── */
   .sidebar {
-    border-right: 1px solid var(--color-line);
-    background: var(--color-bg);
+    /* Subtle background contrast instead of a divider line — separation
+       reads through tone, not a hard rule. */
+    background: var(--color-bg-2);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -264,8 +265,14 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 16px 14px 14px;
-    min-height: 52px;
+    /* Asymmetric vertical padding shifts the brand mark down a few px so
+       its optical center lines up with the topbar text. The brand mark's
+       `::after` outline (inset: -3px) extends above the 26px box, making
+       a strictly centered mark read a touch high; the extra top padding
+       compensates. Height stays locked to the topbar (48px). */
+    padding: 8px 14px 0 14px;
+    height: 48px;
+    flex-shrink: 0;
   }
   .brand-mark {
     width: 26px;
@@ -412,6 +419,7 @@
   .sidebar.collapsed-inner .nav-item .label,
   .sidebar.collapsed-inner .nav-item .kbd,
   .sidebar.collapsed-inner .brand-name,
+  .sidebar.collapsed-inner .brand-mark,
   .sidebar.collapsed-inner .recent,
   .sidebar.collapsed-inner .foot-detail {
     display: none;
@@ -421,7 +429,19 @@
   }
   .sidebar.collapsed-inner .brand {
     justify-content: center;
-    padding: 16px 0 14px;
+    padding: 0;
+  }
+  /* Collapsed: the brand mark steps aside and the toggle takes its
+     spot — centered, fully visible (no hover-only fade), so the
+     collapse control isn't competing with the brand for the same
+     56-px column. */
+  .sidebar.collapsed-inner .collapse-btn {
+    position: static;
+    opacity: 1;
+    width: 28px;
+    height: 28px;
+    margin: 0 auto;
+    color: var(--color-ink-3);
   }
 
   .recent {
@@ -559,11 +579,16 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 18px;
+    /* Right padding follows the explanation-panel width — when the panel
+       is open the topbar shrinks so its controls don't slide under the
+       panel, and the panel's own header lines up at the topbar's Y. */
+    padding: 0 calc(18px + var(--tafsir-panel-w, 0px)) 0 18px;
+    transition: padding 200ms var(--ease);
     height: 48px;
-    border-bottom: 1px solid var(--color-line);
     background: var(--color-bg);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .crumbs {
@@ -844,6 +869,11 @@
     min-width: 0;
     overflow: hidden;
     position: relative;
+    /* The explanation panel is `position: fixed` (so its header lines up
+       with the topbar) — give the reader the corresponding right padding
+       so verses don't disappear behind the panel. */
+    padding-right: var(--tafsir-panel-w, 0px);
+    transition: padding-right 200ms var(--ease);
   }
   .reader {
     flex: 1;
@@ -902,7 +932,8 @@
   [data-rooting="neutral"] .sura-band {
     background: transparent;
     border: 0;
-    border-bottom: 1px solid var(--color-line);
+    /* No bottom rule — the band reads as a header through typography and
+       whitespace alone. */
     margin-bottom: 28px;
     padding-bottom: 28px;
   }
@@ -919,8 +950,12 @@
     font-family: var(--font-arabic);
     font-size: 56px;
     color: var(--color-ink);
-    line-height: 1;
-    margin-bottom: 12px;
+    /* line-height: 1 was too tight — the high diacritics on Arabic glyphs
+       (shadda, fatha, sukoon) overflowed the line box and visually crashed
+       into the English transliteration below. Give them room. */
+    line-height: 1.5;
+    padding-top: 0.1em;
+    margin-bottom: 18px;
     direction: rtl;
   }
   .sura-name-en {
@@ -1243,8 +1278,11 @@
   }
   .continue-banner .cb-text {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    /* Center-align — baseline alignment with two different font families
+       (sans label vs ref) reads as misaligned because the optical centers
+       differ. Centering looks balanced regardless of metrics. */
+    align-items: center;
+    gap: 10px;
     flex: 1;
     min-width: 0;
   }
@@ -1256,10 +1294,12 @@
     color: var(--color-ink-3);
   }
   .continue-banner .cb-ref {
-    font-family: var(--font-display);
-    font-style: italic;
+    /* Match the mono treatment used for refs elsewhere (.recent-item .ref,
+       .sura-no) — italic display felt out of place against the sans label. */
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--color-ink);
-    font-size: 13.5px;
+    letter-spacing: 0.01em;
   }
   .continue-banner .cb-arrow {
     display: inline-flex;
@@ -1521,8 +1561,11 @@
     padding: 4px;
   }
   .pop-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Single column so each item gets the popover's full inner width and
+       the meaning + verse-count subtitle has room to breathe (a 2-col grid
+       was forcing "11 verses" to ellipsize). */
+    display: flex;
+    flex-direction: column;
     gap: 1px;
   }
   .pop-item {
@@ -1580,27 +1623,41 @@
     display: block;
     margin-top: 1px;
   }
-  .pop-foot {
-    padding: 6px 10px;
-    border-top: 1px solid var(--color-line);
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-  }
-
   /* ── Tafsir panel ──────────────────────────────────────── */
   .tafsir-panel {
+    /* Fixed to the viewport's right edge so the panel covers the topbar's
+       vertical band — that lets `.tp-head` sit at Y=0 alongside the topbar
+       row. The reader and topbar both leave room for it via
+       `--tafsir-panel-w`, written by TafsirPanel on mount/resize. */
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: 460px;
     max-width: 50vw;
-    flex-shrink: 0;
-    border-left: 1px solid var(--color-line);
+    min-width: 360px;
+    z-index: 10;
+    /* The lighter `bg-elev` already separates the panel from the reader —
+       no border needed. */
     background: var(--color-bg-elev);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     animation: slideInRight 220ms var(--ease);
+  }
+  .tp-resize {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    transform: translateX(-3px);
+    cursor: col-resize;
+    z-index: 2;
+    background: transparent;
+    transition: background 120ms var(--ease);
+  }
+  .tp-resize:hover,
+  .tp-resize.dragging {
+    background: var(--color-line-strong);
   }
   @keyframes slideInRight {
     from {
@@ -1613,11 +1670,14 @@
     }
   }
   .tp-head {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--color-line);
+    /* Match the topbar's height exactly so the panel's "93:1 Explanation"
+       row visually sits on the same Y as "Read › Ad-Duha · 93". */
+    height: 48px;
+    padding: 0 18px;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
   }
   .tp-ref {
     font-family: var(--font-mono);
@@ -1648,8 +1708,8 @@
     line-height: 2;
     color: var(--color-ink);
     padding: 14px 16px;
+    /* Background contrast against the panel's bg-elev — no border. */
     background: var(--color-bg);
-    border: 1px solid var(--color-line);
     border-radius: var(--radius);
     margin-bottom: 6px;
   }
@@ -4482,20 +4542,19 @@
   }
 }
 
-/* ── Focus-visible on text inputs that null-out their outline ───────
-   Each of these inputs sets `outline: 0` because they sit inside a
-   container that paints its own focus state (e.g. .ask-input border
-   change, .library-bar .search border change). This block keeps a
-   visible :focus-visible ring as a fallback in case the container
-   focus state is missing or overridden. */
-.cmdk-input input:focus-visible,
-.popover .pop-search input:focus-visible,
-.ask-input:focus-within,
-.library-bar .search:focus-within,
-.note-title:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+/* ── Text-input focus is intentionally quiet ────────────────────────
+   The blinking caret is enough — text inputs do not paint a focus
+   ring. Container-level inputs (.ask-input, .library-bar .search) get
+   a subtle border/shadow shift inside their own block; everything
+   else relies on the caret. Buttons and links still pick up the
+   global :focus-visible ring for keyboard accessibility. */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[contenteditable]:focus,
+[contenteditable]:focus-visible {
+  outline: none;
 }
 
 /* ── Reduced-motion users opt out of slide / spring animations ──── */

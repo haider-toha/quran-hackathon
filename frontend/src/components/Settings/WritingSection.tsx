@@ -60,7 +60,7 @@ export function WritingSection() {
     <section className="settings-section">
       <header className="settings-section-hd">
         <h2>Writing</h2>
-        <p>Where and how often Mishkāt surfaces suggestions while you write.</p>
+        <p>Where and how often Mishkat surfaces suggestions while you write.</p>
       </header>
 
       <div className="set-section">

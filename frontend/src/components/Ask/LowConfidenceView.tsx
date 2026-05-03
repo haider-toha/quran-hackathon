@@ -79,7 +79,7 @@ export function LowConfidenceView({ deferral = SAMPLE_DEFERRAL }: Props = {}) {
           maxWidth: 480,
         }}
       >
-        Mishkāt is designed to defer rather than speculate. When the tafsir corpus doesn&apos;t
+        Mishkat is designed to defer rather than speculate. When the tafsir corpus doesn&apos;t
         address a question directly, you&apos;ll see a panel like this instead of a
         confident-sounding answer that isn&apos;t grounded.
       </div>

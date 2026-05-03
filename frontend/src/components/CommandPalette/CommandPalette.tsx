@@ -31,7 +31,7 @@ const NAV_COMMANDS: readonly Command[] = [
     kind: "nav",
     icon: BookIcon,
     label: "Read",
-    sub: "Ad-Ḍuḥā 93",
+    sub: "Ad-Duha 93",
     href: "/",
   },
   {
@@ -76,7 +76,7 @@ const VERSE_COMMANDS: readonly Command[] = AD_DUHA.verses.map((verse) => ({
   id: `v-${verse.number}`,
   kind: "verse",
   icon: BookIcon,
-  label: `Ad-Ḍuḥā 93:${verse.number}`,
+  label: `Ad-Duha 93:${verse.number}`,
   sub: verse.english,
   href: "/" satisfies AppRoute,
 }));
@@ -310,7 +310,7 @@ export function CommandPalette({ onClose }: Props) {
           <span>
             <span className="kbd-inline">{kbdLabel("esc")}</span> close
           </span>
-          <span style={{ marginLeft: "auto" }}>{kbdChord("cmd", "K")} · Mishkāt</span>
+          <span style={{ marginLeft: "auto" }}>{kbdChord("cmd", "K")} · Mishkat</span>
         </div>
       </div>
 

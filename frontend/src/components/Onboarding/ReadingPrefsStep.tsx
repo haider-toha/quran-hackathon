@@ -85,7 +85,7 @@ export function ReadingPrefsStep({ onContinue, onBack }: Props) {
         <section className="onboard-section">
           <header className="onboard-section-hd">
             <span className="lbl">Response style</span>
-            <span className="desc">How Mishkāt shapes its answers.</span>
+            <span className="desc">How Mishkat shapes its answers.</span>
           </header>
           <div className="onboard-grid onboard-grid-3">
             {RESPONSE_STYLE_OPTIONS.map((opt) => (

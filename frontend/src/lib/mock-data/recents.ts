@@ -4,7 +4,7 @@ export type RecentItem = {
   title: string;
 };
 
-// All recents live inside Surat Aḍ-Ḍuḥā in v3 — the corpus is one surah,
+// All recents live inside Surat Ad-Duha in v3 — the corpus is one surah,
 // so cross-surah refs would dead-link. Each entry surfaces in the sidebar
 // "Recent" stack and links to the matching note when its title matches a
 // note in the corpus.

@@ -37,7 +37,7 @@ export function SourcesSection() {
       <header className="settings-section-hd">
         <h2>Tafsir sources</h2>
         <p>
-          Enable the commentaries Mishkāt will draw on when answering questions, generating
+          Enable the commentaries Mishkat will draw on when answering questions, generating
           summaries, and suggesting links. Source order in answers reflects classical canonicity,
           not your order here.
         </p>

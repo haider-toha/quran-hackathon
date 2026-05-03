@@ -23,33 +23,33 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
   {
     id: "r1",
     type: "lecture",
-    title: "The Pause Before the Gift — A Tafsir of Surat Aḍ-Ḍuḥā",
+    title: "The Pause Before the Gift — A Tafsir of Surat Ad-Duha",
     speaker: "Dr. Yasir Qadhi",
     trust: "verified",
     meta: "42 min · Lecture · AlMaghrib · 2019",
     duration: "42:18",
     snippet:
-      "When the waḥy paused, the Prophet ﷺ felt it as absence. This sermon traces how the surah responds — not by explaining the silence away, but by reframing what silence means in a relationship with God. Anchors the reading in the Bukhārī 4983 narration of Jundub b. Sufyān.",
+      "When the wahy paused, the Prophet ﷺ felt it as absence. This sermon traces how the surah responds — not by explaining the silence away, but by reframing what silence means in a relationship with God. Anchors the reading in the Bukhari 4983 narration of Jundub b. Sufyan.",
     thumbnailUrl: null,
     readTimeMinutes: null,
   },
   {
     id: "r2",
     type: "article",
-    title: "Aḍ-Ḍuḥā and the Theology of Pauses",
+    title: "Ad-Duha and the Theology of Pauses",
     speaker: "Dr. Sherman Jackson",
     trust: "verified",
     meta: "8 min read · Article · The American Muslim · Mar 2018",
     duration: null,
     snippet:
-      "A reading of Aḍ-Ḍuḥā through the lens of Islamic theology of trials. Argues that the surah's structure — oath, reassurance, recollection, charge — is itself a pedagogical model for moving through periods of perceived divine absence.",
+      "A reading of Ad-Duha through the lens of Islamic theology of trials. Argues that the surah's structure — oath, reassurance, recollection, charge — is itself a pedagogical model for moving through periods of perceived divine absence.",
     thumbnailUrl: null,
     readTimeMinutes: 8,
   },
   {
     id: "r3",
     type: "article",
-    title: "The orphan in Quranic ethics: a close reading of Aḍ-Ḍuḥā 93:9",
+    title: "The orphan in Quranic ethics: a close reading of Ad-Duha 93:9",
     speaker: "Maria Massi Dakake",
     trust: "unknown",
     meta: "12 min read · Academic · Journal of Quranic Studies · 14.2",
@@ -68,7 +68,7 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     meta: "1h 12 min · Video · Bayyinah TV · 2016",
     duration: "1:12:04",
     snippet:
-      "Linguistic deep-dive into the surah. Explores why ḍuḥā and layl are paired in oath, and what the choice of waddaʿaka over taraka does theologically. Particular attention to verse 3 and to the structural mirroring of verses 6-8 with verses 9-11.",
+      "Linguistic deep-dive into the surah. Explores why duha and layl are paired in oath, and what the choice of waddaaka over taraka does theologically. Particular attention to verse 3 and to the structural mirroring of verses 6-8 with verses 9-11.",
     thumbnailUrl: "https://i.ytimg.com/vi/e-1A-OMMgjc/hqdefault.jpg",
     readTimeMinutes: null,
   },
@@ -81,20 +81,20 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     meta: "24 min · Lecture · Yaqeen Institute · 2021",
     duration: "24:32",
     snippet:
-      "Pastoral reflection on the experience of feeling spiritually disconnected. Cites Aḍ-Ḍuḥā as a textual anchor for the position that perceived divine silence is not, theologically, divine absence. Includes a section on the difference between the diagnostic reading of silence and the trusting one.",
+      "Pastoral reflection on the experience of feeling spiritually disconnected. Cites Ad-Duha as a textual anchor for the position that perceived divine silence is not, theologically, divine absence. Includes a section on the difference between the diagnostic reading of silence and the trusting one.",
     thumbnailUrl: null,
     readTimeMinutes: null,
   },
   {
     id: "r6",
     type: "video",
-    title: "Allah Has Not Left You — A Deeper Look at Aḍ-Ḍuḥā",
+    title: "Allah Has Not Left You — A Deeper Look at Ad-Duha",
     speaker: "Nouman Ali Khan",
     trust: "verified",
     meta: "18 min · Video · Bayyinah TV",
     duration: "18:24",
     snippet:
-      "A short Bayyinah lecture on what the Prophet ﷺ felt during the pause in revelation. Reads waddaʿaka in its formal-farewell register and contrasts the Quran's own choice of vocabulary with the Quraysh taunt that prompted the surah.",
+      "A short Bayyinah lecture on what the Prophet ﷺ felt during the pause in revelation. Reads waddaaka in its formal-farewell register and contrasts the Quran's own choice of vocabulary with the Quraysh taunt that prompted the surah.",
     thumbnailUrl: "https://i.ytimg.com/vi/eOoCfnN3k5M/hqdefault.jpg",
     readTimeMinutes: null,
   },
@@ -107,46 +107,46 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
     meta: "9 min · Video · Mufti Menk Channel · 2020",
     duration: "9:42",
     snippet:
-      "Brief, accessible reading of the surah focused on the rhetorical structure of la-sawfa yuʿṭīka rabbuka fa-tarḍā — *will most certainly give you, and you will be content*. Frames the verse as a generic anchor of hope alongside its primary address to the Prophet ﷺ.",
+      "Brief, accessible reading of the surah focused on the rhetorical structure of la-sawfa yutika rabbuka fa-tarda — *will most certainly give you, and you will be content*. Frames the verse as a generic anchor of hope alongside its primary address to the Prophet ﷺ.",
     thumbnailUrl: "https://i.ytimg.com/vi/K0PG7jsKLBA/hqdefault.jpg",
     readTimeMinutes: null,
   },
   {
     id: "r8",
     type: "article",
-    title: "Asbāb al-Nuzūl on Aḍ-Ḍuḥā: a survey of the durations narrated",
+    title: "Asbab al-Nuzul on Ad-Duha: a survey of the durations narrated",
     speaker: "Dr. Sohaib Saeed",
     trust: "verified",
     meta: "11 min read · Article · Quran Tafseer Institute · 2022",
     duration: null,
     snippet:
-      "Catalogues the four canonical positions on the duration of the *fatra* (twelve, fifteen, twenty-five, forty days) and traces the chains. Notes that al-Qurṭubī treats fifteen days as the majority view and that Ibn Kathīr's commentary on the surah declines to commit to a number.",
+      "Catalogues the four canonical positions on the duration of the *fatra* (twelve, fifteen, twenty-five, forty days) and traces the chains. Notes that al-Qurtubi treats fifteen days as the majority view and that Ibn Kathir's commentary on the surah declines to commit to a number.",
     thumbnailUrl: null,
     readTimeMinutes: 11,
   },
   {
     id: "r9",
     type: "lecture",
-    title: "Patience in the unanswered prayer — readings from Aḍ-Ḍuḥā 93:5",
+    title: "Patience in the unanswered prayer — readings from Ad-Duha 93:5",
     speaker: "Dr. Omar Suleiman",
     trust: "verified",
     meta: "31 min · Lecture · Yaqeen Institute · 2020",
     duration: "31:08",
     snippet:
-      "Pastoral khutbah on the unhurried la-sawfa of verse 5. Argues that the verse should reshape the believer's expectation of the *timing* of God's giving rather than the *fact* of it. Includes the aṭ-Ṭabarī tradition that this is the *most hopeful verse* in the Quran.",
+      "Pastoral khutbah on the unhurried la-sawfa of verse 5. Argues that the verse should reshape the believer's expectation of the *timing* of God's giving rather than the *fact* of it. Includes the at-Tabari tradition that this is the *most hopeful verse* in the Quran.",
     thumbnailUrl: null,
     readTimeMinutes: null,
   },
   {
     id: "r10",
     type: "article",
-    title: "On the linguistic register of waddaʿa: parting between intimates",
+    title: "On the linguistic register of waddaa: parting between intimates",
     speaker: "Dr. Akram Nadwi",
     trust: "verified",
     meta: "6 min read · Article · Cambridge Islamic College · 2019",
     duration: null,
     snippet:
-      "Concise close-reading of the verb waddaʿa in classical Arabic usage. Distinguishes it from taraka (left), faraqa (separated), and ghāba (was absent). Argues that the verse's choice of waddaʿaka is shaped to the precise register of fear in the Quraysh taunt.",
+      "Concise close-reading of the verb waddaa in classical Arabic usage. Distinguishes it from taraka (left), faraqa (separated), and ghaba (was absent). Argues that the verse's choice of waddaaka is shaped to the precise register of fear in the Quraysh taunt.",
     thumbnailUrl: null,
     readTimeMinutes: 6,
   },
@@ -166,13 +166,13 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
   {
     id: "r12",
     type: "article",
-    title: "When silence is mercy: Aḍ-Ḍuḥā for the spiritually exhausted",
+    title: "When silence is mercy: Ad-Duha for the spiritually exhausted",
     speaker: "Sh. Hamza Yusuf",
     trust: "verified",
     meta: "14 min read · Article · Renovatio · 2021",
     duration: null,
     snippet:
-      "Theological-pastoral essay on the surah as a model for periods of dryness in prayer. Reads As-Saʿdī's *tarbiyya* framing of the pause and connects it to the Akbarī tradition of *qabḍ wa basṭ* (constraint and expansion) in the spiritual life.",
+      "Theological-pastoral essay on the surah as a model for periods of dryness in prayer. Reads As-Sadi's *tarbiyya* framing of the pause and connects it to the Akbari tradition of *qabd wa bast* (constraint and expansion) in the spiritual life.",
     thumbnailUrl: null,
     readTimeMinutes: 14,
   },
@@ -192,19 +192,19 @@ export const SAMPLE_RESEARCH: readonly ResearchResult[] = [
   {
     id: "r14",
     type: "lecture",
-    title: "Aḍ-Ḍuḥā and the structure of consolation",
+    title: "Ad-Duha and the structure of consolation",
     speaker: "Dr. Fakhr-ul-Islam Banuri",
     trust: "unknown",
     meta: "2h 18 min · Lecture · Darul Uloom Karachi · 2017",
     duration: "2:18:50",
     snippet:
-      "Long-form classical lecture (Urdu with English subtitles) treating Aḍ-Ḍuḥā alongside Ash-Sharḥ as a paired *consolation diptych*. Trust unknown pending corpus review of the speaker's broader output. Long-running lecture; index by section.",
+      "Long-form classical lecture (Urdu with English subtitles) treating Ad-Duha alongside Ash-Sharh as a paired *consolation diptych*. Trust unknown pending corpus review of the speaker's broader output. Long-running lecture; index by section.",
     thumbnailUrl: null,
     readTimeMinutes: null,
   },
 ];
 
 export const RESEARCH_QUESTION =
-  "What does the pause in revelation in Surat Aḍ-Ḍuḥā teach us about feeling spiritually distant?";
+  "What does the pause in revelation in Surat Ad-Duha teach us about feeling spiritually distant?";
 
 export const RESEARCH_TOTAL_RESULTS = 23;

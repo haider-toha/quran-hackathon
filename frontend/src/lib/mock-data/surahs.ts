@@ -1,7 +1,7 @@
 import type { SurahSummary } from "@/types";
 
 // In v3 the corpus has been narrowed to a single deeply-modeled surah —
-// Surat Aḍ-Ḍuḥā (93). The catalogue exposes only this entry so the
+// Surat Ad-Duha (93). The catalogue exposes only this entry so the
 // SurahPicker, sidebar count, and command palette all reflect the
 // intentional single-surah scope. When the corpus expands, the array
 // grows; consumers do not change.
@@ -9,7 +9,7 @@ export const JUZ_AMMA_SURAHS: readonly SurahSummary[] = [
   {
     number: 93,
     arabic: "الضُّحَى",
-    transliteration: "Aḍ-Ḍuḥā",
+    transliteration: "Ad-Duha",
     meaning: "The Forenoon",
     verseCount: 11,
     revelation: "Meccan",

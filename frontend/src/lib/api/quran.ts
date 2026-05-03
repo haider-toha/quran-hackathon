@@ -11,7 +11,7 @@ import type { Surah, SurahSummary } from "@/types";
 
 /**
  * Fetch a single surah by number. Resolves to a fully-hydrated `Surah` (with
- * verses) when the surah is in the Juzʾ ʿAmma corpus we ship today; rejects
+ * verses) when the surah is in the Juz Amma corpus we ship today; rejects
  * with a typed error when the surah isn't found.
  */
 export async function fetchSurah(n: number): Promise<Surah> {

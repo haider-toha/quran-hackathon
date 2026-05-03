@@ -3,7 +3,7 @@ import type { Surah } from "@/types";
 export const AD_DUHA: Surah = {
   number: 93,
   arabic: "الضُّحَى",
-  transliteration: "Aḍ-Ḍuḥā",
+  transliteration: "Ad-Duha",
   meaning: "The Forenoon",
   verseCount: 11,
   revelation: "Meccan",

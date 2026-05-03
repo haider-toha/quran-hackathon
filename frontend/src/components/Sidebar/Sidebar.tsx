@@ -51,7 +51,7 @@ export function Sidebar({ collapsed, onCollapseToggle, sourceCount }: Props) {
         <div className="brand-mark" aria-hidden lang="ar">
           م
         </div>
-        <div className="brand-name">Mishkāt</div>
+        <div className="brand-name">Mishkat</div>
         <button
           type="button"
           className="collapse-btn"

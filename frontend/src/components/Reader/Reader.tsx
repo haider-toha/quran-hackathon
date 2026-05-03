@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icon";
 import { usePreferences } from "@/hooks/usePreferences";
-import { findSurahSummary } from "@/lib/mock-data";
+import { findSurah, findSurahSummary } from "@/lib/mock-data";
 import type { LastRead, Surah } from "@/types";
 
 import { ContinueBanner } from "./ContinueBanner";
@@ -39,6 +39,11 @@ function pickContinueRef(lastRead: LastRead, currentSurah: number): LastRead {
   if (!lastRead) return null;
   if (Date.now() - lastRead.timestamp > LAST_READ_FRESHNESS_MS) return null;
   if (lastRead.surah === currentSurah) return null;
+  // Don't offer to continue to a surah we can't actually render — the v3
+  // corpus is intentionally narrow, and a stale `lastRead` pointer from an
+  // earlier session could otherwise produce a banner that links to a
+  // missing surah and silently falls back to the default.
+  if (!findSurah(lastRead.surah)) return null;
   return lastRead;
 }
 
@@ -236,9 +241,8 @@ export function Reader({ surah }: Props) {
           <nav
             aria-label="Adjacent surahs"
             style={{
-              marginTop: 56,
+              marginTop: 72,
               padding: "20px 0",
-              borderTop: "1px solid var(--color-line)",
               display: "flex",
               alignItems: "center",
               gap: 12,
@@ -256,12 +260,40 @@ export function Reader({ surah }: Props) {
             <span style={{ flex: 1 }} />
             <span
               style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 11,
-                color: "var(--color-ink-4)",
+                display: "inline-flex",
+                alignItems: "baseline",
+                gap: 10,
+                lineHeight: 1.5,
+                color: "var(--color-ink-3)",
               }}
             >
-              {surah.transliteration} · {surah.number} · Juz {surah.juz}
+              <span
+                // Display italic for the name — mirrors the SuraBand hero
+                // treatment ("Ad-Duha – The Forenoon") so the foot of the
+                // page rhymes with its head.
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontStyle: "italic",
+                  fontSize: 14,
+                  color: "var(--color-ink-2)",
+                  letterSpacing: "-0.005em",
+                }}
+              >
+                {surah.transliteration}
+              </span>
+              <span
+                // Mono for the meta — same convention as `.sura-no`. Sans
+                // would feel weightless next to the display italic.
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 10.5,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "var(--color-ink-4)",
+                }}
+              >
+                Surah {surah.number} · Juz {surah.juz}
+              </span>
             </span>
             <span style={{ flex: 1 }} />
             {next ? (

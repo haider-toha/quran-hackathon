@@ -71,7 +71,7 @@ const AYAH_93_3: SlashCommandResult = {
   type: "verse",
   content:
     "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ\n\nYour Lord has not forsaken you, nor does He hate you.",
-  source: { name: "Surat Ad-Ḍuḥā", ref: "93:3" },
+  source: { name: "Surat Ad-Duha", ref: "93:3" },
   aiGenerated: false,
 };
 
@@ -79,7 +79,7 @@ const SUMMARY_RESULT: SlashCommandResult = {
   type: "summary",
   content:
     "After a pause in revelation, the surah arrives as a direct response. The negation in verse 3 closes both possibilities — neither farewell nor displeasure — and reframes silence as preparation rather than absence.",
-  source: { name: "Tafsir As-Saʿdī", ref: "93:3" },
+  source: { name: "Tafsir As-Sadi", ref: "93:3" },
   aiGenerated: true,
 };
 
@@ -104,7 +104,7 @@ export async function runSlashCommand(
     case "search":
       return delay(SEARCH_RESULT);
     case "ayah":
-      // /ayah 93:3 returns the canonical Ad-Ḍuḥā verse. Other refs return a
+      // /ayah 93:3 returns the canonical Ad-Duha verse. Other refs return a
       // generic placeholder — wave-2 wires this to real surah data.
       if (trimmed === "93:3") return delay(AYAH_93_3);
       return delay({

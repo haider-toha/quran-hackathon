@@ -51,7 +51,7 @@ export function SourcesStep({ onContinue, onBack }: Props) {
       <div className="onboard-body">
         <h2 className="onboard-title">Choose your sources</h2>
         <p className="onboard-lede">
-          Mishkāt draws on classical tafsir when answering questions. Pick the commentaries you want
+          Mishkat draws on classical tafsir when answering questions. Pick the commentaries you want
           included. You can change this later in Settings.
         </p>
         <div className="set-section onboard-sources">

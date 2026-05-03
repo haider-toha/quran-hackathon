@@ -40,7 +40,7 @@ type AskHistoryEntry = {
   timestamp: number;
 };
 
-const SCOPE = "Aḍ-Ḍuḥā 93:1–11";
+const SCOPE = "Ad-Duha 93:1–11";
 const FALLBACK_SCENARIO: AskScenario = (() => {
   const first = ASK_SCENARIOS[0];
   if (!first) throw new Error("ASK_SCENARIOS is empty");
@@ -80,7 +80,7 @@ function activeDeferral(variant: AskScenarioVariant): Deferral | null {
  * Scenario switching: the demo bar exposes a scenario + variant picker
  * (admin only) so QA can cycle through every authored scenario without
  * editing code. The default scenario is `ASK_SCENARIOS[0]` (the canonical
- * mā waddaʿaka reading); state changes (Input → Streaming → Answered)
+ * ma waddaaka reading); state changes (Input → Streaming → Answered)
  * pick a variant whose outcome matches the destination state.
  */
 export function Ask() {

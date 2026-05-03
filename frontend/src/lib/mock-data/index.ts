@@ -23,7 +23,7 @@ export {
 export type { RecentItem } from "./recents";
 export { RECENT_ITEMS } from "./recents";
 
-// In v3 the corpus is intentionally one surah — Aḍ-Ḍuḥā (93). The
+// In v3 the corpus is intentionally one surah — Ad-Duha (93). The
 // catalogue type and `findSurah` lookup keep their shape so that
 // expanding the corpus later does not change call-site code.
 export const JUZ_AMMA_SURAH_DATA: Readonly<Record<number, Surah>> = {

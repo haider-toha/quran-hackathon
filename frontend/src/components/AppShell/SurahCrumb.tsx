@@ -42,7 +42,10 @@ export function SurahCrumb({ onSurahPicker, surahPickerActive, surahPickerAnchor
         ref={surahPickerAnchorRef}
         type="button"
         className={clsx("btn", "ghost", "sm")}
-        style={{ fontSize: 13, height: 26, padding: "0 8px" }}
+        // `height: 26` (or .btn.sm's 24) clips the underdots on d/h in the
+        // transliteration — switch to padding-driven sizing so descenders
+        // stay visible.
+        style={{ fontSize: 13, height: "auto", padding: "4px 8px", lineHeight: 1.3 }}
         onClick={onSurahPicker}
         aria-expanded={surahPickerActive}
         aria-haspopup="dialog"

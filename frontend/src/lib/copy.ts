@@ -3,11 +3,7 @@
 // activity rather than entertain. Empty states orient before they invite
 // action.
 
-export const COPY_VOICE = `Mishkāt's voice is contemplative, source-first, and quiet. We name what we are doing rather than entertain the user while we do it. We do not use emoji, exclamation marks, or hype. When we do not know, we say so and we show what the sources do say. When we cite, we attribute. When we suggest, we explain why.`;
-
-// Label shown beneath the surah picker in the topbar. The current Juz Amma
-// scope is hardcoded here so we only have to change one place when we widen.
-export const JUZ_LABEL = "Juz Amma";
+export const COPY_VOICE = `Mishkat's voice is contemplative, source-first, and quiet. We name what we are doing rather than entertain the user while we do it. We do not use emoji, exclamation marks, or hype. When we do not know, we say so and we show what the sources do say. When we cite, we attribute. When we suggest, we explain why.`;
 
 // Continue-from-last-read banner copy. Quiet, declarative, no exclamation.
 export const CONTINUE_READING_LABEL = "Continue reading";
@@ -15,9 +11,9 @@ export const CONTINUE_READING_LABEL = "Continue reading";
 export const LOADING_MESSAGES: readonly string[] = [
   "Searching the tafsir corpus…",
   "Retrieving relevant passages…",
-  "Reading As-Saʿdī…",
-  "Reading Ibn Kathīr…",
-  "Reading al-Qurṭubī…",
+  "Reading As-Sadi…",
+  "Reading Ibn Kathir…",
+  "Reading al-Qurtubi…",
   "Cross-checking citations…",
   "Drawing the threads together…",
 ];

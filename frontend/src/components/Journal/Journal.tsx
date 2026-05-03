@@ -60,7 +60,7 @@ export function Journal({ noteId }: Props) {
         }}
       >
         <div className="pane-head">
-          <span className="pane-title">Ad-Ḍuḥā · 93</span>
+          <span className="pane-title">Ad-Duha · 93</span>
           <span className="pane-spacer" />
           <span
             style={{

@@ -21,6 +21,25 @@ function entryFor(surahNumber: number, ayahNumber: number): TafsirEntry | null {
   return TAFSIR_AD_DUHA[ayahNumber] ?? null;
 }
 
+const TAFSIR_WIDTH_KEY = "mishkat:tafsir-width:v1";
+const MIN_WIDTH = 360;
+const MAX_WIDTH = 760;
+const DEFAULT_WIDTH = 460;
+
+function readStoredWidth(): number {
+  if (typeof window === "undefined") return DEFAULT_WIDTH;
+  try {
+    const raw = window.localStorage.getItem(TAFSIR_WIDTH_KEY);
+    if (!raw) return DEFAULT_WIDTH;
+    const n = Number.parseInt(raw, 10);
+    if (!Number.isFinite(n)) return DEFAULT_WIDTH;
+    const viewportMax = Math.floor(window.innerWidth * 0.5);
+    return Math.min(MAX_WIDTH, viewportMax, Math.max(MIN_WIDTH, n));
+  } catch {
+    return DEFAULT_WIDTH;
+  }
+}
+
 export function TafsirPanel({ surah, ayah, onClose }: Props) {
   // We read `showReflectionPrompts` (and nothing else) — v3 renders the
   // canonical Detailed layout regardless of `responseStyle`, so the prior
@@ -38,6 +57,11 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
 
   const takeawayItems: readonly ReactNode[] = useMemo(
     () => (entry ? entry.takeaways.map((line, index) => parseInline(line, `tk-${index}`)) : []),
+    [entry],
+  );
+
+  const reflectionNodes: readonly ReactNode[] = useMemo(
+    () => (entry ? parseInline(entry.reflection, "ref") : []),
     [entry],
   );
 
@@ -64,8 +88,80 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
+  // Resizable panel width — persisted to localStorage so the user's chosen
+  // width survives session and surah changes. Lazy initializer is safe here
+  // because TafsirPanel only mounts post-hydration (gated by selectedAyah,
+  // which starts null in the parent), so server/client first render disagree
+  // in a regime React can't even compare.
+  const [panelWidth, setPanelWidth] = useState<number>(readStoredWidth);
+
+  // Mirror the live width onto a root CSS variable so the topbar (which
+  // shrinks via `padding-right`) and the reader (which gains
+  // `padding-right`) leave room for the fixed-positioned panel. Cleared
+  // on unmount so the topbar/reader spring back to full width when the
+  // panel closes.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--tafsir-panel-w", `${panelWidth}px`);
+    return () => {
+      root.style.removeProperty("--tafsir-panel-w");
+    };
+  }, [panelWidth]);
+
+  const handleResizePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const handle = event.currentTarget;
+    const panel = handle.parentElement;
+    if (!panel) return;
+    const startX = event.clientX;
+    const startWidth = panel.getBoundingClientRect().width;
+    const viewportMax = Math.floor(window.innerWidth * 0.5);
+    const upperBound = Math.min(MAX_WIDTH, viewportMax);
+    let lastWidth = startWidth;
+
+    handle.classList.add("dragging");
+    // Block text selection while dragging — without this, dragging across
+    // the reader grabs verse text.
+    const previousUserSelect = document.body.style.userSelect;
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "col-resize";
+
+    function onMove(ev: PointerEvent) {
+      // Dragging left (clientX decreases) should grow the panel since the
+      // handle sits on the panel's left edge.
+      const delta = startX - ev.clientX;
+      lastWidth = Math.min(upperBound, Math.max(MIN_WIDTH, startWidth + delta));
+      setPanelWidth(lastWidth);
+    }
+    function onUp() {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      handle.classList.remove("dragging");
+      document.body.style.userSelect = previousUserSelect;
+      document.body.style.cursor = "";
+      try {
+        window.localStorage.setItem(TAFSIR_WIDTH_KEY, String(Math.round(lastWidth)));
+      } catch {
+        // Quota / privacy mode — preference won't persist this session.
+      }
+    }
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+  }, []);
+
   return (
-    <aside className="tafsir-panel" aria-label="Tafsir explanation">
+    <aside
+      className="tafsir-panel"
+      style={{ width: panelWidth }}
+      aria-label="Tafsir explanation"
+    >
+      <div
+        className="tp-resize"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize explanation panel"
+        onPointerDown={handleResizePointerDown}
+      />
       <div className="tp-head">
         <span className="tp-ref">
           {surah.number}:{ayah.number}
@@ -136,7 +232,7 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
           <div className="tp-section">
             <div className="tp-marginalia">
               <span className="lbl">Reflection</span>
-              {entry.reflection}
+              {reflectionNodes}
             </div>
           </div>
         ) : null}

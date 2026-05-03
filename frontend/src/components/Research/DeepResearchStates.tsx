@@ -30,7 +30,7 @@ export function DeepIdleState({ onStart }: { onStart: () => void }) {
         Run a deep research pass on this question
       </div>
       <div style={{ fontSize: 12.5, color: "var(--color-ink-3)", lineHeight: 1.55 }}>
-        Mishkāt will gather corroborating sources, cross-check citations, and surface a longer-form
+        Mishkat will gather corroborating sources, cross-check citations, and surface a longer-form
         report. You can keep reading; we&rsquo;ll notify you when it completes.
       </div>
       <div>

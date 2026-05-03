@@ -2,7 +2,7 @@
 // stream from the backend as the user writes. For v3 we hand-author 3-5
 // suggestions per "featured" note across the four kinds — related-verse,
 // tafsir-match, related-note, prompt — using real refs and source names
-// from the Aḍ-Ḍuḥā corpus.
+// from the Ad-Duha corpus.
 //
 // `hash` is a stable content fingerprint so the dismissal store can identify
 // a suggestion across sessions even when its surface position changes.
@@ -17,7 +17,7 @@ const N1: readonly Suggestion[] = [
     reason: "You wrote about silence — the next verse may answer it",
     preview:
       "“And your Lord is going to give you, and you will be satisfied.” — the verse that follows the negation in 93:3.",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:5" },
+    source: { name: "Surat Ad-Duha", ref: "93:5" },
     feedback: null,
   },
   {
@@ -26,8 +26,8 @@ const N1: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited matches your wording",
     preview:
-      "As-Saʿdī uses tarbiyya here — the same word you reached for. He frames the pause as nurturing, not absence.",
-    source: { name: "Tafsir As-Saʿdī", ref: "93:3" },
+      "As-Sadi uses tarbiyya here — the same word you reached for. He frames the pause as nurturing, not absence.",
+    source: { name: "Tafsir As-Sadi", ref: "93:3" },
     feedback: null,
   },
   {
@@ -35,7 +35,7 @@ const N1: readonly Suggestion[] = [
     hash: "n1:related-note:qala",
     kind: "related-note",
     reason: "Your past note discusses the same theme",
-    preview: "“Reading ‘qalā’ carefully” — your earlier note explores the same word you used here.",
+    preview: "“Reading ‘qala’ carefully” — your earlier note explores the same word you used here.",
     source: { name: "Note", ref: "n6" },
     feedback: null,
   },
@@ -54,8 +54,8 @@ const N1: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited matches your wording",
     preview:
-      "Ibn Kathīr reads waddaʿaka as the formal goodbye — to negate it is to deny that any farewell occurred at all.",
-    source: { name: "Tafsir Ibn Kathīr", ref: "93:3" },
+      "Ibn Kathir reads waddaaka as the formal goodbye — to negate it is to deny that any farewell occurred at all.",
+    source: { name: "Tafsir Ibn Kathir", ref: "93:3" },
     feedback: null,
   },
 ];
@@ -67,7 +67,7 @@ const N2: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "You wrote about being found — verse 7 carries the second finding",
     preview: "“And He found you lost and guided you.” — second of the three wajadaka clauses.",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:7" },
+    source: { name: "Surat Ad-Duha", ref: "93:7" },
     feedback: null,
   },
   {
@@ -76,8 +76,8 @@ const N2: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited matches your wording",
     preview:
-      "As-Saʿdī links the three findings to three kinds of lack — material, situational, spiritual — each met directly.",
-    source: { name: "Tafsir As-Saʿdī", ref: "93:6-8" },
+      "As-Sadi links the three findings to three kinds of lack — material, situational, spiritual — each met directly.",
+    source: { name: "Tafsir As-Sadi", ref: "93:6-8" },
     feedback: null,
   },
   {
@@ -98,7 +98,7 @@ const N3: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "You wrote about sufficiency — verse 8 names it",
     preview: "“And He found you in need and made you self-sufficient.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:8" },
+    source: { name: "Surat Ad-Duha", ref: "93:8" },
     feedback: null,
   },
   {
@@ -106,8 +106,8 @@ const N3: readonly Suggestion[] = [
     hash: "n3:tafsir-match:qurtubi:aghna",
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited matches your wording",
-    preview: "Al-Qurṭubī glosses aghnā as “no longer in need,” closer to contentment than wealth.",
-    source: { name: "Tafsir Al-Qurṭubī", ref: "93:8" },
+    preview: "Al-Qurtubi glosses aghna as “no longer in need,” closer to contentment than wealth.",
+    source: { name: "Tafsir Al-Qurtubi", ref: "93:8" },
     feedback: null,
   },
   {
@@ -127,9 +127,9 @@ const N4: readonly Suggestion[] = [
     id: "n4-related-93-1",
     hash: "n4:related-verse:93:1",
     kind: "related-verse",
-    reason: "Your note pairs ḍuḥā and layl — start from the first oath",
+    reason: "Your note pairs duha and layl — start from the first oath",
     preview: "“By the morning brightness…” — the first half of the surah's opening pair.",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:1" },
+    source: { name: "Surat Ad-Duha", ref: "93:1" },
     feedback: null,
   },
   {
@@ -138,8 +138,8 @@ const N4: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage that matches your reading of the pairing",
     preview:
-      "As-Saʿdī reads ḍuḥā and layl as opposites that both belong to the same hand — the same pairing you noticed.",
-    source: { name: "Tafsir As-Saʿdī", ref: "93:1-2" },
+      "As-Sadi reads duha and layl as opposites that both belong to the same hand — the same pairing you noticed.",
+    source: { name: "Tafsir As-Sadi", ref: "93:1-2" },
     feedback: null,
   },
   {
@@ -160,7 +160,7 @@ const N5: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "Your letter is anchored on this verse",
     preview: "“Your Lord has neither forsaken you nor does He hate you.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:3" },
+    source: { name: "Surat Ad-Duha", ref: "93:3" },
     feedback: null,
   },
   {
@@ -178,8 +178,8 @@ const N5: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you might add to the letter",
     preview:
-      "Al-Qurṭubī gives fifteen days as the majority position; some narrate forty. The duration is contested — that may itself be the point.",
-    source: { name: "Tafsir al-Qurṭubī", ref: "93:1" },
+      "Al-Qurtubi gives fifteen days as the majority position; some narrate forty. The duration is contested — that may itself be the point.",
+    source: { name: "Tafsir al-Qurtubi", ref: "93:1" },
     feedback: null,
   },
   {
@@ -199,9 +199,9 @@ const N6: readonly Suggestion[] = [
     id: "n6-related-93-3",
     hash: "n6:related-verse:93:3",
     kind: "related-verse",
-    reason: "The verse where qalā is negated",
+    reason: "The verse where qala is negated",
     preview: "“…nor does He hate you.” — the second negation in 93:3.",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:3" },
+    source: { name: "Surat Ad-Duha", ref: "93:3" },
     feedback: null,
   },
   {
@@ -210,8 +210,8 @@ const N6: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage that matches your reading",
     preview:
-      "Ibn Kathīr glosses qalā as active dislike, not mere distance — exactly the heat you described.",
-    source: { name: "Tafsir Ibn Kathīr", ref: "93:3" },
+      "Ibn Kathir glosses qala as active dislike, not mere distance — exactly the heat you described.",
+    source: { name: "Tafsir Ibn Kathir", ref: "93:3" },
     feedback: null,
   },
   {
@@ -220,7 +220,7 @@ const N6: readonly Suggestion[] = [
     kind: "prompt",
     reason: "A reflection question you might explore",
     preview:
-      "If even a flicker of qalā is denied, what does that tell you about how to read the silences in your prayer life?",
+      "If even a flicker of qala is denied, what does that tell you about how to read the silences in your prayer life?",
     source: null,
     feedback: null,
   },
@@ -233,7 +233,7 @@ const N7: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "The verse you're reading from",
     preview: "“And your Lord is going to give you, and you will be satisfied.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:5" },
+    source: { name: "Surat Ad-Duha", ref: "93:5" },
     feedback: null,
   },
   {
@@ -242,8 +242,8 @@ const N7: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited",
     preview:
-      "As-Saʿdī notes that the gift in la-sawfa is left without a noun — and that the open-endedness is itself the gift.",
-    source: { name: "Tafsir As-Saʿdī", ref: "93:5" },
+      "As-Sadi notes that the gift in la-sawfa is left without a noun — and that the open-endedness is itself the gift.",
+    source: { name: "Tafsir As-Sadi", ref: "93:5" },
     feedback: null,
   },
   {
@@ -264,7 +264,7 @@ const N8: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "The first wajadaka clause",
     preview: "“Did He not find you an orphan and shelter you?”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:6" },
+    source: { name: "Surat Ad-Duha", ref: "93:6" },
     feedback: null,
   },
   {
@@ -296,7 +296,7 @@ const N9: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "The verse under comparison",
     preview: "“And your Lord is going to give you, and you will be satisfied.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:5" },
+    source: { name: "Surat Ad-Duha", ref: "93:5" },
     feedback: null,
   },
   {
@@ -305,8 +305,8 @@ const N9: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir line that strengthens the third commentary",
     preview:
-      "Aṭ-Ṭabarī (cited by al-Qurṭubī): “This is the most hopeful verse in the Book of God.”",
-    source: { name: "Tafsir aṭ-Ṭabarī (via al-Qurṭubī)", ref: "93:5" },
+      "At-Tabari (cited by al-Qurtubi): “This is the most hopeful verse in the Book of God.”",
+    source: { name: "Tafsir at-Tabari (via al-Qurtubi)", ref: "93:5" },
     feedback: null,
   },
   {
@@ -328,7 +328,7 @@ const N10: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "The verse you're reading from",
     preview: "“And as for the petitioner, do not repel him.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:10" },
+    source: { name: "Surat Ad-Duha", ref: "93:10" },
     feedback: null,
   },
   {
@@ -337,8 +337,8 @@ const N10: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "A tafsir passage you haven't cited",
     preview:
-      "As-Saʿdī widens sāʾil to include both the asker for wealth and the asker for knowledge — your note touches the second.",
-    source: { name: "Tafsir As-Saʿdī", ref: "93:10" },
+      "As-Sadi widens sail to include both the asker for wealth and the asker for knowledge — your note touches the second.",
+    source: { name: "Tafsir As-Sadi", ref: "93:10" },
     feedback: null,
   },
   {
@@ -360,8 +360,8 @@ const N14: readonly Suggestion[] = [
     kind: "tafsir-match",
     reason: "The hadith your note centers on",
     preview:
-      "Bukhārī 4983 (Jundub): “I see only that your shayṭān has bid you farewell.” The Quran answers her in her vocabulary two verses later.",
-    source: { name: "Ṣaḥīḥ al-Bukhārī", ref: "4983" },
+      "Bukhari 4983 (Jundub): “I see only that your shaytan has bid you farewell.” The Quran answers her in her vocabulary two verses later.",
+    source: { name: "Sahih al-Bukhari", ref: "4983" },
     feedback: null,
   },
   {
@@ -370,7 +370,7 @@ const N14: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "The verse the hadith leads into",
     preview: "“Your Lord has neither forsaken you nor does He hate you.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:3" },
+    source: { name: "Surat Ad-Duha", ref: "93:3" },
     feedback: null,
   },
   {
@@ -403,7 +403,7 @@ const DEFAULT: readonly Suggestion[] = [
     kind: "related-verse",
     reason: "A verse to sit with",
     preview: "“Your Lord has not forsaken you, nor does He hate you.”",
-    source: { name: "Surat Aḍ-Ḍuḥā", ref: "93:3" },
+    source: { name: "Surat Ad-Duha", ref: "93:3" },
     feedback: null,
   },
 ];

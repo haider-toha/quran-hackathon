@@ -9,7 +9,7 @@ import { PREFERENCES_BOOTSTRAP_SCRIPT } from "@/lib/preferences-bootstrap";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mishkāt — A reader for the Quran",
+  title: "Mishkat — A reader for the Quran",
   description:
     "Read, ask, and write alongside the classical tafsir corpus. A contemplative, source-first companion for the Quran.",
 };
