@@ -2,7 +2,12 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 
-import { isDismissed, readDismissals, subscribeDismissals } from "@/lib/dismissal-store";
+import {
+  type DismissalStore,
+  isDismissedIn,
+  readDismissals,
+  subscribeDismissals,
+} from "@/lib/dismissal-store";
 import { suggestionsFor } from "@/lib/mock-data";
 
 type Props = {
@@ -13,9 +18,10 @@ type Props = {
   onActivate: () => void;
 };
 
-// Stable empty server snapshot for `useSyncExternalStore`. Same pattern as
-// `SuggestionsRail` — keeps SSR/hydration consistent with no live state.
-const SERVER_DISMISSALS = Object.freeze({});
+// Stable empty server snapshot for `useSyncExternalStore`. Hydration runs
+// against this snapshot too, so the first client render matches the server.
+// Real dismissals populate after hydration, triggering a re-render.
+const SERVER_DISMISSALS: DismissalStore = Object.freeze({}) as DismissalStore;
 
 /**
  * Bottom-right indicator: `✦ N connections`. Subtle, muted, no card chrome.
@@ -24,14 +30,19 @@ const SERVER_DISMISSALS = Object.freeze({});
  * mode via the parent's `onActivate` callback.
  */
 export function ConnectionsIndicator({ noteId, onActivate }: Props) {
-  // Re-render after dismissals so the count drops live as the user
-  // dismisses suggestions in connect mode and switches back.
-  useSyncExternalStore(subscribeDismissals, readDismissals, () => SERVER_DISMISSALS);
+  // Subscribe via the server-snapshot path so the first hydration render
+  // reads the empty store (same as the server) — avoids a SSR/CSR text
+  // mismatch when the user has dismissed suggestions in localStorage.
+  const dismissals = useSyncExternalStore(
+    subscribeDismissals,
+    readDismissals,
+    () => SERVER_DISMISSALS,
+  );
 
   const liveCount = useMemo<number>(() => {
     const seed = suggestionsFor(noteId);
-    return seed.filter((s) => !isDismissed(noteId, s.hash)).length;
-  }, [noteId]);
+    return seed.filter((s) => !isDismissedIn(dismissals, noteId, s.hash)).length;
+  }, [noteId, dismissals]);
 
   if (liveCount === 0) return null;
 

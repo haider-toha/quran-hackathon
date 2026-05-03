@@ -1,6 +1,6 @@
 "use client";
 
-// SlashCommandMenu — Phase 4's V2-mode replacement for the legacy SlashMenu.
+// SlashCommandMenu — the journal editor's slash-command menu.
 //
 // Detects a `/` typed at the start of a line (or after whitespace) inside
 // the editor textarea, then renders a small floating menu with five
@@ -8,11 +8,11 @@
 // citation. The two specialty options (Verse reference, Tafsir citation)
 // pop an inline mini-picker for the additional argument needed.
 //
-// Caret positioning uses the same hidden-mirror technique the legacy hook
-// uses (see `useSlashMenu.ts`): a div mirrors the textarea's font/padding/
-// width, we render the text up to the caret, and the trailing span's rect
-// gives us the caret's pixel coordinates. The menu is portaled to the body
-// so ancestor `overflow:hidden` doesn't clip it.
+// Caret positioning uses a hidden-mirror technique: a div mirrors the
+// textarea's font/padding/width, we render the text up to the caret, and
+// the trailing span's rect gives us the caret's pixel coordinates. The
+// menu is portaled to the body so ancestor `overflow:hidden` doesn't clip
+// it.
 //
 // Hosting contract:
 //   - NoteBody passes `body` (current value) and `textareaRef`.
@@ -181,8 +181,8 @@ export function SlashCommandMenu({ textareaRef, body, onApply }: Props) {
   }, []);
 
   // Detect-and-update the slash context based on the current body + caret.
-  // Mirrors the trigger rules in `useSlashMenu`: a `/` at start-of-line or
-  // after whitespace, with no whitespace between the slash and caret.
+  // Trigger rule: `/` at start-of-line or after whitespace, with no
+  // whitespace between the slash and caret.
   const detect = useCallback(
     (text: string, caret: number) => {
       let i = caret - 1;
@@ -206,8 +206,8 @@ export function SlashCommandMenu({ textareaRef, body, onApply }: Props) {
         return;
       }
       const query = text.slice(queryStart + 1, caret);
-      // Hard cap matches the legacy hook — runaway captures would otherwise
-      // keep the menu mounted as the user types a long word.
+      // Hard cap on query length — runaway captures would otherwise keep
+      // the menu mounted as the user types a long word.
       if (query.length > 32) {
         setSlash(null);
         setSubmode(null);
@@ -630,7 +630,10 @@ function caretCoords(textarea: HTMLTextAreaElement, mirror: HTMLDivElement, care
   }
   mirror.textContent = textarea.value.substring(0, caret);
   const marker = document.createElement("span");
-  marker.textContent = textarea.value.substring(caret) || ".";
+  // Single-character marker so `markerRect.height` is one line, not the
+  // full height of all post-caret text. The marker just needs SOMETHING
+  // rendered so its rect captures the caret-line position.
+  marker.textContent = ".";
   mirror.appendChild(marker);
   const taRect = textarea.getBoundingClientRect();
   const markerRect = marker.getBoundingClientRect();

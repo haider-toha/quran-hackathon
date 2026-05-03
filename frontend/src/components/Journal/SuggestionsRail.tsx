@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { InsertIcon, SparkleIcon, TimeIcon, XIcon } from "@/components/Icon";
 import {
   dismiss,
-  isDismissed,
+  isDismissedIn,
   readDismissals,
   snooze,
   subscribeDismissals,
@@ -34,17 +34,22 @@ export function SuggestionsRail({ note, onInsert }: Props) {
   const reviewOnSave = preferences.reviewOnSave;
 
   // Subscribe to dismissal store changes so the rail re-renders after a
-  // user dismisses or snoozes a card. The server snapshot is an empty
-  // object — same shape, no live state, no hydration drift.
-  useSyncExternalStore(subscribeDismissals, readDismissals, getServerDismissals);
+  // user dismisses or snoozes a card. The first hydration render reads the
+  // empty `getServerDismissals` snapshot so the SSR and CSR DOM agree —
+  // real dismissals populate post-hydration.
+  const dismissals = useSyncExternalStore(
+    subscribeDismissals,
+    readDismissals,
+    getServerDismissals,
+  );
 
   const visible = useMemo<readonly Suggestion[]>(() => {
     if (frequency === "off") return [];
     const seed = suggestionsFor(note.id);
-    const live = seed.filter((s) => !isDismissed(note.id, s.hash));
+    const live = seed.filter((s) => !isDismissedIn(dismissals, note.id, s.hash));
     if (frequency === "low") return live.slice(0, LOW_LIMIT);
     return live;
-  }, [note.id, frequency]);
+  }, [note.id, frequency, dismissals]);
 
   // reviewOnSave gate — when on, the body is suppressed until the user
   // pauses or saves. The header count still reflects the real number.

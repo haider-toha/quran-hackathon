@@ -32,11 +32,6 @@ export type {
 } from "./ask";
 export type { AppRoute } from "./routes";
 export type { Template, TemplateSection, TemplateSectionType } from "./templates";
-export type {
-  SlashCommand,
-  SlashCommandCategory,
-  SlashCommandResult,
-  SlashCommandResultType,
-} from "./slash";
+export type { SlashCommand, SlashCommandCategory } from "./slash";
 export type { Suggestion, SuggestionKind, SuggestionFeedback } from "./suggestions";
 export type { FeatureFlags } from "./admin";
