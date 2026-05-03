@@ -60,6 +60,9 @@ def _env(key: str, required: bool = True) -> str:
     return val
 
 
+# Public CDN endpoint — no auth required for read operations.
+# The newer api.quran.com requires x-auth-token/x-client-id, but this
+# qurancdn.com endpoint remains open. No SLA; if it changes, update the URL.
 QURAN_BASE     = "https://api.qurancdn.com/api/qdc"
 SUPABASE_URL   = _env("SUPABASE_URL").rstrip("/")
 SUPABASE_KEY   = _env("SUPABASE_SECRET_KEY")
