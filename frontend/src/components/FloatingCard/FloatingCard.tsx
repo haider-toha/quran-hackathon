@@ -15,6 +15,13 @@
 // component renders nothing (no portal node attached, no listeners). When
 // `open === true` but the runtime is SSR, also renders nothing — the portal
 // is only mounted client-side.
+//
+// Positioning uses a CSS `transform: translate(...)` driven from inline
+// `--card-x` / `--card-y` custom properties. Compositing transforms is
+// cheaper than animating `top`/`left` and avoids subpixel rounding glitches.
+// The CSS rule that reads these variables lives in `globals.css` (see the
+// `.floating-card` block, owned by the CSS agent). Until that rule lands,
+// we also set `transform` inline so the positioning works regardless.
 
 import clsx from "clsx";
 import {
@@ -190,17 +197,19 @@ export function FloatingCard({
   // to call setState in an effect. See `useHydrated` above.
   const hydrated = useHydrated();
 
-  // Re-measure on a single requestAnimationFrame tick, coalesced across many
-  // resize/scroll bursts. Reads the live anchor rect each time.
+  // Re-measure on the next paint, coalescing many resize/scroll bursts. Reads
+  // the live anchor + card rects each time — `getBoundingClientRect()` is
+  // accurate even when the card is positioned by a transform.
   const recompute = useCallback(() => {
     if (!anchor || !cardRef.current) return;
     const anchorRect = anchor.getBoundingClientRect();
     const cardEl = cardRef.current;
+    const cardRect = cardEl.getBoundingClientRect();
     // Card size: pre-existing dimensions if rendered; fall back to a sensible
     // estimate for the first paint.
     const cardSize = {
-      width: cardEl.offsetWidth || 240,
-      height: cardEl.offsetHeight || 80,
+      width: cardRect.width || 240,
+      height: cardRect.height || 80,
     };
     const viewport = {
       width: window.innerWidth,
@@ -218,6 +227,29 @@ export function FloatingCard({
       return;
     }
     recompute();
+  }, [open, anchor, recompute]);
+
+  // Watch the card itself for size changes via ResizeObserver — content
+  // growing or shrinking after first paint (e.g. async data lands) needs a
+  // fresh placement. Coalesced into one rAF to avoid layout thrash.
+  useEffect(() => {
+    if (!open || !anchor) return;
+    const cardEl = cardRef.current;
+    if (!cardEl) return;
+    let frame: number | null = null;
+    const onChange = () => {
+      if (frame !== null) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = null;
+        recompute();
+      });
+    };
+    const observer = new ResizeObserver(onChange);
+    observer.observe(cardEl);
+    return () => {
+      observer.disconnect();
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
   }, [open, anchor, recompute]);
 
   // Coalesce resize/scroll into one rAF so heavy scroll containers don't
@@ -267,13 +299,34 @@ export function FloatingCard({
   if (!open) return null;
   if (!hydrated || !isClient()) return null;
 
-  // Style: until `position` is computed (first frame after mount), keep the
-  // card invisible to avoid a (0,0) flash. After that, fixed-position to the
-  // resolved coordinates.
-  const style: CSSProperties =
+  // Positioning strategy: the card is `position: fixed` at (0, 0), and we
+  // shift it into place via a `transform: translate(--card-x, --card-y)`.
+  // Compositing the transform is cheaper than animating top/left and avoids
+  // the subpixel rounding flicker we saw on macOS Safari with the previous
+  // `top`/`left` approach. We also expose the values as CSS variables so a
+  // global rule (owned by the CSS agent) can read them; the inline
+  // `transform` is a safety net for the moment that rule isn't in place.
+  type CardCSS = CSSProperties & {
+    "--card-x"?: string;
+    "--card-y"?: string;
+  };
+  const style: CardCSS =
     position === null
-      ? { position: "fixed", top: 0, left: 0, visibility: "hidden", pointerEvents: "none" }
-      : { position: "fixed", top: position.top, left: position.left };
+      ? {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          visibility: "hidden",
+          pointerEvents: "none",
+        }
+      : {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          "--card-x": `${position.left}px`,
+          "--card-y": `${position.top}px`,
+          transform: `translate(${position.left}px, ${position.top}px)`,
+        };
 
   return createPortal(
     <div

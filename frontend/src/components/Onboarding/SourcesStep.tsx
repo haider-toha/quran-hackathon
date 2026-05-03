@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 
 import { SourceRow } from "@/components/Settings/SourceRow";
 import { TAFSIR_93_3, TAFSIR_SOURCES } from "@/lib/mock-data";
@@ -9,11 +9,13 @@ import type { TafsirSource } from "@/types";
 
 type Props = {
   onContinue: () => void;
+  onBack: () => void;
 };
 
-export function SourcesStep({ onContinue }: Props) {
+export function SourcesStep({ onContinue, onBack }: Props) {
   const { preferences, setPreference } = usePreferences();
   const [previewOpenId, setPreviewOpenId] = useState<TafsirSource["id"] | null>(null);
+  const [pending, startTransition] = useTransition();
 
   // Memoise so toggleEnabled's identity is stable across renders.
   const enabledSet = useMemo(
@@ -38,6 +40,12 @@ export function SourcesStep({ onContinue }: Props) {
     setPreviewOpenId((prev) => (prev === id ? null : id));
   }, []);
 
+  const handleContinue = () => {
+    startTransition(() => {
+      onContinue();
+    });
+  };
+
   return (
     <div className="onboard-step onboard-step-wide">
       <div className="onboard-body">
@@ -61,7 +69,15 @@ export function SourcesStep({ onContinue }: Props) {
         </div>
       </div>
       <div className="onboard-actions">
-        <button type="button" className="btn primary lg" onClick={onContinue}>
+        <button type="button" className="btn lg" onClick={onBack} disabled={pending}>
+          Back
+        </button>
+        <button
+          type="button"
+          className="btn primary lg"
+          onClick={handleContinue}
+          disabled={pending}
+        >
           Continue
         </button>
       </div>

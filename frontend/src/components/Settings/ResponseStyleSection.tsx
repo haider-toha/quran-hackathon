@@ -1,6 +1,6 @@
 "use client";
 
-import { usePreferences } from "@/hooks/usePreferences";
+import { usePreferenceActions, usePreferenceResponseStyle } from "@/hooks/usePreferences";
 import type { ResponseStyle } from "@/types";
 
 const OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: string; desc: string }> = [
@@ -22,7 +22,11 @@ const OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: string; desc: string
 ];
 
 export function ResponseStyleSection() {
-  const { preferences, setPreference } = usePreferences();
+  // Single-field selectors so this section doesn't re-render on unrelated
+  // preference changes. The actions context is referentially stable, so
+  // pulling it separately doesn't add a re-render either.
+  const responseStyle = usePreferenceResponseStyle();
+  const { setPreference } = usePreferenceActions();
   return (
     <section className="settings-section">
       <header className="settings-section-hd">
@@ -31,7 +35,7 @@ export function ResponseStyleSection() {
       </header>
       <div className="settings-radio-group" role="radiogroup" aria-label="Response style">
         {OPTIONS.map((opt) => {
-          const active = preferences.responseStyle === opt.value;
+          const active = responseStyle === opt.value;
           return (
             <button
               key={opt.value}

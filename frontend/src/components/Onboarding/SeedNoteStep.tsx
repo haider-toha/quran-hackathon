@@ -1,10 +1,13 @@
 "use client";
 
+import { useTransition } from "react";
+
 import { addUserNote } from "@/lib/notes-store";
 import type { Note } from "@/types";
 
 type Props = {
   onContinue: () => void;
+  onBack: () => void;
 };
 
 const WELCOME_NOTE_BODY = [
@@ -45,10 +48,14 @@ function buildWelcomeNote(): Note {
   };
 }
 
-export function SeedNoteStep({ onContinue }: Props) {
+export function SeedNoteStep({ onContinue, onBack }: Props) {
+  const [pending, startTransition] = useTransition();
+
   const handleContinue = () => {
-    addUserNote(buildWelcomeNote());
-    onContinue();
+    startTransition(() => {
+      addUserNote(buildWelcomeNote());
+      onContinue();
+    });
   };
 
   return (
@@ -71,7 +78,15 @@ export function SeedNoteStep({ onContinue }: Props) {
         </ul>
       </div>
       <div className="onboard-actions">
-        <button type="button" className="btn primary lg" onClick={handleContinue}>
+        <button type="button" className="btn lg" onClick={onBack} disabled={pending}>
+          Back
+        </button>
+        <button
+          type="button"
+          className="btn primary lg"
+          onClick={handleContinue}
+          disabled={pending}
+        >
           Begin
         </button>
       </div>

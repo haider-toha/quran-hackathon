@@ -38,10 +38,23 @@ const FLAG_DESCRIPTIONS: Readonly<Record<FlagKey, { label: string; desc: string 
   },
 };
 
+// Stable, exhaustive list of feature-flag keys. Listing them by hand keeps
+// the array typed as `readonly FlagKey[]` without an `as` cast over
+// `Object.keys`, which would broaden to `string[]` and erase the union.
+const FLAG_KEYS: readonly FlagKey[] = [
+  "slashCommands",
+  "suggestionsRail",
+  "deepResearch",
+  "recitation",
+  "notesExport",
+  "deleteAccount",
+  "adminAskStateLow",
+];
+
 export function AdminSection() {
   const flags = useFeatureFlags();
   const setFlag = useSetFlag();
-  const keys = Object.keys(FLAG_DESCRIPTIONS) as readonly FlagKey[];
+  const keys = FLAG_KEYS;
 
   return (
     <section className="settings-section">

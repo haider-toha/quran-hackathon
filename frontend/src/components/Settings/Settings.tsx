@@ -33,7 +33,7 @@ const TABS: ReadonlyArray<{ id: Tab; label: string }> = [
 
 const ADMIN_TAB: { id: Tab; label: string } = { id: "admin", label: "Admin (developer)" };
 
-const VALID_TABS: ReadonlySet<Tab> = new Set([
+const VALID_TABS: readonly Tab[] = [
   "sources",
   "response-style",
   "reading",
@@ -41,10 +41,16 @@ const VALID_TABS: ReadonlySet<Tab> = new Set([
   "notifications",
   "account",
   "admin",
-]);
+];
+
+function isTab(value: string): value is Tab {
+  // String-narrowing predicate so callers can drop the `as Tab` cast at
+  // the boundary where untrusted query-string input enters the component.
+  return (VALID_TABS as readonly string[]).includes(value);
+}
 
 function pickTab(value: string | null | undefined): Tab {
-  if (value && VALID_TABS.has(value as Tab)) return value as Tab;
+  if (value && isTab(value)) return value;
   return "sources";
 }
 

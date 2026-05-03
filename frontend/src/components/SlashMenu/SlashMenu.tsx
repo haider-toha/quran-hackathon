@@ -9,6 +9,11 @@
 // fixed at that position and pass it to FloatingCard. The virtual anchor
 // itself is portaled into the body so it always lives in the viewport
 // frame regardless of any ancestor `overflow:hidden`.
+//
+// ARIA: rendered as `role="menu"` with `role="menuitem"` rows. The textarea
+// upstream stays in its native role; consumers should not advertise the
+// menu via `aria-controls` because the menu doesn't trap focus and hangs
+// off a transient slash trigger rather than a stable popup button.
 
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +21,7 @@ import { createPortal } from "react-dom";
 
 import { FloatingCard } from "@/components/FloatingCard";
 import { ICON_MAP } from "@/components/Icon";
+import { useRovingFocus } from "@/hooks/useRovingFocus";
 import { SLASH_COMMANDS } from "@/lib/slash-commands";
 import type { SlashCommand } from "@/types";
 
@@ -98,17 +104,13 @@ function VirtualAnchor({
 
 export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }: SlashMenuProps) {
   const [virtualEl, setVirtualEl] = useState<HTMLDivElement | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [lastQuery, setLastQuery] = useState(query);
 
   const matches = useMemo(() => filterCommands(query, allowedIds), [query, allowedIds]);
-
-  // Reset selection to the first item whenever the filter changes. React 19
-  // "derive state during render" pattern, same as CommandPalette.
-  if (lastQuery !== query) {
-    setLastQuery(query);
-    setActiveIndex(0);
-  }
+  const { activeIndex, setActiveIndex, onKeyDown: onRovingKeyDown } = useRovingFocus(
+    matches.length,
+    query,
+    { enabled: open },
+  );
 
   // Auto-close when the filter empties — gives the consuming editor a clean
   // signal that further typing should fall through to the textarea.
@@ -118,19 +120,14 @@ export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }
     }
   }, [open, matches.length, onClose]);
 
-  // Keyboard: ArrowUp/Down navigate, Enter selects, Escape closes. Use
-  // `keydown` on the document so we capture the intent regardless of where
-  // focus currently lives (typically the textarea above us).
+  // Keyboard: roving focus claims ArrowUp/Down/Home/End; Enter selects;
+  // Escape closes. We listen on the document because focus typically lives
+  // in the textarea above us, not inside this menu.
   useEffect(() => {
     if (!open || matches.length === 0) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        setActiveIndex((i) => Math.min(matches.length - 1, i + 1));
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        setActiveIndex((i) => Math.max(0, i - 1));
-      } else if (event.key === "Enter") {
+      if (onRovingKeyDown(event)) return;
+      if (event.key === "Enter") {
         const command = matches[activeIndex];
         if (command) {
           event.preventDefault();
@@ -144,15 +141,16 @@ export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, matches, activeIndex, onSelect, onClose]);
+  }, [open, matches, activeIndex, onSelect, onClose, onRovingKeyDown]);
 
   // Resolve the FloatingCard anchor: either the HTMLElement passed in, or
   // the virtual anchor we mount from {x, y}.
   const resolvedAnchor: HTMLElement | null = isCoord(anchor) ? virtualEl : anchor;
 
-  // The slash menu is a passive list — intentionally use role="tooltip" on
-  // the FloatingCard so it does NOT trap focus (the user is still typing in
-  // the editor). Outside-click and ESC are handled by us.
+  // Tooltip role on the FloatingCard so it stays passive (no focus trap).
+  // The `role="menu"` lives on the inner list — the user is still typing in
+  // the editor, so we must not pull focus away. Outside-click and ESC are
+  // handled by us, not the FloatingCard's dialog wiring.
   return (
     <>
       {open && isCoord(anchor) ? (
@@ -166,7 +164,7 @@ export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }
         role="tooltip"
         className="slash-menu"
       >
-        <div role="listbox" aria-label="Slash commands" className="slash-list">
+        <div role="menu" aria-label="Slash commands" className="slash-list">
           {matches.length === 0 ? (
             <div className="slash-empty">No commands</div>
           ) : (
@@ -177,8 +175,7 @@ export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }
                 <button
                   key={cmd.id}
                   type="button"
-                  role="option"
-                  aria-selected={selected}
+                  role="menuitem"
                   className={clsx("slash-row", selected && "is-active")}
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => {

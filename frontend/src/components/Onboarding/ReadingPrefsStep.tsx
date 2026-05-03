@@ -1,12 +1,14 @@
 "use client";
 
 import clsx from "clsx";
+import { useTransition } from "react";
 
 import { usePreferences } from "@/hooks/usePreferences";
 import type { ReaderMode, ResponseStyle } from "@/types";
 
 type Props = {
   onContinue: () => void;
+  onBack: () => void;
 };
 
 const READER_MODE_OPTIONS: ReadonlyArray<{ value: ReaderMode; label: string; desc: string }> = [
@@ -43,8 +45,15 @@ const RESPONSE_STYLE_OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: strin
     },
   ];
 
-export function ReadingPrefsStep({ onContinue }: Props) {
+export function ReadingPrefsStep({ onContinue, onBack }: Props) {
   const { preferences, setPreference } = usePreferences();
+  const [pending, startTransition] = useTransition();
+
+  const handleContinue = () => {
+    startTransition(() => {
+      onContinue();
+    });
+  };
 
   return (
     <div className="onboard-step onboard-step-wide">
@@ -134,7 +143,15 @@ export function ReadingPrefsStep({ onContinue }: Props) {
         </section>
       </div>
       <div className="onboard-actions">
-        <button type="button" className="btn primary lg" onClick={onContinue}>
+        <button type="button" className="btn lg" onClick={onBack} disabled={pending}>
+          Back
+        </button>
+        <button
+          type="button"
+          className="btn primary lg"
+          onClick={handleContinue}
+          disabled={pending}
+        >
           Continue
         </button>
       </div>

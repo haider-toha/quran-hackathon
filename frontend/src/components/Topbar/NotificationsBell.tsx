@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { BellIcon } from "@/components/Icon";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import {
   clearAll,
   markRead,
@@ -43,7 +44,8 @@ export function NotificationsBell() {
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Click-outside + ESC closes the popover.
+  // Click-outside closes the popover. Escape is wired via `useDialogFocus`
+  // below so the same hook handles tab-trapping and focus restoration.
   useEffect(() => {
     if (!open) return;
     function onPointerDown(event: PointerEvent) {
@@ -53,20 +55,19 @@ export function NotificationsBell() {
       if (buttonRef.current?.contains(target)) return;
       setOpen(false);
     }
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        setOpen(false);
-        buttonRef.current?.focus();
-      }
-    }
     window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
+
+  // Focus trap + Escape — only when the popover is open. The hook records
+  // the previously focused element on mount and restores it on unmount, so
+  // the bell button regains focus when the popover closes.
+  useDialogFocus(popoverRef, {
+    onEscape: open ? () => setOpen(false) : undefined,
+    restoreFocus: open,
+  });
 
   const unreadCount = items.filter((n) => !n.read).length;
   const hasNotifications = items.length > 0;
@@ -104,6 +105,7 @@ export function NotificationsBell() {
         <div
           ref={popoverRef}
           role="dialog"
+          aria-modal="true"
           aria-label="Notifications"
           style={{
             position: "absolute",
@@ -162,7 +164,10 @@ export function NotificationsBell() {
             {hasNotifications ? (
               <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
                 {items.map((item) => (
-                  <li key={item.id} style={{ borderBottom: "1px solid var(--color-line-2)" }}>
+                  <li
+                    key={`${item.id}-${item.createdAt}`}
+                    style={{ borderBottom: "1px solid var(--color-line-2)" }}
+                  >
                     <NotificationRow item={item} onActivate={() => markRead(item.id)} />
                   </li>
                 ))}

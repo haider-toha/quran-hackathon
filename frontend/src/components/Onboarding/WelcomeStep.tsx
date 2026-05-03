@@ -1,10 +1,26 @@
 "use client";
 
+import { useTransition } from "react";
+
 type Props = {
   onContinue: () => void;
 };
 
 export function WelcomeStep({ onContinue }: Props) {
+  // Use a transition for the Continue tap. There's no Server Action wired
+  // yet, but staging the handler through `startTransition` lets us flip the
+  // button into a `disabled={pending}` state once a real persistence call
+  // (e.g. a Server Action that records "user accepted onboarding step 1")
+  // is added. Today the body is sync, so `pending` flips off in the same
+  // tick — but the wiring stays put.
+  const [pending, startTransition] = useTransition();
+
+  const handleContinue = () => {
+    startTransition(() => {
+      onContinue();
+    });
+  };
+
   return (
     <div className="onboard-step">
       <div className="onboard-body">
@@ -15,7 +31,12 @@ export function WelcomeStep({ onContinue }: Props) {
         </p>
       </div>
       <div className="onboard-actions">
-        <button type="button" className="btn primary lg" onClick={onContinue}>
+        <button
+          type="button"
+          className="btn primary lg"
+          onClick={handleContinue}
+          disabled={pending}
+        >
           Continue
         </button>
       </div>
