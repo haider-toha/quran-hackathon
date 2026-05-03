@@ -199,13 +199,7 @@ export function TafsirPanel({ surah, ayah, onClose, closing, onClosed }: Props) 
 
   const handleCopy = useCallback(async () => {
     const ref = `${surah.transliteration} ${surah.number}:${ayah.number}`;
-    const lines: string[] = [
-      ref,
-      "",
-      ayah.arabic,
-      "",
-      `"${ayah.english}"`,
-    ];
+    const lines: string[] = [ref, "", ayah.arabic, "", `"${ayah.english}"`];
     if (entry) {
       lines.push("", "Summary", ...entry.summary);
       if (entry.takeaways.length > 0) {
@@ -235,7 +229,7 @@ export function TafsirPanel({ surah, ayah, onClose, closing, onClosed }: Props) 
 
   return (
     <aside
-      className={`tafsir-panel${closing ? " tp--closing" : ""}`}
+      className={`tafsir-panel${closing ? "tp--closing" : ""}`}
       style={{ width: panelWidth }}
       aria-label="Tafsir explanation"
       onAnimationEnd={handleAnimationEnd}

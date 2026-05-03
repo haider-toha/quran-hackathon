@@ -1,15 +1,11 @@
 import clsx from "clsx";
-import Image from "next/image";
 
 import {
-  AlertInfoIcon,
   ArticleIcon,
   BookmarkIcon,
   ExternalIcon,
   HeadphonesIcon,
   InsertIcon,
-  PlayIcon,
-  TimeIcon,
   VideoIcon,
 } from "@/components/Icon";
 import type { ResearchResult, ResearchType } from "@/types";
@@ -18,136 +14,99 @@ type Props = {
   result: ResearchResult;
 };
 
-function trustClass(trust: ResearchResult["trust"]): string | undefined {
-  if (trust === "verified") return undefined;
-  if (trust === "flagged") return "flagged";
-  return "unknown";
-}
-
-function lastMetaToken(meta: string): string {
-  const tokens = meta.split("·");
-  const tail = tokens[tokens.length - 1];
-  return tail ? tail.trim() : meta.trim();
-}
-
-// Type-specific affordance rendered inside the .res-thumb box. Lectures show a
-// large play button, videos show a thumbnail (or placeholder), articles show
-// a paper-icon-with-readtime.
-function ThumbAffordance({ result }: { result: ResearchResult }) {
-  if (result.type === "lecture") {
-    return (
-      <div
-        aria-hidden="true"
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: "50%",
-          background: "var(--color-ink-2)",
-          color: "var(--color-bg-elev)",
-          display: "grid",
-          placeItems: "center",
-          paddingLeft: 2,
-        }}
-      >
-        <PlayIcon size={16} />
-      </div>
-    );
-  }
-  if (result.type === "video") {
-    if (result.thumbnailUrl !== null) {
-      return (
-        <Image
-          src={result.thumbnailUrl}
-          alt=""
-          width={80}
-          height={60}
-          unoptimized
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      );
-    }
-    return (
-      <div
-        aria-hidden="true"
-        style={{
-          display: "grid",
-          placeItems: "center",
-          width: "100%",
-          height: "100%",
-          background: "var(--color-bg-deep)",
-          color: "var(--color-ink-4)",
-        }}
-      >
-        <VideoIcon size={20} />
-      </div>
-    );
-  }
-  // Article fallthrough.
-  return <ArticleIcon size={20} />;
-}
-
 const TYPE_LABELS: Readonly<Record<ResearchType, string>> = {
   lecture: "Lecture",
   video: "Video",
   article: "Article",
 };
 
+function trustClass(trust: ResearchResult["trust"]): string {
+  if (trust === "verified") return "verified";
+  if (trust === "flagged") return "flagged";
+  return "unknown";
+}
+
+// Type-specific icon centered in the thumb box. We commit to icon
+// treatment for every result so the card grid stays visually consistent
+// — mixing real video thumbnails with article placeholders looked
+// unfinished at a glance.
+function TypeIcon({ type }: { type: ResearchType }) {
+  if (type === "lecture") return <HeadphonesIcon size={20} />;
+  if (type === "video") return <VideoIcon size={20} />;
+  return <ArticleIcon size={20} />;
+}
+
+function durationOrReadTime(result: ResearchResult): string | null {
+  if (result.duration) return result.duration;
+  if (result.readTimeMinutes !== null) return `${result.readTimeMinutes} min read`;
+  return null;
+}
+
 export function ResearchCard({ result }: Props) {
   const trustModifier = trustClass(result.trust);
+  const lengthLabel = durationOrReadTime(result);
 
   return (
-    <div className="res-result">
-      <div className="res-thumb">
-        <ThumbAffordance result={result} />
-        {result.duration ? <span className="duration">{result.duration}</span> : null}
+    <article className={clsx("res-result", `trust-${trustModifier}`)}>
+      <div className="res-thumb" aria-hidden="true">
+        <TypeIcon type={result.type} />
       </div>
       <div className="res-body">
-        <div className="res-row">
-          <span className="speaker">
-            <span className={clsx("trust-dot", trustModifier)} />
-            {result.speaker}
+        <h3 className="res-title">{result.title}</h3>
+        <div className="res-meta">
+          <span className={clsx("trust-dot", trustModifier)} aria-hidden="true" />
+          <span className="res-meta-speaker">{result.speaker}</span>
+          <span className="res-meta-sep" aria-hidden="true">
+            ·
           </span>
-          <span aria-hidden="true">·</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            {result.type === "lecture" ? <HeadphonesIcon size={11} /> : null}
-            {result.type === "video" ? <VideoIcon size={11} /> : null}
-            {result.type === "article" ? <ArticleIcon size={11} /> : null}
-            {TYPE_LABELS[result.type]}
-          </span>
-          {result.type === "article" && result.readTimeMinutes !== null ? (
+          <span>{TYPE_LABELS[result.type]}</span>
+          {lengthLabel ? (
             <>
-              <span aria-hidden="true">·</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-                <TimeIcon size={11} />
-                {result.readTimeMinutes} min read
+              <span className="res-meta-sep" aria-hidden="true">
+                ·
               </span>
+              <span>{lengthLabel}</span>
             </>
-          ) : (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{lastMetaToken(result.meta)}</span>
-            </>
-          )}
-          {result.trust === "unknown" ? (
-            <span className="chip ext" style={{ marginLeft: 4 }}>
-              <AlertInfoIcon size={9} /> Unverified speaker
-            </span>
           ) : null}
+          <span className="res-meta-sep" aria-hidden="true">
+            ·
+          </span>
+          <span>{result.source}</span>
+          {result.year ? (
+            <>
+              <span className="res-meta-sep" aria-hidden="true">
+                ·
+              </span>
+              <span>{result.year}</span>
+            </>
+          ) : null}
+          {result.trust === "flagged" ? <span className="res-flag-tag">Flagged</span> : null}
         </div>
-        <div className="res-title">{result.title}</div>
-        <div className="res-snip">{result.snippet}</div>
+        <p className="res-snip">{result.snippet}</p>
         <div className="res-actions">
-          <button type="button" className="btn sm">
-            <InsertIcon size={12} /> Insert into note
+          <button type="button" className="btn sm" aria-label={`Open ${result.title}`}>
+            <ExternalIcon size={12} /> Open
           </button>
-          <button type="button" className="btn sm ghost">
-            <BookmarkIcon size={12} /> Bookmark
-          </button>
-          <button type="button" className="btn sm ghost">
-            <ExternalIcon size={12} /> Open source
-          </button>
+          <div className="res-actions-secondary" aria-label="Secondary actions">
+            <button
+              type="button"
+              className="iconbtn"
+              aria-label={`Insert ${result.title} into note`}
+              title="Insert into note"
+            >
+              <InsertIcon size={13} />
+            </button>
+            <button
+              type="button"
+              className="iconbtn"
+              aria-label={`Bookmark ${result.title}`}
+              title="Bookmark"
+            >
+              <BookmarkIcon size={13} />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

@@ -5,6 +5,7 @@ import { FlagsProvider } from "@/hooks/useFeatureFlags";
 import { PreferencesProvider } from "@/hooks/usePreferences";
 import { fontVariableClassName } from "@/lib/fonts";
 import { PREFERENCES_BOOTSTRAP_SCRIPT } from "@/lib/preferences-bootstrap";
+import { ScopeProvider } from "@/lib/scope-context";
 
 import "./globals.css";
 
@@ -27,7 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <PreferencesProvider>
           <FlagsProvider>
-            <AppShell>{children}</AppShell>
+            <ScopeProvider>
+              <AppShell>{children}</AppShell>
+            </ScopeProvider>
           </FlagsProvider>
         </PreferencesProvider>
       </body>

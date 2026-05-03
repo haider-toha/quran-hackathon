@@ -25,7 +25,7 @@ export const TAFSIR_SOURCES: readonly TafsirSource[] = [
   },
   {
     id: "qurtubi",
-    name: "Tafsir al-Qurtubi (Al-Jami li-Ahkam al-Quran)",
+    name: "Tafsir al-Qurtubi",
     author: "Muhammad al-Qurtubi",
     century: "7th AH / 13th CE",
     language: "Arabic",
@@ -36,7 +36,7 @@ export const TAFSIR_SOURCES: readonly TafsirSource[] = [
   },
   {
     id: "tabari",
-    name: "Tafsir at-Tabari (Jami al-Bayan)",
+    name: "Tafsir at-Tabari",
     author: "Muhammad ibn Jarir at-Tabari",
     century: "4th AH / 10th CE",
     language: "Arabic",
@@ -56,7 +56,7 @@ export const TAFSIR_SOURCES: readonly TafsirSource[] = [
   },
   {
     id: "razi",
-    name: "Tafsir al-Kabir (Mafatih al-Ghayb)",
+    name: "Tafsir al-Razi",
     author: "Fakhr ad-Din ar-Razi",
     century: "6th AH / 12th CE",
     language: "Arabic",

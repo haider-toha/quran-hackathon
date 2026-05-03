@@ -18,6 +18,7 @@ import {
   ColumnsIcon,
   CompassIcon,
   CopyIcon,
+  DownloadIcon,
   ExternalIcon,
   EyeIcon,
   FilterIcon,
@@ -35,6 +36,7 @@ import {
   LinkIcon,
   ListIcon,
   LockIcon,
+  MapIcon,
   MoonIcon,
   MoreIcon,
   NoteIcon,
@@ -49,6 +51,7 @@ import {
   SearchIcon,
   SendIcon,
   SettingsIcon,
+  ShareIcon,
   ShieldIcon,
   SidebarIcon,
   SourceIcon,
@@ -127,6 +130,9 @@ export const ICON_MAP: Readonly<Record<IconName, ComponentType<IconProps>>> = {
   "align-left": AlignLeftIcon,
   bell: BellIcon,
   lock: LockIcon,
+  download: DownloadIcon,
+  share: ShareIcon,
+  map: MapIcon,
 };
 
 // `IconName` is a string literal union; this guard returns a typed

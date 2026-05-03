@@ -1,5 +1,7 @@
 "use client";
 
+import clsx from "clsx";
+
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { usePreferences } from "@/hooks/usePreferences";
 import type { SuggestionFrequency, SuggestionsSurface } from "@/types";
@@ -121,6 +123,30 @@ export function WritingSection() {
               </button>
             );
           })}
+        </div>
+      </div>
+
+      <div className="set-section">
+        <div className="set-section-hd">Suggestion timing</div>
+        <div className="set-row">
+          <div>
+            <div className="lbl">Review suggestions only when you pause or save</div>
+            <div className="desc">
+              Hide suggestions while you write — surface them after a long pause or when the note is
+              saved. The header still shows the count.
+            </div>
+          </div>
+          <button
+            type="button"
+            className={clsx("toggle", preferences.reviewOnSave && "on")}
+            aria-pressed={preferences.reviewOnSave}
+            aria-label={
+              preferences.reviewOnSave
+                ? "Surface suggestions live"
+                : "Only review suggestions on pause or save"
+            }
+            onClick={() => setPreference("reviewOnSave", !preferences.reviewOnSave)}
+          />
         </div>
       </div>
     </section>

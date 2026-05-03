@@ -9,13 +9,13 @@ export const COPY_VOICE = `Mishkat's voice is contemplative, source-first, and q
 export const CONTINUE_READING_LABEL = "Continue reading";
 
 export const LOADING_MESSAGES: readonly string[] = [
-  "Searching the tafsir corpus…",
-  "Retrieving relevant passages…",
+  "Searching tafsir…",
+  "Retrieving passages…",
   "Reading As-Sadi…",
   "Reading Ibn Kathir…",
   "Reading al-Qurtubi…",
   "Cross-checking citations…",
-  "Drawing the threads together…",
+  "Composing answer…",
 ];
 
 export const EMPTY_STATES = {

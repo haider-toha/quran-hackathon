@@ -1,29 +1,28 @@
 "use client";
 
 // ChromeMain — the right-hand main area of the AppShell: topbar, work area
-// for `{children}`, plus the floating SurahPicker and CommandPalette that
-// the topbar's controls anchor.
+// for `{children}`, plus the floating SurahPicker that the topbar's
+// breadcrumb anchors.
 //
-// Owns three pieces of transient state that don't fit anywhere else:
-//   - `commandOpen` — Cmd-K dialog visibility
+// Owns two pieces of transient state that don't fit anywhere else:
 //   - `surahPickerOpen` — pop-up for the read-target crumb
 //   - `surahPickerAnchor` — the anchor element reference that FloatingCard
 //     reads positions from. We keep it in state (callback ref) so React can
 //     react to it without us reading `.current` during render.
 //
-// `KeyboardShortcuts` is rendered here too so the global Cmd-K / digit
-// shortcuts can flip `commandOpen` without lifting the state higher.
+// Phase 6 lifted the command-palette state out of this file: the palette
+// now mounts at the AppShell root and reads its open/closed state from
+// `command-palette-store`. The ⌘K hotkey is registered inside
+// `<GlobalCommandPalette />`. `KeyboardShortcuts` here still owns the
+// digit / `?` / `,` / `⌘⇧S` / `⌘⇧C` / `⌘/` bindings.
 //
-// We render `<SurahPicker>` and `<CommandPalette>` as siblings of `<main>`
-// rather than inside it: `.main` has `overflow: hidden`, and the popover's
-// `position: absolute` would be clipped by it. Both overlays use absolute /
-// fixed positioning relative to the viewport anyway, so the DOM placement
-// is purely a clipping concern.
+// We render `<SurahPicker>` as a sibling of `<main>` rather than inside it:
+// `.main` has `overflow: hidden`, and the popover's `position: absolute`
+// would be clipped by it.
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 
-import { CommandPalette } from "@/components/CommandPalette";
 import { SurahPicker } from "@/components/SurahPicker";
 import { Topbar } from "@/components/Topbar";
 import { DEFAULT_SURAH_NUMBER } from "@/lib/mock-data";
@@ -37,7 +36,6 @@ type Props = {
 export function ChromeMain({ children }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [commandOpen, setCommandOpen] = useState(false);
   const [surahPickerOpen, setSurahPickerOpen] = useState(false);
   // Callback ref for the surah-picker trigger. Storing the element itself
   // (rather than holding `.current`) keeps the Floating-card positioning
@@ -52,8 +50,6 @@ export function ChromeMain({ children }: Props) {
     return n;
   }, [searchParams]);
 
-  const openCommandPalette = useCallback(() => setCommandOpen(true), []);
-  const closeCommandPalette = useCallback(() => setCommandOpen(false), []);
   const toggleSurahPicker = useCallback(() => setSurahPickerOpen((o) => !o), []);
   const closeSurahPicker = useCallback(() => setSurahPickerOpen(false), []);
   const onSurahSelect = useCallback(
@@ -67,10 +63,9 @@ export function ChromeMain({ children }: Props) {
 
   return (
     <>
-      <KeyboardShortcuts onOpenCommandPalette={openCommandPalette} />
+      <KeyboardShortcuts />
       <main className="main">
         <Topbar
-          onCommandPalette={openCommandPalette}
           onSurahPicker={toggleSurahPicker}
           surahPickerActive={surahPickerOpen}
           surahPickerAnchorRef={setSurahPickerAnchor}
@@ -85,7 +80,6 @@ export function ChromeMain({ children }: Props) {
           onSelect={onSurahSelect}
         />
       ) : null}
-      {commandOpen ? <CommandPalette onClose={closeCommandPalette} /> : null}
     </>
   );
 }

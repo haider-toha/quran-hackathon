@@ -1,6 +1,8 @@
 import type { SlashCommand, SlashCommandResult } from "@/types";
 
-// 5 commands from spec §8.2. The Journal slash menu opens on `/`.
+// 5 commands from spec §8.2 plus the Phase-9 Ask power commands. The
+// Journal slash menu opens on `/`; the Ask slash menu reuses the same
+// registry but whitelists a different subset via the `allowedIds` prop.
 //
 // Convention: `trigger` is the typed string after `/`. `name` is the human
 // label rendered in the menu. `iconName` lets the menu render via the
@@ -46,6 +48,43 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     description: "Generate a reflection prompt for the linked verse.",
     iconName: "reflect",
     category: "generate",
+  },
+  // Phase-9 Ask power commands. Each one is a side-effect (not a content
+  // result) — the consumer (`components/Ask/Ask.tsx`) inspects the id and
+  // routes to the matching store action rather than going through
+  // `runSlashCommand`. They live here so the central registry stays the
+  // single source of truth for slash discovery + filtering.
+  {
+    id: "scope",
+    trigger: "scope",
+    name: "/scope",
+    description: "Change the active scope (surah / verse range).",
+    iconName: "compass",
+    category: "transform",
+  },
+  {
+    id: "sources",
+    trigger: "sources",
+    name: "/sources",
+    description: "Open the active sources panel.",
+    iconName: "layers",
+    category: "transform",
+  },
+  {
+    id: "compare",
+    trigger: "compare",
+    name: "/compare",
+    description: "Toggle between synthesized and by-source answer views.",
+    iconName: "library",
+    category: "transform",
+  },
+  {
+    id: "clear",
+    trigger: "clear",
+    name: "/clear",
+    description: "Clear the current conversation.",
+    iconName: "x",
+    category: "transform",
   },
 ];
 

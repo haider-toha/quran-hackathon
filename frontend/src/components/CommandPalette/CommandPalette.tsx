@@ -1,5 +1,33 @@
 "use client";
 
+// CommandPalette — global ⌘K overlay. Mounted once at the AppShell root and
+// driven by the `command-palette-store` so any caller (the keyboard
+// shortcut, the sidebar search button, future menu entries) shares one
+// open/close source of truth.
+//
+// Result groups follow the Phase 6 spec:
+//   - Jump to       → primary nav routes (Library, Read, Ask, Journal,
+//                     Research, Settings)
+//   - Recent notes  → top 5 from `notes-store` overlay merged with
+//                     SAMPLE_NOTES, most-recently-edited first
+//   - Verses        → substring match against the in-scope surah
+//                     (Ad-Duha) — surah name, transliteration, ref form
+//                     "93", "93:3", or English translation text
+//   - Settings      → small list of in-app toggles (theme, suggestions
+//                     surface) that flip via the existing preferences
+//                     hook
+//
+// Filtering is a simple lower-case substring + token match against
+// `label` and `sub`. Verse refs additionally match against the bare
+// number form "93:N" so a user can type `93:3` and reach Ad-Duha 93:3.
+// If a group has zero matches it's hidden entirely.
+//
+// Keyboard:
+//   - Arrow Up / Down      move highlight
+//   - Enter                activate the highlighted entry
+//   - Esc                  close the palette
+//   - Click outside scrim  close the palette
+
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -8,38 +36,65 @@ import {
   BookIcon,
   CompassIcon,
   LibraryIcon,
+  MoonIcon,
   NoteIcon,
   PenIcon,
-  PlusIcon,
   SearchIcon,
+  SettingsIcon,
   SparkleIcon,
-  TimeIcon,
+  SunIcon,
+  WandIcon,
+  type IconProps,
 } from "@/components/Icon";
-import { TemplatePicker } from "@/components/TemplatePicker";
 import { kbdChord, kbdLabel } from "@/lib/kbd";
+import { closeCommandPalette } from "@/lib/command-palette-store";
 import { AD_DUHA, SAMPLE_NOTES } from "@/lib/mock-data";
-import { createNoteFromTemplate } from "@/lib/notes-store";
-import { readRecents } from "@/lib/recents";
+import { readUserNotes } from "@/lib/notes-store";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
-import type { AppRoute, Template } from "@/types";
+import { usePreferences } from "@/hooks/usePreferences";
+import type { AppRoute, Note } from "@/types";
+import type { ComponentType } from "react";
 
-import { type Command, useCommandFilter } from "./useCommandFilter";
+// ── Command shape ──────────────────────────────────────────────
+// `kind` identifies which group an entry belongs to so the renderer can
+// label rows consistently with the spec's group headings. `action`
+// fires an in-process side-effect; `href` triggers a route push. Items
+// always have at least one of those two.
+type CommandKind = "nav" | "note" | "verse" | "setting";
 
+type Command = {
+  id: string;
+  kind: CommandKind;
+  icon: ComponentType<IconProps>;
+  label: string;
+  sub: string;
+  href?: AppRoute | string;
+  action?: () => void;
+};
+
+type CommandGroup = {
+  label: string;
+  items: readonly Command[];
+};
+
+// Static jump-to set. Hoisted out of the component so the array isn't
+// rebuilt per keystroke — the contents never depend on local state.
 const NAV_COMMANDS: readonly Command[] = [
   {
-    id: "nav-read",
+    id: "nav-library",
     kind: "nav",
-    icon: BookIcon,
-    label: "Read",
-    sub: "Ad-Duha 93",
-    href: "/",
+    icon: LibraryIcon,
+    label: "Library",
+    sub: "Notes archive",
+    href: "/library",
   },
+  { id: "nav-read", kind: "nav", icon: BookIcon, label: "Read", sub: "Open the reader", href: "/" },
   {
     id: "nav-ask",
     kind: "nav",
     icon: SparkleIcon,
     label: "Ask",
-    sub: "New question",
+    sub: "Ask a question",
     href: "/ask",
   },
   {
@@ -47,68 +102,75 @@ const NAV_COMMANDS: readonly Command[] = [
     kind: "nav",
     icon: PenIcon,
     label: "Journal",
-    sub: "On grief that comes in waves",
+    sub: "Write and connect",
     href: "/journal",
-  },
-  {
-    id: "nav-library",
-    kind: "nav",
-    icon: LibraryIcon,
-    label: "Library",
-    sub: "8 notes",
-    href: "/library",
   },
   {
     id: "nav-research",
     kind: "nav",
     icon: CompassIcon,
     label: "Research",
-    sub: "External — flagged amber",
+    sub: "Deep research workspace",
     href: "/research",
+  },
+  {
+    id: "nav-settings",
+    kind: "nav",
+    icon: SettingsIcon,
+    label: "Settings",
+    sub: "Preferences and sources",
+    href: "/settings",
   },
 ];
 
-// Static command sets — rebuilt once per module load, not per render. Verse
-// and note commands depend on imported corpora that don't change at runtime,
-// so hoisting them out of the component avoids regenerating ~50+ objects on
-// every keystroke.
+// Verse commands, pre-built once. Each entry has `tokens` joined into the
+// `sub` so the substring filter can match against ref forms ("93", "93:3"),
+// transliteration ("Ad-Duha", "Duha"), and the English line.
 const VERSE_COMMANDS: readonly Command[] = AD_DUHA.verses.map((verse) => ({
-  id: `v-${verse.number}`,
+  id: `verse-${AD_DUHA.number}-${verse.number}`,
   kind: "verse",
   icon: BookIcon,
-  label: `Ad-Duha 93:${verse.number}`,
-  sub: verse.english,
-  href: "/" satisfies AppRoute,
-}));
-
-const NOTE_COMMANDS: readonly Command[] = SAMPLE_NOTES.slice(0, 5).map((note) => ({
-  id: `n-${note.id}`,
-  kind: "note",
-  icon: NoteIcon,
-  label: note.title,
-  sub: `${note.link} · ${note.tags.slice(0, 2).join(", ")}`,
-  href: "/journal" satisfies AppRoute,
+  label: `${AD_DUHA.transliteration} ${AD_DUHA.number}:${verse.number}`,
+  sub: `${AD_DUHA.number}:${verse.number} · ${verse.english}`,
+  // The reader picks up `?surah=N&ayah=K` and scrolls there.
+  href: `/?surah=${AD_DUHA.number}&ayah=${verse.number}`,
 }));
 
 type Props = {
-  onClose: () => void;
+  /** Caller passes `closeCommandPalette` from the store. The component
+   *  keeps the prop indirection so consumers can still mount the palette
+   *  with a custom close handler if needed (e.g. tests). */
+  onClose?: () => void;
 };
 
 export function CommandPalette({ onClose }: Props) {
   const router = useRouter();
+  const closePalette = useCallback(() => {
+    if (onClose) onClose();
+    else closeCommandPalette();
+  }, [onClose]);
+
+  const { preferences, setPreference, toggleTheme } = usePreferences();
   const [query, setQuery] = useState("");
   const [focusIndex, setFocusIndex] = useState(0);
   const [lastQuery, setLastQuery] = useState(query);
-  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  // Recents are read once on mount. The palette is short-lived and recents
-  // only mutate from navigation actions that close it, so a snapshot is
-  // sufficient — no need for a faux-reactive useSyncExternalStore.
-  const [recents] = useState(() => readRecents());
 
-  // React 19 "derive state from changing prop/state" pattern — reset focus
-  // to the top of the result list whenever the query changes.
+  // Recent notes — top 5 by editedAt desc, drawn from the user store
+  // overlay merged with SAMPLE_NOTES. Read once on mount; the palette is
+  // short-lived so we don't subscribe.
+  const [recentNotes] = useState<readonly Note[]>(() => {
+    const userNotes = readUserNotes();
+    const merged = [...userNotes, ...SAMPLE_NOTES];
+    // Stable sort by editedAt desc (ISO-8601 strings sort lexicographically).
+    const sorted = [...merged].sort((a, b) => (a.editedAt < b.editedAt ? 1 : -1));
+    return sorted.slice(0, 5);
+  });
+
+  // Reset focus to the top of the result list whenever the query changes.
+  // React 19 "derive state from changing prop/state" pattern — same idiom
+  // the previous palette implementation used.
   if (lastQuery !== query) {
     setLastQuery(query);
     setFocusIndex(0);
@@ -118,79 +180,82 @@ export function CommandPalette({ onClose }: Props) {
     inputRef.current?.focus();
   }, []);
 
-  useDialogFocus(dialogRef, { onEscape: onClose });
+  useDialogFocus(dialogRef, { onEscape: closePalette });
 
   const trimmedQuery = query.trim();
 
-  const handleTemplateSelect = useCallback(
-    (template: Template | null) => {
-      const note = createNoteFromTemplate(template);
-      setTemplatePickerOpen(false);
-      router.push(`/journal?note=${encodeURIComponent(note.id)}`);
-      onClose();
-    },
-    [router, onClose],
+  // ── Recent-notes commands ────────────────────────────────────
+  // Routes back to the journal with the note id so JournalV2 picks it up.
+  const noteCommands = useMemo<readonly Command[]>(
+    () =>
+      recentNotes.map((note) => ({
+        id: `note-${note.id}`,
+        kind: "note",
+        icon: NoteIcon,
+        label: note.title || "Untitled note",
+        sub: note.link
+          ? `${note.link}${note.tags.length > 0 ? ` · ${note.tags.slice(0, 2).join(", ")}` : ""}`
+          : note.tags.slice(0, 2).join(", ") || "Note",
+        href: `/journal?note=${encodeURIComponent(note.id)}`,
+      })),
+    [recentNotes],
   );
 
-  // Build the create-new commands. Each routes to a screen and (where it
-  // makes sense) prefills with the current query. Rebuilt only when the
-  // trimmed query changes so unrelated state churn doesn't allocate.
-  const createCommands = useMemo<readonly Command[]>(() => {
-    const askHref = trimmedQuery.length > 0 ? `/ask?q=${encodeURIComponent(trimmedQuery)}` : "/ask";
-    const researchHref =
-      trimmedQuery.length > 0 ? `/research?q=${encodeURIComponent(trimmedQuery)}` : "/research";
+  // ── Settings commands ────────────────────────────────────────
+  // In-process toggles. Each `action` mutates persisted state via the
+  // shared preferences hook so the change survives reload.
+  const settingCommands = useMemo<readonly Command[]>(() => {
+    const isDark = preferences.theme === "dark";
+    const suggestionsOff = preferences.suggestionsSurface === "off";
     return [
       {
-        id: "new-note",
-        kind: "create",
-        icon: PlusIcon,
-        label: "New note",
-        sub: "Pick a template",
-        action: () => setTemplatePickerOpen(true),
+        id: "setting-theme",
+        kind: "setting",
+        icon: isDark ? SunIcon : MoonIcon,
+        label: "Toggle theme",
+        sub: isDark ? "Switch to light" : "Switch to dark",
+        action: () => {
+          toggleTheme();
+          closePalette();
+        },
       },
       {
-        id: "new-question",
-        kind: "create",
-        icon: SparkleIcon,
-        label: "New question in Ask",
-        sub: trimmedQuery.length > 0 ? `Ask: “${trimmedQuery}”` : "Open Ask",
-        href: askHref,
-      },
-      {
-        id: "new-research",
-        kind: "create",
-        icon: CompassIcon,
-        label: "New research query",
-        sub: trimmedQuery.length > 0 ? `Research: “${trimmedQuery}”` : "Open Research",
-        href: researchHref,
+        id: "setting-suggestions",
+        kind: "setting",
+        icon: WandIcon,
+        label: "Toggle suggestions",
+        sub: suggestionsOff ? "Turn on suggestions rail" : "Turn off suggestions rail",
+        action: () => {
+          setPreference("suggestionsSurface", suggestionsOff ? "rail" : "off");
+          closePalette();
+        },
       },
     ];
-  }, [trimmedQuery]);
+  }, [preferences.theme, preferences.suggestionsSurface, toggleTheme, setPreference, closePalette]);
 
-  const recentCommands = useMemo<readonly Command[]>(
-    () =>
-      recents.slice(0, 5).map((entry) => ({
-        id: `recent-${entry.id}`,
-        kind: "recent",
-        icon: TimeIcon,
-        label: entry.query,
-        sub: entry.route === "/research" ? "Research" : "Ask",
-        href:
-          entry.route === "/research" || entry.route === "/ask"
-            ? `${entry.route}?q=${encodeURIComponent(entry.query)}`
-            : entry.route,
-      })),
-    [recents],
-  );
+  // ── Filter ───────────────────────────────────────────────────
+  // Lower-case substring match against `label + sub`. Verse rows already
+  // include the ref form in `sub`, so users can type `93:3` directly.
+  const groups = useMemo<readonly CommandGroup[]>(() => {
+    const q = trimmedQuery.toLowerCase();
+    const matches = (item: Command): boolean => {
+      if (q.length === 0) return true;
+      return item.label.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q);
+    };
 
-  const groups = useCommandFilter({
-    trimmedQuery,
-    recentCommands,
-    createCommands,
-    navCommands: NAV_COMMANDS,
-    verseCommands: VERSE_COMMANDS,
-    noteCommands: NOTE_COMMANDS,
-  });
+    const navItems = NAV_COMMANDS.filter(matches);
+    const noteItems = noteCommands.filter(matches);
+    const verseItems = VERSE_COMMANDS.filter(matches);
+    const settingItems = settingCommands.filter(matches);
+
+    const built: readonly (CommandGroup | null)[] = [
+      navItems.length > 0 ? { label: "Jump to", items: navItems } : null,
+      noteItems.length > 0 ? { label: "Recent notes", items: noteItems } : null,
+      verseItems.length > 0 ? { label: "Verses", items: verseItems } : null,
+      settingItems.length > 0 ? { label: "Settings", items: settingItems } : null,
+    ];
+    return built.filter((g): g is CommandGroup => g !== null);
+  }, [trimmedQuery, noteCommands, settingCommands]);
 
   const flat = useMemo(() => groups.flatMap((g) => g.items), [groups]);
 
@@ -202,17 +267,17 @@ export function CommandPalette({ onClose }: Props) {
       }
       if (command.href !== undefined) {
         router.push(command.href);
-        onClose();
+        closePalette();
       }
     },
-    [router, onClose],
+    [router, closePalette],
   );
 
-  // Arrow keys + Enter move through the result list. Escape and Tab are
-  // handled by `useDialogFocus` above. Suspend list-key handling while the
-  // template picker is open so its own keyboard handling can take over.
+  // Arrow keys move highlight; Enter activates. Escape and Tab are wired
+  // through `useDialogFocus`. We listen on the document so the keys work
+  // even if focus has wandered out of the input (e.g. user clicks the
+  // scrim region briefly).
   useEffect(() => {
-    if (templatePickerOpen) return;
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowDown") {
         event.preventDefault();
@@ -228,60 +293,54 @@ export function CommandPalette({ onClose }: Props) {
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [flat, focusIndex, runCommand, templatePickerOpen]);
+  }, [flat, focusIndex, runCommand]);
 
   return (
     <div
-      className="cmdk-overlay"
+      className="command-palette command-palette-scrim"
       role="presentation"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        // Outside-click closes. The card stops propagation so clicks
+        // inside the input / list region don't bubble to the scrim.
+        if (event.target === event.currentTarget) closePalette();
       }}
     >
       <div
         ref={dialogRef}
-        className="cmdk"
+        className="command-palette-card"
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="cmdk-input">
+        <div className="command-palette-input">
           <SearchIcon size={15} />
           <input
             ref={inputRef}
-            placeholder="Type a verse, ask a question, search notes…"
+            placeholder="Search verses, notes, sources, or jump to…"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
           <span className="kbd-inline">{kbdLabel("esc")}</span>
         </div>
-        <div className="cmdk-list">
+        <div className="command-palette-list">
           {groups.length === 0 && (
-            <div
-              style={{
-                padding: "24px 16px",
-                color: "var(--color-ink-4)",
-                textAlign: "center",
-                fontSize: 13,
-              }}
-            >
-              No results for &ldquo;{query}&rdquo;
-            </div>
+            <div className="command-palette-empty">No results for &ldquo;{query}&rdquo;</div>
           )}
           {groups.map((group, gi) => {
             const offset = groups.slice(0, gi).reduce((acc, g) => acc + g.items.length, 0);
             return (
-              <div key={group.label}>
-                <div className="cmdk-group-label">{group.label}</div>
+              <div key={group.label} className="command-palette-group">
+                <div className="command-palette-group-head">{group.label}</div>
                 {group.items.map((item, ii) => {
                   const idx = offset + ii;
                   const Icon = item.icon;
+                  const active = idx === focusIndex;
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      className={clsx("cmdk-item", idx === focusIndex && "focus")}
+                      className={clsx("command-palette-result", active && "active")}
                       onMouseEnter={() => setFocusIndex(idx)}
                       onClick={() => runCommand(item)}
                     >
@@ -299,7 +358,7 @@ export function CommandPalette({ onClose }: Props) {
             );
           })}
         </div>
-        <div className="cmdk-foot">
+        <div className="command-palette-foot">
           <span>
             <span className="kbd-inline">{kbdLabel("up")}</span>
             <span className="kbd-inline">{kbdLabel("down")}</span> navigate
@@ -313,12 +372,6 @@ export function CommandPalette({ onClose }: Props) {
           <span style={{ marginLeft: "auto" }}>{kbdChord("cmd", "K")} · Mishkat</span>
         </div>
       </div>
-
-      <TemplatePicker
-        open={templatePickerOpen}
-        onClose={() => setTemplatePickerOpen(false)}
-        onSelect={handleTemplateSelect}
-      />
     </div>
   );
 }

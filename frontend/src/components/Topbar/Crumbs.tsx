@@ -2,7 +2,6 @@ import { Fragment } from "react";
 
 const CRUMBS_BY_PATH: Record<string, readonly string[]> = {
   "/": ["Read", "Ad-Duha · 93"],
-  "/ask": ["Ask", "Scoped to Ad-Duha 93:1–11"],
   "/journal": ["Journal", "On grief that comes in waves"],
   "/library": ["Library"],
   "/research": ["Research", "External — Ad-Duha 93:3"],
@@ -10,7 +9,8 @@ const CRUMBS_BY_PATH: Record<string, readonly string[]> = {
 };
 
 export function Crumbs({ pathname }: { pathname: string }) {
-  const items = CRUMBS_BY_PATH[pathname] ?? ["Read"];
+  const items = CRUMBS_BY_PATH[pathname];
+  if (!items) return null;
   return (
     <nav aria-label="Breadcrumb" className="crumbs">
       {items.map((label, i) => {

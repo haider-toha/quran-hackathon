@@ -7,14 +7,16 @@ export type ResearchResult = {
   title: string;
   speaker: string;
   trust: TrustLevel;
-  meta: string;
+  source: string;
+  year: string | null;
   duration: string | null;
   snippet: string;
-  // Optional thumbnail URL for video-type results. Wave 2F adds this for the
-  // result-type-icon affordance — videos render the thumbnail when present;
-  // a placeholder otherwise. Articles and lectures default to null.
-  thumbnailUrl: string | null;
-  // Estimated read time in minutes for article-type results. Lectures and
-  // videos use `duration` instead; for them this is null.
   readTimeMinutes: number | null;
+};
+
+export type ResearchSynthesisGroup = {
+  id: string;
+  label: string;
+  body: string;
+  speakers: readonly string[];
 };

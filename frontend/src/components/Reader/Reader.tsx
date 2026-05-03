@@ -49,9 +49,8 @@ function pickContinueRef(lastRead: LastRead, currentSurah: number): LastRead {
   return lastRead;
 }
 
-// Returns `true` once we've hydrated on the client. Same pattern TrustLegend
-// and FloatingCard use: SSR returns false, client returns true, no
-// setState-in-effect.
+// Returns `true` once we've hydrated on the client. Same pattern FloatingCard
+// uses: SSR returns false, client returns true, no setState-in-effect.
 function useHydrated(): boolean {
   return useSyncExternalStore(
     () => () => {},

@@ -1,18 +1,16 @@
 "use client";
 
 import clsx from "clsx";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 
-import { AlertWarnIcon, FilterIcon, QuestionIcon, ShieldIcon } from "@/components/Icon";
+import { ChevronDownIcon, FilterIcon, QuestionIcon, SearchIcon } from "@/components/Icon";
 import { useDeepResearchTimer } from "@/hooks/useDeepResearchTimer";
 import { useOnOutsideInteraction } from "@/hooks/useOnOutsideInteraction";
-import type { ResearchResult, ResearchType } from "@/types";
+import type { ResearchResult, ResearchSynthesisGroup, ResearchType, TrustLevel } from "@/types";
 
-import { DeepCompletedState, DeepIdleState, DeepRunningState } from "./DeepResearchStates";
+import { DeepCompletedState, DeepRunningState } from "./DeepResearchStates";
 import { ResearchCard } from "./ResearchCard";
-import { ResearchModeTabs, type ResearchMode } from "./ResearchModeTabs";
 import { DEFAULT_SPEAKER_FILTER, SpeakerFilter, type SpeakerFilterValue } from "./SpeakerFilter";
-import { TrustLegend } from "./TrustLegend";
 
 type FilterType = "all" | ResearchType;
 
@@ -23,10 +21,29 @@ const FILTER_BUTTONS: readonly { id: FilterType; label: string }[] = [
   { id: "video", label: "Videos" },
 ];
 
+const TRUST_ROWS: readonly { level: TrustLevel; label: string; body: string }[] = [
+  {
+    level: "verified",
+    label: "Verified",
+    body: "Speaker has institutional credentials and a public scholarly record.",
+  },
+  {
+    level: "unknown",
+    label: "Unknown",
+    body: "Not enough signals yet to verify this speaker.",
+  },
+  {
+    level: "flagged",
+    label: "Flagged",
+    body: "Sourcing has been flagged as inaccurate or controversial. Read with caution.",
+  },
+];
+
 type Props = {
   results: readonly ResearchResult[];
   question: string;
   totalResults: number;
+  synthesis: readonly ResearchSynthesisGroup[];
 };
 
 function applySpeakerFilter(
@@ -34,9 +51,7 @@ function applySpeakerFilter(
   filter: SpeakerFilterValue,
 ): readonly ResearchResult[] {
   return results.filter((result) => {
-    // Hard blacklist — wins regardless of trust gate.
     if (filter.blacklist.includes(result.speaker)) return false;
-    // Whitelist gates: when populated, only those speakers pass.
     if (filter.whitelist.length > 0 && !filter.whitelist.includes(result.speaker)) {
       return false;
     }
@@ -46,18 +61,35 @@ function applySpeakerFilter(
   });
 }
 
-export function Research({ results, question, totalResults }: Props) {
+export function Research({ results, question, totalResults, synthesis }: Props) {
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [speakerFilter, setSpeakerFilter] = useState<SpeakerFilterValue>(DEFAULT_SPEAKER_FILTER);
   const [speakerFilterOpen, setSpeakerFilterOpen] = useState(false);
-  const speakerButtonRef = useRef<HTMLDivElement>(null);
-  const [mode, setMode] = useState<ResearchMode>("quick");
+  const speakerFilterRef = useRef<HTMLDivElement>(null);
+  const [trustHelpOpen, setTrustHelpOpen] = useState(false);
+  const trustHelpRef = useRef<HTMLDivElement>(null);
+
+  // Reset the editable draft when the page receives a new question prop
+  // (e.g. URL-driven prefill from the command palette). React render-phase
+  // reset rather than an effect: cheaper, no extra render, and the lint rule
+  // bans setState-in-effect.
+  const [lastQuestion, setLastQuestion] = useState(question);
+  const [activeQuery, setActiveQuery] = useState(question);
+  const [queryDraft, setQueryDraft] = useState(question);
+  if (question !== lastQuestion) {
+    setLastQuestion(question);
+    setActiveQuery(question);
+    setQueryDraft(question);
+  }
+
   const deepTimer = useDeepResearchTimer();
   const [deepRevealed, setDeepRevealed] = useState(false);
+  const [synthesisOpen, setSynthesisOpen] = useState(true);
 
-  const speakers = useMemo(() => {
-    return [...new Set(results.map((r) => r.speaker))].sort((a, b) => a.localeCompare(b));
-  }, [results]);
+  const speakers = useMemo(
+    () => [...new Set(results.map((r) => r.speaker))].sort((a, b) => a.localeCompare(b)),
+    [results],
+  );
 
   const visibleResults = useMemo(() => {
     const trustFiltered = applySpeakerFilter(results, speakerFilter);
@@ -65,108 +97,141 @@ export function Research({ results, question, totalResults }: Props) {
     return trustFiltered.filter((result) => result.type === filterType);
   }, [results, filterType, speakerFilter]);
 
-  // Click-outside + Escape on the speaker filter dropdown — single shared hook.
-  useOnOutsideInteraction(speakerButtonRef, () => setSpeakerFilterOpen(false), {
+  useOnOutsideInteraction(speakerFilterRef, () => setSpeakerFilterOpen(false), {
     enabled: speakerFilterOpen,
   });
+  useOnOutsideInteraction(trustHelpRef, () => setTrustHelpOpen(false), {
+    enabled: trustHelpOpen,
+  });
+
+  function handleRerun(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmed = queryDraft.trim();
+    if (trimmed.length === 0 || trimmed === activeQuery) return;
+    setActiveQuery(trimmed);
+    // In production this would re-fetch results. The mock corpus is fixed,
+    // so we just acknowledge the new question by updating the active query.
+  }
 
   function startDeepResearch() {
     deepTimer.start();
     setDeepRevealed(false);
   }
 
-  // In deep mode, results render only after the user clicks "View results".
-  // In quick mode, results render immediately.
-  const showResults = mode === "quick" || (mode === "deep" && deepRevealed);
+  const queryEdited = queryDraft.trim() !== activeQuery && queryDraft.trim().length > 0;
+  const showResults =
+    deepTimer.status !== "running" && (deepTimer.status !== "completed" || deepRevealed);
+  const showSynthesis = showResults && synthesis.length > 0 && visibleResults.length >= 4;
 
   return (
     <div className="research">
       <div className="research-inner">
-        <div className="research-hd">
+        <header className="research-hd">
           <h1>External research</h1>
-          <span className="chip ext">
-            <AlertWarnIcon size={10} /> Outside the tafsir corpus
-          </span>
-        </div>
+          <p className="research-sub">
+            Lectures, articles, and videos from the wider scholarly community
+          </p>
+        </header>
 
-        <div className="research-disc">
-          <div className="ic">
-            <ShieldIcon size={14} />
+        <form className="research-query" onSubmit={handleRerun} role="search">
+          <SearchIcon size={14} className="research-query-ic" />
+          <input
+            type="text"
+            value={queryDraft}
+            onChange={(event) => setQueryDraft(event.target.value)}
+            aria-label="Research question"
+            className="research-query-input"
+            spellCheck={false}
+          />
+          <button
+            type="submit"
+            className={clsx("btn", "sm", !queryEdited && "ghost")}
+            disabled={!queryEdited}
+          >
+            Rerun
+          </button>
+        </form>
+
+        {deepTimer.status === "idle" ? (
+          <div className="research-deep-link">
+            <button type="button" onClick={startDeepResearch} className="research-deep-link-btn">
+              Run deep research <span aria-hidden="true">→</span>
+            </button>
+            <span className="research-deep-link-hint">
+              ~45s · cross-checks citations and gathers a longer report
+            </span>
           </div>
-          <div>
-            Results below come from third-party lectures, articles, and videos — they aren&apos;t
-            part of the verified tafsir corpus and aren&apos;t held to the same standard. Speakers
-            carry trust signals based on your settings; treat anything marked{" "}
-            <strong style={{ color: "var(--color-ext)" }}>unknown</strong> as preliminary.
-          </div>
-        </div>
-
-        <TrustLegend />
-
-        <ResearchModeTabs mode={mode} onChange={setMode} />
-
-        <div className="research-q">
-          <QuestionIcon size={14} />
-          <span>&ldquo;{question}&rdquo;</span>
-        </div>
-
-        {mode === "deep" && deepTimer.status === "idle" ? (
-          <DeepIdleState onStart={startDeepResearch} />
         ) : null}
-        {mode === "deep" && deepTimer.status === "running" ? <DeepRunningState /> : null}
-        {mode === "deep" && deepTimer.status === "completed" && !deepRevealed ? (
+
+        {deepTimer.status === "running" ? <DeepRunningState /> : null}
+        {deepTimer.status === "completed" && !deepRevealed ? (
           <DeepCompletedState onView={() => setDeepRevealed(true)} />
         ) : null}
 
         {showResults ? (
           <>
-            <div
-              style={{
-                display: "flex",
-                gap: 6,
-                marginBottom: 18,
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-              role="tablist"
-              aria-label="Filter research results"
-            >
-              {FILTER_BUTTONS.map((button) => {
-                const isActive = filterType === button.id;
-                return (
+            <div className="research-filter-row" role="toolbar" aria-label="Result filters">
+              <div className="research-filter-tabs" role="tablist" aria-label="Result type">
+                {FILTER_BUTTONS.map((button) => {
+                  const isActive = filterType === button.id;
+                  return (
+                    <button
+                      key={button.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      className={clsx("btn", "sm", !isActive && "ghost")}
+                      onClick={() => setFilterType(button.id)}
+                    >
+                      {button.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="research-filter-trailing">
+                <div ref={speakerFilterRef} className="research-filter-anchor">
                   <button
-                    key={button.id}
                     type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    className={clsx("btn", "sm", !isActive && "ghost")}
-                    onClick={() => setFilterType(button.id)}
+                    className="btn sm ghost"
+                    aria-expanded={speakerFilterOpen}
+                    aria-haspopup="dialog"
+                    onClick={() => setSpeakerFilterOpen((v) => !v)}
                   >
-                    {button.label}
+                    <FilterIcon size={12} /> Speakers
                   </button>
-                );
-              })}
-              <span style={{ flex: 1 }} />
-              <div ref={speakerButtonRef} style={{ position: "relative" }}>
-                <button
-                  type="button"
-                  className="btn sm ghost"
-                  aria-expanded={speakerFilterOpen}
-                  aria-haspopup="dialog"
-                  onClick={() => setSpeakerFilterOpen((v) => !v)}
-                >
-                  <FilterIcon size={12} /> Speaker filters
-                </button>
-                {speakerFilterOpen ? (
-                  <SpeakerFilter
-                    value={speakerFilter}
-                    speakers={speakers}
-                    onChange={setSpeakerFilter}
-                    onClose={() => setSpeakerFilterOpen(false)}
-                  />
-                ) : null}
+                  {speakerFilterOpen ? (
+                    <SpeakerFilter
+                      value={speakerFilter}
+                      speakers={speakers}
+                      onChange={setSpeakerFilter}
+                      onClose={() => setSpeakerFilterOpen(false)}
+                    />
+                  ) : null}
+                </div>
+                <div ref={trustHelpRef} className="research-filter-anchor">
+                  <button
+                    type="button"
+                    className="iconbtn"
+                    aria-expanded={trustHelpOpen}
+                    aria-haspopup="dialog"
+                    aria-label="Trust signals legend"
+                    onClick={() => setTrustHelpOpen((v) => !v)}
+                  >
+                    <QuestionIcon size={13} />
+                  </button>
+                  {trustHelpOpen ? <TrustHelp /> : null}
+                </div>
               </div>
             </div>
+
+            {showSynthesis ? (
+              <SynthesisCard
+                groups={synthesis}
+                totalSources={visibleResults.length}
+                open={synthesisOpen}
+                onToggle={() => setSynthesisOpen((v) => !v)}
+              />
+            ) : null}
 
             {visibleResults.length === 0 ? (
               <div className="empty">
@@ -179,35 +244,16 @@ export function Research({ results, question, totalResults }: Props) {
                 </div>
               </div>
             ) : (
-              visibleResults.map((result) => <ResearchCard key={result.id} result={result} />)
+              <div className="research-results">
+                {visibleResults.map((result) => (
+                  <ResearchCard key={result.id} result={result} />
+                ))}
+              </div>
             )}
 
-            <div
-              style={{
-                marginTop: 28,
-                padding: "20px 0",
-                textAlign: "center",
-                color: "var(--color-ink-4)",
-                fontSize: 12,
-                fontStyle: "italic",
-                fontFamily: "var(--font-serif)",
-              }}
-            >
+            <div className="research-foot">
               Showing {visibleResults.length} of {totalResults} results.{" "}
-              <button
-                type="button"
-                style={{
-                  background: "transparent",
-                  border: 0,
-                  padding: 0,
-                  color: "var(--color-ink-3)",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: "inherit",
-                  fontStyle: "inherit",
-                  textDecoration: "underline",
-                }}
-              >
+              <button type="button" className="research-foot-link">
                 Show more
               </button>
             </div>
@@ -215,5 +261,56 @@ export function Research({ results, question, totalResults }: Props) {
         ) : null}
       </div>
     </div>
+  );
+}
+
+function TrustHelp() {
+  return (
+    <div role="dialog" aria-label="Trust signals" className="research-trust-help">
+      <div className="research-trust-help-title">Trust signals</div>
+      <ul>
+        {TRUST_ROWS.map((row) => (
+          <li key={row.level}>
+            <span aria-hidden="true" className={`trust-dot ${row.level}`} />
+            <div>
+              <strong>{row.label}</strong>
+              <span> — {row.body}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+type SynthesisProps = {
+  groups: readonly ResearchSynthesisGroup[];
+  totalSources: number;
+  open: boolean;
+  onToggle: () => void;
+};
+
+function SynthesisCard({ groups, totalSources, open, onToggle }: SynthesisProps) {
+  const headline = `Across ${totalSources} sources, ${groups.length} readings emerge`;
+  return (
+    <section className={clsx("research-synth", open && "open")}>
+      <button type="button" className="research-synth-head" onClick={onToggle} aria-expanded={open}>
+        <span className="research-synth-headline">{headline}</span>
+        <ChevronDownIcon size={13} className="research-synth-chev" />
+      </button>
+      {open ? (
+        <ul className="research-synth-list">
+          {groups.map((group) => (
+            <li key={group.id} className="research-synth-row">
+              <div className="research-synth-row-head">
+                <span className="research-synth-row-label">{group.label}</span>
+                <span className="research-synth-row-speakers">{group.speakers.join(" · ")}</span>
+              </div>
+              <p className="research-synth-row-body">{group.body}</p>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
   );
 }

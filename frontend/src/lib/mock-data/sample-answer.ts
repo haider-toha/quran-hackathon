@@ -118,9 +118,9 @@ const S1_CANONICAL: Answer = {
     { source: "Tafsir As-Sadi", status: "done", meta: "4 passages" },
     { source: "Tafsir Ibn Kathir", status: "done", meta: "3 passages" },
     { source: "Tafsir al-Qurtubi", status: "done", meta: "2 passages" },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (Bukhari 4983)" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
-  confidence: { level: "high", sources: 4, total: 4 },
+  confidence: { level: "high", sources: 3, total: 4 },
   durationMs: 1400,
 };
 
@@ -204,13 +204,22 @@ const S1_SPECULATIVE_DEFERRAL: Deferral = {
       status: "done",
       meta: "0 direct matches",
     },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (external state)" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
   confidence: { level: "low", sources: 1, total: 4 },
   body: [
     "**The classical tafsir corpus doesn't address the Prophet's ﷺ *internal experience* of the pause directly.** What the commentaries describe is the external situation: revelation paused, Quraysh — and the wife of Abu Lahab specifically — mocked, this surah arrived as the response (Bukhari 4983).",
     "What you're asking — about whether the Prophet ﷺ *felt* God's anger — is a question about subjective experience, and the verse is explicit that no such anger existed (*ma qala*). But the texts I'm drawing on don't speculate about his internal state in the way your question implies.",
     "I can give you what the sources *do* say about his outward state during the *fatra*, or you can rephrase. Both options below.",
+  ],
+  nextSteps: [
+    {
+      kind: "enable-source",
+      label: "Enable Tafsir al-Razi for theological/psychological readings",
+      target: "Tafsir al-Razi",
+    },
+    { kind: "rephrase", label: "Ask about the Prophet's ﷺ outward state instead" },
+    { kind: "external", label: "Search external biographical sources (sira)" },
   ],
 };
 
@@ -416,13 +425,20 @@ const S2_OFF_SCOPE_DEFERRAL: Deferral = {
     { source: "Tafsir As-Sadi", status: "done", meta: "0 direct matches" },
     { source: "Tafsir Ibn Kathir", status: "done", meta: "0 direct matches" },
     { source: "Tafsir al-Qurtubi", status: "done", meta: "0 direct matches" },
-    { source: "Comparative scripture corpus", status: "done", meta: "out of scope" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct matches" },
   ],
   confidence: { level: "low", sources: 0, total: 4 },
   body: [
     "**This is a comparative-religion question, and the corpus I'm drawing on is the classical Quranic tafsir on Surat Ad-Duha specifically.** The four commentaries I have access to (As-Sadi, Ibn Kathir, al-Qurtubi, at-Tabari) treat the orphan motif inside the Quranic and prophetic frame — they don't compare it to orphan figures in the Hebrew Bible or the New Testament.",
     "If you want, I can stay in scope and unpack the *internal* logic of the orphan motif here — how 93:6 connects to 93:9, what *yatim* means in Arabic usage, how the verse is read by the classical tradition. That I can do well.",
     "If you want the comparative reading, that's a different corpus and a different question. I'd recommend asking it as a fresh search rather than trying to stretch this one.",
+  ],
+  nextSteps: [
+    {
+      kind: "rephrase",
+      label: "Stay in scope: ask about the Quranic orphan motif itself",
+    },
+    { kind: "external", label: "Open external comparative-religion search" },
   ],
 };
 
@@ -564,13 +580,20 @@ const S3_PARTIAL_DEFERRAL: Deferral = {
     { source: "Tafsir As-Sadi", status: "done", meta: "1 oblique" },
     { source: "Tafsir Ibn Kathir", status: "done", meta: "1 oblique" },
     { source: "Tafsir al-Qurtubi", status: "done", meta: "0 direct" },
-    { source: "Sunnah corpus", status: "done", meta: "1 hadith (community scope)" },
+    { source: "Tafsir at-Tabari", status: "done", meta: "0 direct" },
   ],
   confidence: { level: "med", sources: 2, total: 4 },
   body: [
     "**93:5 has a primary addressee: the Prophet ﷺ.** The classical commentaries are unanimous that the *la-sawfa yutika rabbuka* (will most certainly give *you*) refers to him directly — and they tie its scope to his specific gifts (intercession, revelation, the opening of regions for his community).",
     "**Whether the verse 'applies' to you is a more careful question.** The traditional reading is that the Prophet's ﷺ contentment in *fa-tarda* is wide enough to include his community — At-Tabari cites the hadith *'I shall not be content while one of my community is in the Fire'* as the basis for treating the verse as having communal scope. So the *promise* is to him; the *consolation* of the promise reaches anyone who is part of the community he loves.",
     "I'd be cautious about reading the verse as a personal *guarantee* of any specific outcome in your life — that's not what the tafsirs do with it. But as an anchor for hope, in the way the Prophet ﷺ used it himself, it is well within scope.",
+  ],
+  nextSteps: [
+    {
+      kind: "rephrase",
+      label: "Ask: how do classical scholars apply 93:5 to the community?",
+    },
+    { kind: "widen-scope", label: "Widen scope to all of Surah Ad-Duha" },
   ],
 };
 
@@ -704,7 +727,7 @@ export const STREAMING_RETRIEVAL: readonly RetrievalStep[] = [
   { source: "Tafsir As-Sadi", status: "done", meta: "4 passages" },
   { source: "Tafsir Ibn Kathir", status: "done", meta: "3 passages" },
   { source: "Tafsir al-Qurtubi", status: "active", meta: "searching…" },
-  { source: "Sunnah corpus", status: "pending", meta: "queued" },
+  { source: "Tafsir at-Tabari", status: "pending", meta: "queued" },
 ];
 
 export const STREAMING_TEXT =

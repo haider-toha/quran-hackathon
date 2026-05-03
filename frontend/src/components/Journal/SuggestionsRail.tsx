@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { InsertIcon, SparkleIcon, TimeIcon, XIcon } from "@/components/Icon";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@/lib/dismissal-store";
 import { suggestionsFor } from "@/lib/mock-data";
 import { usePreferences } from "@/hooks/usePreferences";
-import type { Note, Suggestion, SuggestionFrequency } from "@/types";
+import type { Note, Suggestion, SuggestionFrequency, SuggestionKind } from "@/types";
 
 type Props = {
   note: Note;
@@ -24,9 +24,14 @@ type Props = {
 // real implementation decides volume server-side.
 const LOW_LIMIT = 2;
 
+// reviewOnSave: how long the user must be idle (no keystrokes in NoteBody)
+// before the rail body reveals. 30 seconds — the spec value.
+const IDLE_REVEAL_MS = 30_000;
+
 export function SuggestionsRail({ note, onInsert }: Props) {
   const { preferences } = usePreferences();
   const frequency: SuggestionFrequency = preferences.suggestionFrequency;
+  const reviewOnSave = preferences.reviewOnSave;
 
   // Subscribe to dismissal store changes so the rail re-renders after a
   // user dismisses or snoozes a card. The server snapshot is an empty
@@ -41,9 +46,17 @@ export function SuggestionsRail({ note, onInsert }: Props) {
     return live;
   }, [note.id, frequency]);
 
+  // reviewOnSave gate — when on, the body is suppressed until the user
+  // pauses or saves. The header count still reflects the real number.
+  // We start with `revealed = !reviewOnSave`; when reviewOnSave flips on,
+  // we re-suppress until the next idle/save event.
+  const revealed = useReviewOnSaveReveal({ enabled: reviewOnSave, noteId: note.id });
+
   // Surface gate is enforced in the parent (Journal). If we got here, the
   // surface is "rail". Keep the empty-state graceful.
   if (frequency === "off") return null;
+
+  const showCards = !reviewOnSave || revealed;
 
   return (
     <div className="suggestions-rail">
@@ -53,22 +66,26 @@ export function SuggestionsRail({ note, onInsert }: Props) {
         <span className="count">{visible.length}</span>
       </div>
       <div className="rail-body">
-        {visible.length === 0 ? (
-          <div className="rail-empty">All caught up. New suggestions surface as you write.</div>
+        {showCards ? (
+          visible.length === 0 ? (
+            <div className="rail-empty">All caught up. New suggestions surface as you write.</div>
+          ) : (
+            visible.map((suggestion) => (
+              <SuggestionCard
+                key={suggestion.id}
+                suggestion={suggestion}
+                onInsert={() => {
+                  onInsert(formatSuggestionForInsert(suggestion));
+                  // Dismiss after insert so the card disappears.
+                  dismiss(note.id, suggestion.hash);
+                }}
+                onDismiss={() => dismiss(note.id, suggestion.hash)}
+                onSnooze={() => snooze(note.id, suggestion.hash)}
+              />
+            ))
+          )
         ) : (
-          visible.map((suggestion) => (
-            <SuggestionCard
-              key={suggestion.id}
-              suggestion={suggestion}
-              onInsert={() => {
-                onInsert(formatSuggestionForInsert(suggestion));
-                // Dismiss after insert so the card disappears.
-                dismiss(note.id, suggestion.hash);
-              }}
-              onDismiss={() => dismiss(note.id, suggestion.hash)}
-              onSnooze={() => snooze(note.id, suggestion.hash)}
-            />
-          ))
+          <div className="rail-empty">All quiet — suggestions appear when you pause or save.</div>
         )}
         <div className="rail-foot">Suggestions update as you write.</div>
       </div>
@@ -83,17 +100,21 @@ type CardProps = {
   onSnooze: () => void;
 };
 
+/**
+ * The redesigned (Phase 2) card. Source-only header, two-line preview,
+ * Insert as the primary action. Snooze + Dismiss icons are hidden until
+ * hover/focus-within. No background fill — just a thin left accent line
+ * coloured by source.
+ */
 function SuggestionCard({ suggestion, onInsert, onDismiss, onSnooze }: CardProps) {
   return (
-    <div className="rail-card card-suggestion" data-kind={suggestion.kind}>
-      <div className="reason">{suggestion.reason}</div>
+    <div
+      className="rail-card card-suggestion"
+      data-kind={suggestion.kind}
+      data-accent={accentTokenFor(suggestion.kind)}
+    >
+      <div className="src">{sourceLabel(suggestion)}</div>
       <div className="body">{suggestion.preview}</div>
-      {suggestion.source ? (
-        <div className="src">
-          {suggestion.source.name}
-          {suggestion.source.ref ? ` · ${suggestion.source.ref}` : ""}
-        </div>
-      ) : null}
       <div className="actions">
         <button
           type="button"
@@ -103,27 +124,136 @@ function SuggestionCard({ suggestion, onInsert, onDismiss, onSnooze }: CardProps
         >
           <InsertIcon size={11} /> Insert
         </button>
-        <button
-          type="button"
-          className="btn ghost sm"
-          onClick={onSnooze}
-          aria-label="Snooze for 24 hours"
-          title="Snooze for 24 hours"
-        >
-          <TimeIcon size={11} />
-        </button>
-        <button
-          type="button"
-          className="btn ghost sm"
-          onClick={onDismiss}
-          aria-label="Dismiss suggestion"
-          title="Dismiss"
-        >
-          <XIcon size={11} />
-        </button>
+        <span className="actions-hover">
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={onSnooze}
+            aria-label="Snooze for 24 hours"
+            title="Snooze for 24 hours"
+          >
+            <TimeIcon size={11} />
+          </button>
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={onDismiss}
+            aria-label="Dismiss suggestion"
+            title="Dismiss"
+          >
+            <XIcon size={11} />
+          </button>
+        </span>
       </div>
     </div>
   );
+}
+
+/**
+ * Compose the small mono source line shown at the top of each card.
+ * Examples: `As-Sadi · 93:3`, `Past note · n6`, `Prompt`.
+ */
+function sourceLabel(suggestion: Suggestion): string {
+  if (suggestion.kind === "prompt") return "Prompt";
+  if (!suggestion.source) return "Source";
+  if (suggestion.source.ref) {
+    return `${suggestion.source.name} · ${suggestion.source.ref}`;
+  }
+  return suggestion.source.name;
+}
+
+/**
+ * Map a suggestion kind to a `data-accent` token the CSS reads to pick the
+ * left-line colour. Kept as a typed lookup so adding a new kind forces a
+ * compile-time decision about its accent.
+ */
+function accentTokenFor(kind: SuggestionKind): string {
+  switch (kind) {
+    case "tafsir-match":
+      return "tafsir";
+    case "related-verse":
+      return "verse-link";
+    case "related-note":
+      return "ink-quiet";
+    case "prompt":
+      return "ai";
+    default:
+      return "ink-quiet";
+  }
+}
+
+/**
+ * Reveal-gating hook for the "Review suggestions only when you pause or
+ * save" preference. When `enabled === false`, always returns `true` (the
+ * rail body shows immediately). When `enabled === true`, returns `false`
+ * until either:
+ *
+ *   - the user has been idle (no `mishkat:note-typing` event) for >30s, or
+ *   - a `mishkat:note-saved` event fires for any note, OR
+ *   - the active note id changes (so opening a fresh note doesn't inherit
+ *     a suppressed state from the prior one).
+ *
+ * Implementation note: we keep two pieces of state — `gateKey` (a string
+ * derived from `{enabled, noteId}`) and `revealed`. The reset when those
+ * inputs change is handled by `useState`'s initializer at the top of the
+ * effect-key change rather than by a `setState` inside the effect body,
+ * which the `react-hooks/set-state-in-effect` lint rule rightly flags.
+ */
+function useReviewOnSaveReveal({ enabled, noteId }: { enabled: boolean; noteId: string }): boolean {
+  // The "current intent" key. When inputs change, the render-time
+  // comparison below resets `revealed` to its starting value — no
+  // setState inside an effect is needed. This is the React 19 pattern
+  // for derived-state-on-prop-change.
+  const gateKey = `${enabled ? "1" : "0"}:${noteId}`;
+  const [snapshot, setSnapshot] = useState<{ key: string; revealed: boolean }>(() => ({
+    key: gateKey,
+    revealed: !enabled,
+  }));
+
+  let revealed = snapshot.revealed;
+  if (snapshot.key !== gateKey) {
+    // Inputs changed since last render — recompute and store, but do
+    // it during render via setState (React allows this for "reset on
+    // prop change" without effect cascading).
+    revealed = !enabled;
+    setSnapshot({ key: gateKey, revealed });
+  }
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    let idleTimer: number | null = null;
+    function scheduleIdle() {
+      if (idleTimer !== null) window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => {
+        setSnapshot({ key: gateKey, revealed: true });
+      }, IDLE_REVEAL_MS);
+    }
+
+    function onTyping() {
+      // Active typing — suppress the body and re-arm the idle timer.
+      setSnapshot({ key: gateKey, revealed: false });
+      scheduleIdle();
+    }
+
+    function onSaved() {
+      setSnapshot({ key: gateKey, revealed: true });
+    }
+
+    // Arm the initial idle window so an opened note that the user
+    // doesn't touch will reveal after IDLE_REVEAL_MS even without a save.
+    scheduleIdle();
+
+    window.addEventListener("mishkat:note-typing", onTyping);
+    window.addEventListener("mishkat:note-saved", onSaved);
+    return () => {
+      window.removeEventListener("mishkat:note-typing", onTyping);
+      window.removeEventListener("mishkat:note-saved", onSaved);
+      if (idleTimer !== null) window.clearTimeout(idleTimer);
+    };
+  }, [enabled, gateKey]);
+
+  return revealed;
 }
 
 /**

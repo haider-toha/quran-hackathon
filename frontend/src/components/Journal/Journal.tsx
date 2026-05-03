@@ -9,9 +9,11 @@ import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
 import { updateNote } from "@/lib/api/notes";
 import { findNote as findSampleNote } from "@/lib/mock-data";
 import { createNoteFromTemplate, readUserNotes, subscribeUserNotes } from "@/lib/notes-store";
+import { useFeatureFlag } from "@/hooks/useFeatureFlag";
 import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
 
+import { JournalV2 } from "./JournalV2";
 import { NoteBody } from "./NoteBody";
 import { NoteToolbar } from "./NoteToolbar";
 import { SuggestionsRail } from "./SuggestionsRail";
@@ -27,6 +29,16 @@ type Props = {
 const EMPTY_NOTES: readonly Note[] = [];
 
 export function Journal({ noteId }: Props) {
+  // Phase 1 introduces a v2 mode-aware layout behind a dev feature flag.
+  // Flag defaults to ON; toggle off via devtools by setting
+  // `mishkat:ff:journalV2` to "0" in localStorage. When OFF, the original
+  // 3-column layout below renders unchanged.
+  const v2Enabled = useFeatureFlag("journalV2");
+  if (v2Enabled) return <JournalV2 noteId={noteId} />;
+  return <JournalLegacy noteId={noteId} />;
+}
+
+function JournalLegacy({ noteId }: Props) {
   const { preferences } = usePreferences();
 
   // Subscribe to the user-notes store so any mutation (slash-command insert,
@@ -74,8 +86,6 @@ export function Journal({ noteId }: Props) {
         </div>
         <VerseContext linkedAyah={linkedAyah} />
       </div>
-
-      <div className="journal-divider" />
 
       <div className="journal-pane right" style={{ flex: 1 }}>
         <NoteToolbar />

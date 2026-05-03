@@ -10,8 +10,8 @@ import type { Note } from "@/types";
 //   • one has zero tags (n13) — exercises empty-tag rendering
 //   • range of relative dates from "4m ago" to "3 weeks ago" — exercises
 //     DateFilter today/week/month/all bands
-//   • tags chosen to overlap (grief, mercy, language, pattern) so
-//     TagFilter has multi-match candidates and unique-tag candidates
+//   • tags chosen to overlap (grief, mercy, language, pattern) so the
+//     tag popover has multi-match candidates and unique-tag candidates
 
 export const SAMPLE_NOTES: readonly Note[] = [
   {

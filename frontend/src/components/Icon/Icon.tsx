@@ -333,3 +333,31 @@ export const LockIcon = makeIcon(
     <path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0V7.5" />
   </>,
 );
+
+export const DownloadIcon = makeIcon(
+  <>
+    <path d="M8 2.5v8.5M5 8.5l3 3 3-3" />
+    <path d="M2.5 13.5h11" />
+  </>,
+);
+
+export const ShareIcon = makeIcon(
+  <>
+    <circle cx="12" cy="3.5" r="1.6" />
+    <circle cx="4" cy="8" r="1.6" />
+    <circle cx="12" cy="12.5" r="1.6" />
+    <path d="M5.4 7.1l5.2-2.7M5.4 8.9l5.2 2.7" />
+  </>,
+);
+
+// Node-graph icon — a centered hub with three peripheral nodes joined by
+// thin radial lines. Mirrors the shape of the Phase 8 Journal map view.
+export const MapIcon = makeIcon(
+  <>
+    <circle cx="8" cy="8" r="1.6" />
+    <circle cx="3" cy="4" r="1.4" />
+    <circle cx="13" cy="5" r="1.4" />
+    <circle cx="9.5" cy="13" r="1.4" />
+    <path d="M7 7L4 5M9 7l3-1.5M8.5 9.7L9 11.6" />
+  </>,
+);

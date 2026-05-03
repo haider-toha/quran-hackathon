@@ -15,7 +15,6 @@ import { isPlainObject, pick } from "@/lib/validators";
 import {
   DEFAULT_PREFERENCES,
   type LastRead,
-  type LibraryView,
   type Preferences,
   type ReaderMode,
   type ResponseStyle,
@@ -52,7 +51,6 @@ const READER_MODES: readonly ReaderMode[] = ["interleaved", "mushaf", "translati
 const RESPONSE_STYLES: readonly ResponseStyle[] = ["brief", "standard", "comparative"];
 const SUGGESTIONS_SURFACES: readonly SuggestionsSurface[] = ["rail", "off"];
 const SUGGESTION_FREQUENCIES: readonly SuggestionFrequency[] = ["high", "low", "off"];
-const LIBRARY_VIEWS: readonly LibraryView[] = ["cards", "table"];
 
 function defaultEnabledSources(): readonly string[] {
   return TAFSIR_SOURCES.filter((s) => s.enabledByDefault).map((s) => s.id);
@@ -126,7 +124,10 @@ function validatePreferences(input: unknown): Preferences {
       input.suggestionFrequency,
       DEFAULT_PREFERENCES.suggestionFrequency,
     ),
-    libraryView: pick(LIBRARY_VIEWS, input.libraryView, DEFAULT_PREFERENCES.libraryView),
+    reviewOnSave:
+      typeof input.reviewOnSave === "boolean"
+        ? input.reviewOnSave
+        : DEFAULT_PREFERENCES.reviewOnSave,
     lastRead: pickLastRead(input.lastRead),
   };
 }
@@ -252,10 +253,6 @@ export function usePreferenceRooting(): Preferences["rooting"] {
 
 export function usePreferenceLastRead(): Preferences["lastRead"] {
   return useValueContext().lastRead;
-}
-
-export function usePreferenceView(): Preferences["libraryView"] {
-  return useValueContext().libraryView;
 }
 
 export function usePreferenceResponseStyle(): Preferences["responseStyle"] {
