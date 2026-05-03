@@ -1,10 +1,5 @@
 export type { Revelation, SurahSummary, Verse, Surah, VerseRef, VerseRange } from "./quran";
-export type {
-  TafsirLanguage,
-  TafsirSource,
-  TafsirCitation,
-  TafsirEntry,
-} from "./tafsir";
+export type { TafsirLanguage, TafsirSource, TafsirCitation, TafsirEntry } from "./tafsir";
 export type { Note, NoteTag } from "./notes";
 export type { ResearchType, TrustLevel, ResearchResult } from "./research";
 export type {

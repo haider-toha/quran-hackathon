@@ -8,11 +8,7 @@ import { PlusIcon } from "@/components/Icon";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
 import { updateNote } from "@/lib/api/notes";
 import { findNote as findSampleNote } from "@/lib/mock-data";
-import {
-  createNoteFromTemplate,
-  readUserNotes,
-  subscribeUserNotes,
-} from "@/lib/notes-store";
+import { createNoteFromTemplate, readUserNotes, subscribeUserNotes } from "@/lib/notes-store";
 import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
 

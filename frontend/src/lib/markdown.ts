@@ -147,9 +147,7 @@ export function renderMarkdown(body: string): ReactNode[] {
       i += 1;
     }
     const id = nextKey();
-    blocks.push(
-      createElement("p", { key: id }, ...parseInline(paragraphLines.join(" "), id)),
-    );
+    blocks.push(createElement("p", { key: id }, ...parseInline(paragraphLines.join(" "), id)));
   }
 
   return blocks;
@@ -171,9 +169,7 @@ function renderBlockquote(quoteLines: readonly string[], key: string): ReactNode
     ),
   ];
   if (sourceLine) {
-    children.push(
-      createElement("span", { key: `${key}-src`, className: "src" }, sourceLine),
-    );
+    children.push(createElement("span", { key: `${key}-src`, className: "src" }, sourceLine));
   }
   return createElement("blockquote", { key }, ...children);
 }

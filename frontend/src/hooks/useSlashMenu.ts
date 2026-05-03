@@ -223,8 +223,7 @@ function caretCoordsFromTextarea(
   const mirrorRect = mirror.getBoundingClientRect();
 
   const x = taRect.left + (markerRect.left - mirrorRect.left) - textarea.scrollLeft;
-  const y =
-    taRect.top + (markerRect.top - mirrorRect.top) - textarea.scrollTop + markerRect.height;
+  const y = taRect.top + (markerRect.top - mirrorRect.top) - textarea.scrollTop + markerRect.height;
 
   // Detach the marker so the next measurement starts clean.
   marker.remove();

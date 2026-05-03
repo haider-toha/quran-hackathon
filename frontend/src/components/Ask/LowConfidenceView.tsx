@@ -1,6 +1,5 @@
 "use client";
 
-
 import { AlertWarnIcon, ArrowRightIcon, CompassIcon, PenIcon } from "@/components/Icon";
 import { parseInline } from "@/lib/markdown";
 import { SAMPLE_DEFERRAL } from "@/lib/mock-data";

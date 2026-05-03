@@ -217,4 +217,3 @@ export function Research({ results, question, totalResults }: Props) {
     </div>
   );
 }
-

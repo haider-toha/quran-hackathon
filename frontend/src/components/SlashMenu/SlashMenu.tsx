@@ -106,11 +106,11 @@ export function SlashMenu({ anchor, open, query, onSelect, onClose, allowedIds }
   const [virtualEl, setVirtualEl] = useState<HTMLDivElement | null>(null);
 
   const matches = useMemo(() => filterCommands(query, allowedIds), [query, allowedIds]);
-  const { activeIndex, setActiveIndex, onKeyDown: onRovingKeyDown } = useRovingFocus(
-    matches.length,
-    query,
-    { enabled: open },
-  );
+  const {
+    activeIndex,
+    setActiveIndex,
+    onKeyDown: onRovingKeyDown,
+  } = useRovingFocus(matches.length, query, { enabled: open });
 
   // Auto-close when the filter empties — gives the consuming editor a clean
   // signal that further typing should fall through to the textarea.

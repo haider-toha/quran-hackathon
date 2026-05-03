@@ -12,7 +12,10 @@ import {
 } from "@/lib/notes-store";
 import type { Note } from "@/types";
 
-export type CreateNoteInput = Omit<Note, "id" | "editedRelative" | "editedAbsolute" | "editedAt"> & {
+export type CreateNoteInput = Omit<
+  Note,
+  "id" | "editedRelative" | "editedAbsolute" | "editedAt"
+> & {
   id?: string;
 };
 

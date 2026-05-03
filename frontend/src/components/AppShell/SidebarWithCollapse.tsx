@@ -41,10 +41,6 @@ export function SidebarWithCollapse() {
   }, [collapsed]);
 
   return (
-    <Sidebar
-      collapsed={collapsed}
-      onCollapseToggle={onCollapseToggle}
-      sourceCount={SOURCE_COUNT}
-    />
+    <Sidebar collapsed={collapsed} onCollapseToggle={onCollapseToggle} sourceCount={SOURCE_COUNT} />
   );
 }

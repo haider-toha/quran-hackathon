@@ -91,10 +91,7 @@ export function Library({ notes }: Props) {
   // skip an explicit pre-sort here because the final sort below operates on
   // the merged list anyway; doing it in one pass keeps render work O(n log
   // n) instead of two O(n log n) passes.
-  const merged = useMemo<readonly Note[]>(
-    () => [...userNotes, ...notes],
-    [notes, userNotes],
-  );
+  const merged = useMemo<readonly Note[]>(() => [...userNotes, ...notes], [notes, userNotes]);
 
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
