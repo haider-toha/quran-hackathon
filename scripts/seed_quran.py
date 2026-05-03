@@ -71,9 +71,10 @@ SB_HEADERS = {
     "Content-Type":  "application/json",
 }
 
-BATCH_SIZE  = 500   # PostgREST rows per upsert request
-EMBED_BATCH = 100   # texts per OpenAI embeddings call
-CHUNK_CHARS = 2000  # max chars per tafsir chunk
+BATCH_SIZE        = 500  # PostgREST rows per upsert request
+VECTOR_BATCH_SIZE = 50   # smaller batches for vector inserts — HNSW index maintenance is slow
+EMBED_BATCH       = 100  # texts per OpenAI embeddings call
+CHUNK_CHARS       = 2000 # max chars per tafsir chunk
 
 # First chapter of each juz (inclusive). Used to filter chapters when --juz is passed.
 # source: standard mushaf juz boundaries.
@@ -154,13 +155,19 @@ def qget(client: httpx.Client, path: str, params: dict[str, Any] | None = None) 
     raise RuntimeError("unreachable")
 
 
-def sb_upsert(client: httpx.Client, table: str, rows: list[dict[str, Any]], conflict: str) -> None:
+def sb_upsert(
+    client: httpx.Client,
+    table: str,
+    rows: list[dict[str, Any]],
+    conflict: str,
+    batch_size: int = BATCH_SIZE,
+) -> None:
     if not rows:
         return
     url  = f"{SUPABASE_URL}/rest/v1/{table}?on_conflict={conflict}"
     hdrs = {**SB_HEADERS, "Prefer": "resolution=merge-duplicates,return=minimal"}
-    for i in range(0, len(rows), BATCH_SIZE):
-        batch = rows[i : i + BATCH_SIZE]
+    for i in range(0, len(rows), batch_size):
+        batch = rows[i : i + batch_size]
         r: httpx.Response | None = None
         for attempt in range(4):
             try:
@@ -469,7 +476,7 @@ def seed_tafsir_chunks(sb: httpx.Client, openai_client: httpx.Client) -> None:
             }
             for i in range(len(chunk_meta))
         ]
-        sb_upsert(sb, "tafsir_chunks", rows, "entry_id,chunk_index")
+        sb_upsert(sb, "tafsir_chunks", rows, "entry_id,chunk_index", batch_size=VECTOR_BATCH_SIZE)
 
         sb.patch(
             f"{SUPABASE_URL}/rest/v1/tafsirs?id=eq.{tid}",
