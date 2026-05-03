@@ -4,8 +4,9 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SearchIcon, XIcon } from "@/components/Icon";
+import { JUZ_LABEL } from "@/lib/copy";
 import { JUZ_AMMA_SURAHS } from "@/lib/mock-data";
-import { useDialogFocus } from "@/lib/use-dialog-focus";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { SurahSummary } from "@/types";
 
 type Props = {
@@ -25,18 +26,12 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  // The popover is conditionally mounted by the parent — by the time this
-  // component renders, `anchor` already points at the trigger DOM node, so
-  // it's safe to read its rect at initial render time. We only re-position
-  // if the anchor *reference* changes between renders (rare).
-  const [position, setPosition] = useState<{ top: number; left: number }>(() =>
-    computePosition(anchor),
-  );
-  const [lastAnchor, setLastAnchor] = useState(anchor);
-  if (lastAnchor !== anchor) {
-    setLastAnchor(anchor);
-    setPosition(computePosition(anchor));
-  }
+  // Position is a pure derivation of `anchor`'s viewport rect. The parent
+  // mounts this popover only after the trigger is in the DOM, so reading
+  // `getBoundingClientRect()` during render is safe — no need for state at
+  // all. `useMemo` keys on the anchor reference; in the rare case the
+  // parent swaps the trigger element, we recompute.
+  const position = useMemo(() => computePosition(anchor), [anchor]);
 
   // Click outside the popover (and outside its anchoring trigger) closes it.
   // EventTarget can be a non-Node (e.g. window); guard with instanceof
@@ -88,7 +83,7 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
         <SearchIcon size={14} />
         <input
           ref={inputRef}
-          placeholder="Search Juz Amma…"
+          placeholder={`Search ${JUZ_LABEL}…`}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -132,7 +127,7 @@ export function SurahPicker({ anchor, current, onClose, onSelect }: Props) {
         <span>
           {filtered.length} of {JUZ_AMMA_SURAHS.length}
         </span>
-        <span>Juz Amma</span>
+        <span>{JUZ_LABEL}</span>
       </div>
     </div>
   );

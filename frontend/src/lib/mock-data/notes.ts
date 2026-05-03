@@ -13,6 +13,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "2 May, 18:42",
     editedAt: "2026-05-02T18:42:00Z",
     hasAi: true,
+    aiAssisted: true,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n2",
@@ -26,6 +29,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "2 May, 16:10",
     editedAt: "2026-05-02T16:10:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n3",
@@ -39,6 +45,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "1 May, 21:30",
     editedAt: "2026-05-01T21:30:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n4",
@@ -52,6 +61,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "1 May, 14:18",
     editedAt: "2026-05-01T14:18:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n5",
@@ -65,6 +77,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "29 Apr, 09:02",
     editedAt: "2026-04-29T09:02:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n6",
@@ -78,6 +93,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "29 Apr, 16:45",
     editedAt: "2026-04-29T16:45:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n7",
@@ -91,6 +109,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "27 Apr, 22:11",
     editedAt: "2026-04-27T22:11:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
   {
     id: "n8",
@@ -104,6 +125,9 @@ export const SAMPLE_NOTES: readonly Note[] = [
     editedAbsolute: "24 Apr, 12:30",
     editedAt: "2026-04-24T12:30:00Z",
     hasAi: false,
+    aiAssisted: false,
+    templateId: null,
+    dismissedSuggestions: [],
   },
 ];
 

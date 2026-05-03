@@ -5,17 +5,28 @@ import { useCallback, type MouseEvent } from "react";
 
 import type { Surah } from "@/types";
 
+import { AyahAudio } from "./AyahAudio";
 import type { AyahSelection } from "./MushafPage";
 
 type Props = {
   surah: Surah;
   selected: number | null;
+  recitation: boolean;
   onSelect: (selection: AyahSelection) => void;
 };
 
-export function TranslationLane({ surah, selected, onSelect }: Props) {
+export function TranslationLane({ surah, selected, recitation, onSelect }: Props) {
   const handleSelect = useCallback(
-    (n: number, event: MouseEvent<HTMLButtonElement>) => {
+    (n: number, event: MouseEvent<HTMLDivElement>) => {
+      onSelect({ n, rect: event.currentTarget.getBoundingClientRect() });
+    },
+    [onSelect],
+  );
+
+  const handleKey = useCallback(
+    (n: number, event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
       onSelect({ n, rect: event.currentTarget.getBoundingClientRect() });
     },
     [onSelect],
@@ -31,15 +42,24 @@ export function TranslationLane({ surah, selected, onSelect }: Props) {
       {surah.verses.map((verse) => {
         const isSelected = selected === verse.number;
         return (
-          <button
+          <div
             key={verse.number}
-            type="button"
             className={clsx("tl-ayah", isSelected && "selected")}
+            data-ayah={verse.number}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
             onClick={(event) => handleSelect(verse.number, event)}
+            onKeyDown={(event) => handleKey(verse.number, event)}
           >
             <div className="num">{verse.number}</div>
             <div className="text">{verse.english}</div>
-          </button>
+            {recitation ? (
+              <div className="tl-audio">
+                <AyahAudio surah={surah.number} ayah={verse.number} />
+              </div>
+            ) : null}
+          </div>
         );
       })}
     </div>

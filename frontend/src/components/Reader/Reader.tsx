@@ -1,13 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icon";
-import { usePreferences } from "@/lib/preferences-context";
-import type { Surah } from "@/types";
+import { usePreferences } from "@/hooks/usePreferences";
+import { findSurahSummary } from "@/lib/mock-data";
+import type { LastRead, Surah } from "@/types";
 
+import { ContinueBanner } from "./ContinueBanner";
+import { InterleavedReader } from "./InterleavedReader";
 import { MushafPage, type AyahSelection } from "./MushafPage";
 import { MushafToolbar, type ToolbarAction } from "./MushafToolbar";
+import { SideBySideReader } from "./SideBySideReader";
 import { SuraBand } from "./SuraBand";
 import { TafsirPanel } from "./TafsirPanel";
 import { TranslationLane } from "./TranslationLane";
@@ -16,21 +21,59 @@ type Props = {
   surah: Surah;
 };
 
+const LAST_READ_FRESHNESS_MS = 7 * 24 * 60 * 60 * 1000;
+
+type AdjacentSurah = {
+  number: number;
+  transliteration: string;
+};
+
+function findAdjacent(current: number, direction: -1 | 1): AdjacentSurah | null {
+  const next = current + direction;
+  const summary = findSurahSummary(next);
+  if (!summary) return null;
+  return { number: summary.number, transliteration: summary.transliteration };
+}
+
+function pickContinueRef(lastRead: LastRead, currentSurah: number): LastRead {
+  if (!lastRead) return null;
+  if (Date.now() - lastRead.timestamp > LAST_READ_FRESHNESS_MS) return null;
+  if (lastRead.surah === currentSurah) return null;
+  return lastRead;
+}
+
 export function Reader({ surah }: Props) {
-  const { preferences } = usePreferences();
+  const { preferences, setLastRead } = usePreferences();
 
   const [selectedAyah, setSelectedAyah] = useState<number | null>(null);
   const [toolbarRect, setToolbarRect] = useState<DOMRect | null>(null);
   const [playing, setPlaying] = useState<number | null>(null);
+  // Snapshot at mount: we don't want the banner flickering after the user
+  // taps an ayah on this surah (which would update preferences.lastRead and
+  // therefore satisfy the new condition for *this* surah). The lazy
+  // initializer keeps the snapshot stable for the lifetime of this Reader.
+  const [continueRef] = useState<LastRead>(() =>
+    pickContinueRef(preferences.lastRead, surah.number),
+  );
 
-  const handleSelectAyah = useCallback((selection: AyahSelection) => {
-    setSelectedAyah(selection.n);
-    setToolbarRect(selection.rect);
-  }, []);
+  const handleSelectAyah = useCallback(
+    (selection: AyahSelection) => {
+      setSelectedAyah(selection.n);
+      setToolbarRect(selection.rect);
+      setLastRead({ surah: surah.number, ayah: selection.n });
+    },
+    [setLastRead, surah.number],
+  );
 
-  const handleTogglePlay = useCallback((n: number) => {
-    setPlaying((current) => (current === n ? null : n));
-  }, []);
+  const handleTogglePlay = useCallback(
+    (n: number) => {
+      setPlaying((current) => (current === n ? null : n));
+      // Treat "started playing" as a read — we record the verse pointer so
+      // continue-reading still works for users who listen rather than tap.
+      setLastRead({ surah: surah.number, ayah: n });
+    },
+    [setLastRead, surah.number],
+  );
 
   const handleClosePanel = useCallback(() => {
     setSelectedAyah(null);
@@ -47,9 +90,10 @@ export function Reader({ surah }: Props) {
     setToolbarRect(null);
   }, []);
 
-  // Escape closes the panel (and any visible toolbar). Resize is *not*
-  // wired up to dismiss the toolbar — mobile address-bar collapse fires
-  // resize constantly and would make the toolbar disappear under the user.
+  // Escape closes the panel (and any visible toolbar). Empty dep array is
+  // safe here: the only references are `setToolbarRect` and `setSelectedAyah`,
+  // which React guarantees are referentially stable across renders. We
+  // attach once on mount and detach on unmount.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -69,44 +113,104 @@ export function Reader({ surah }: Props) {
     setToolbarRect((current) => (current ? null : current));
   }, []);
 
-  const showMushaf = preferences.readerMode !== "translation";
-  const showTranslation = preferences.readerMode !== "mushaf";
+  // After mount, scroll to the deep-link target if the URL has `#ayah-N`.
+  // Only run once per surah; we don't want to fight the user's scrolling.
+  // Cancellation: if `surah.number` changes mid-frame, the cleanup function
+  // both cancels the requestAnimationFrame and flips `cancelled` so the
+  // queued callback (if it was already mid-flight on the next frame) does
+  // not call `setSelectedAyah` for the previous surah.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (!hash.startsWith("#ayah-")) return;
+    const n = Number.parseInt(hash.slice("#ayah-".length), 10);
+    if (!Number.isFinite(n) || n < 1) return;
+    let cancelled = false;
+    // Defer one frame so the chosen reader-mode child has rendered.
+    const id = window.requestAnimationFrame(() => {
+      if (cancelled) return;
+      const el = document.querySelector<HTMLElement>(`[data-ayah="${n}"]`);
+      if (el) {
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        setSelectedAyah(n);
+      }
+    });
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(id);
+    };
+  }, [surah.number]);
+
   const selectedVerse =
     selectedAyah !== null ? (surah.verses.find((v) => v.number === selectedAyah) ?? null) : null;
+
+  const prev = findAdjacent(surah.number, -1);
+  const next = findAdjacent(surah.number, 1);
+
+  const mode = preferences.readerMode;
 
   return (
     <div className="reader-shell">
       <div className="reader" onScroll={handleScroll}>
         <div className="reader-inner">
-          <SuraBand surah={surah} />
-
-          {showMushaf && surah.bismillah ? (
-            <div className="bismillah" dir="rtl" lang="ar">
-              {surah.bismillah}
-            </div>
+          {continueRef ? (
+            <ContinueBanner surah={continueRef.surah} ayah={continueRef.ayah} />
           ) : null}
 
-          {showMushaf ? (
+          <SuraBand surah={surah} />
+
+          {mode === "mushaf" || mode === "interleaved" || mode === "side-by-side" ? (
+            surah.bismillah ? (
+              <div className="bismillah" dir="rtl" lang="ar">
+                {surah.bismillah}
+              </div>
+            ) : null
+          ) : null}
+
+          {mode === "mushaf" ? (
             <MushafPage
               surah={surah}
               selected={selectedAyah}
               playing={playing}
-              recitation={preferences.recitation}
+              recitation={preferences.recitationEnabled}
               onSelect={handleSelectAyah}
               onPlay={handleTogglePlay}
             />
           ) : null}
 
-          {preferences.marginalia && showMushaf ? (
+          {mode === "interleaved" ? (
+            <InterleavedReader
+              surah={surah}
+              selected={selectedAyah}
+              recitation={preferences.recitationEnabled}
+              onSelect={handleSelectAyah}
+            />
+          ) : null}
+
+          {mode === "side-by-side" ? (
+            <SideBySideReader
+              surah={surah}
+              selected={selectedAyah}
+              recitation={preferences.recitationEnabled}
+              onSelect={handleSelectAyah}
+            />
+          ) : null}
+
+          {mode === "translation" ? (
+            <TranslationLane
+              surah={surah}
+              selected={selectedAyah}
+              recitation={preferences.recitationEnabled}
+              onSelect={handleSelectAyah}
+            />
+          ) : null}
+
+          {preferences.showReflectionPrompts && mode === "mushaf" ? (
             <div className="marginalia" style={{ marginTop: 28 }}>
               <span className="lbl">Reflection</span>
               The pause that opens this surah is itself a mercy — what does it teach you about
               silence in your own life?
             </div>
-          ) : null}
-
-          {showTranslation ? (
-            <TranslationLane surah={surah} selected={selectedAyah} onSelect={handleSelectAyah} />
           ) : null}
 
           <nav
@@ -120,9 +224,15 @@ export function Reader({ surah }: Props) {
               gap: 12,
             }}
           >
-            <button type="button" className="btn ghost" disabled>
-              <ChevronLeftIcon size={14} /> Surat Al-Layl · 92
-            </button>
+            {prev ? (
+              <Link className="btn ghost" href={`/?surah=${prev.number}`}>
+                <ChevronLeftIcon size={14} /> Surat {prev.transliteration} · {prev.number}
+              </Link>
+            ) : (
+              <button type="button" className="btn ghost" disabled>
+                <ChevronLeftIcon size={14} />
+              </button>
+            )}
             <span style={{ flex: 1 }} />
             <span
               style={{
@@ -134,9 +244,15 @@ export function Reader({ surah }: Props) {
               {surah.transliteration} · {surah.number} · Juz {surah.juz}
             </span>
             <span style={{ flex: 1 }} />
-            <button type="button" className="btn ghost" disabled>
-              Surat Ash-Sharḥ · 94 <ChevronRightIcon size={14} />
-            </button>
+            {next ? (
+              <Link className="btn ghost" href={`/?surah=${next.number}`}>
+                Surat {next.transliteration} · {next.number} <ChevronRightIcon size={14} />
+              </Link>
+            ) : (
+              <button type="button" className="btn ghost" disabled>
+                <ChevronRightIcon size={14} />
+              </button>
+            )}
           </nav>
         </div>
       </div>

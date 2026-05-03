@@ -302,3 +302,34 @@ export const TimeIcon = makeIcon(
     <path d="M8 4v4l2.5 1.5" />
   </>,
 );
+
+export const LayersIcon = makeIcon(
+  <>
+    <path d="M8 2L2 5l6 3 6-3z" />
+    <path d="M2 8l6 3 6-3" />
+    <path d="M2 11l6 3 6-3" />
+  </>,
+);
+
+export const ColumnsIcon = makeIcon(
+  <>
+    <rect x="2.5" y="2.5" width="4.5" height="11" />
+    <rect x="9" y="2.5" width="4.5" height="11" />
+  </>,
+);
+
+export const AlignLeftIcon = makeIcon(<path d="M2.5 4h11M2.5 7.5h7M2.5 11h11M2.5 14.5h6" />);
+
+export const BellIcon = makeIcon(
+  <>
+    <path d="M3.5 11.5h9c-1-.7-1.5-1.7-1.5-3V7a3.5 3.5 0 0 0-7 0v1.5c0 1.3-.5 2.3-1.5 3z" />
+    <path d="M6.5 11.5v.5a1.5 1.5 0 0 0 3 0v-.5" />
+  </>,
+);
+
+export const LockIcon = makeIcon(
+  <>
+    <rect x="3.5" y="7.5" width="9" height="6" rx="1" />
+    <path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0V7.5" />
+  </>,
+);

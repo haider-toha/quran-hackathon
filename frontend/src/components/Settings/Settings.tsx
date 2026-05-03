@@ -1,84 +1,104 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import clsx from "clsx";
+import { useState } from "react";
 
-import type { TafsirEntry, TafsirSource } from "@/types";
+import { useAdminMode } from "@/hooks/useAdminMode";
 
-import { ResponseModePreview } from "./ResponseModePreview";
-import { SourceRow } from "./SourceRow";
+import { AccountSection } from "./AccountSection";
+import { AdminSection } from "./AdminSection";
+import { NotificationsSection } from "./NotificationsSection";
+import { ReadingSection } from "./ReadingSection";
+import { ResponseStyleSection } from "./ResponseStyleSection";
+import { SourcesSection } from "./SourcesSection";
+import { WritingSection } from "./WritingSection";
 
-type SourceId = TafsirSource["id"];
-type EnabledMap = Partial<Record<SourceId, boolean>>;
+type Tab =
+  | "sources"
+  | "response-style"
+  | "reading"
+  | "writing"
+  | "notifications"
+  | "account"
+  | "admin";
 
-type Props = {
-  sources: readonly TafsirSource[];
-  sampleEntry: TafsirEntry;
-};
+const TABS: ReadonlyArray<{ id: Tab; label: string }> = [
+  { id: "sources", label: "Sources" },
+  { id: "response-style", label: "Response style" },
+  { id: "reading", label: "Reading" },
+  { id: "writing", label: "Writing" },
+  { id: "notifications", label: "Notifications" },
+  { id: "account", label: "Account" },
+];
 
-function initialEnabledMap(sources: readonly TafsirSource[]): EnabledMap {
-  const map: EnabledMap = {};
-  for (const source of sources) map[source.id] = source.enabledByDefault;
-  return map;
+const ADMIN_TAB: { id: Tab; label: string } = { id: "admin", label: "Admin (developer)" };
+
+const VALID_TABS: readonly Tab[] = [
+  "sources",
+  "response-style",
+  "reading",
+  "writing",
+  "notifications",
+  "account",
+  "admin",
+];
+
+function isTab(value: string): value is Tab {
+  // String-narrowing predicate so callers can drop the `as Tab` cast at
+  // the boundary where untrusted query-string input enters the component.
+  return (VALID_TABS as readonly string[]).includes(value);
 }
 
-export function Settings({ sources, sampleEntry }: Props) {
-  const [enabled, setEnabled] = useState<EnabledMap>(() => initialEnabledMap(sources));
-  const [previewOpenId, setPreviewOpenId] = useState<SourceId | null>(null);
+function pickTab(value: string | null | undefined): Tab {
+  if (value && isTab(value)) return value;
+  return "sources";
+}
 
-  // React 19 "reset on prop change" pattern — if the sources list changes
-  // (HMR, future remote fetch), drop our stale toggle map.
-  const [lastSources, setLastSources] = useState(sources);
-  if (lastSources !== sources) {
-    setLastSources(sources);
-    setEnabled(initialEnabledMap(sources));
-    setPreviewOpenId(null);
+type Props = {
+  initialTab: string | null;
+};
+
+export function Settings({ initialTab }: Props) {
+  const { admin } = useAdminMode();
+  const [tab, setTab] = useState<Tab>(() => pickTab(initialTab));
+
+  // Snap back to a visible tab if admin mode flips off while we're on it.
+  // React 19 "reset state on derived condition change" pattern — set during
+  // render rather than in a useEffect so we don't cascade an extra paint.
+  if (tab === "admin" && !admin) {
+    setTab("sources");
   }
 
-  const toggleEnabled = useCallback((id: SourceId) => {
-    setEnabled((prev) => ({ ...prev, [id]: !prev[id] }));
-  }, []);
-
-  const togglePreview = useCallback((id: SourceId) => {
-    setPreviewOpenId((prev) => (prev === id ? null : id));
-  }, []);
+  const tabs = admin ? [...TABS, ADMIN_TAB] : TABS;
 
   return (
-    <div className="settings">
-      <div className="settings-inner">
-        <div className="settings-hd">
-          <h1>Tafsir sources</h1>
-          <p>
-            Enable the commentaries Mishkāt will draw on when answering questions, generating
-            summaries, and suggesting links. Source order in answers reflects classical canonicity,
-            not your order here.
-          </p>
-        </div>
-
-        <div className="set-section">
-          <div className="set-section-hd">Classical tafsirs</div>
-          {sources.map((source) => (
-            <SourceRow
-              key={source.id}
-              source={source}
-              enabled={enabled[source.id] ?? source.enabledByDefault}
-              onToggle={() => toggleEnabled(source.id)}
-              previewOpen={previewOpenId === source.id}
-              onPreviewToggle={() => togglePreview(source.id)}
-              sampleEntry={sampleEntry}
-            />
-          ))}
-        </div>
-
-        <div className="set-section">
-          <div className="set-section-hd">Default answer style</div>
-          <div className="set-row">
-            <div>
-              <div className="lbl">Response mode</div>
-              <div className="desc">Sets the default depth — you can switch per-question.</div>
-            </div>
-          </div>
-          <ResponseModePreview />
-        </div>
+    <div className="settings settings-shell">
+      <aside className="settings-aside" aria-label="Settings sections">
+        <nav>
+          <ul className="settings-nav">
+            {tabs.map((t) => (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  className={clsx("settings-nav-item", tab === t.id && "on")}
+                  aria-current={tab === t.id ? "page" : undefined}
+                  onClick={() => setTab(t.id)}
+                >
+                  {t.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+      <div className="settings-pane">
+        {tab === "sources" ? <SourcesSection /> : null}
+        {tab === "response-style" ? <ResponseStyleSection /> : null}
+        {tab === "reading" ? <ReadingSection /> : null}
+        {tab === "writing" ? <WritingSection /> : null}
+        {tab === "notifications" ? <NotificationsSection /> : null}
+        {tab === "account" ? <AccountSection /> : null}
+        {tab === "admin" && admin ? <AdminSection /> : null}
       </div>
     </div>
   );

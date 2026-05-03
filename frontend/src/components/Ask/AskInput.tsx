@@ -1,5 +1,7 @@
 "use client";
 
+import { forwardRef } from "react";
+
 import { AdjustIcon, SendIcon, StopIcon } from "@/components/Icon";
 import type { AskState } from "@/types";
 
@@ -10,6 +12,13 @@ type Props = {
   onChange: (value: string) => void;
   onSubmit: () => void;
   onStop: () => void;
+  /**
+   * Called on every keydown (besides Enter-submit) so the parent can run
+   * slash-menu detection. Returning `true` from the parent's handler signals
+   * "I consumed this event" — but for now we leave that as a future hook;
+   * the parent currently only inspects the keydown to decide menu state.
+   */
+  onKeyDownExtra?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 };
 
 /**
@@ -17,11 +26,19 @@ type Props = {
  * controlled by the parent so an in-progress edit is preserved across
  * non-state-changing re-renders; the parent decides when to overwrite the
  * value (e.g. when the demo state flips to a different sample question).
+ *
+ * The textarea is forward-ref'd so the parent can read the element for
+ * SlashMenu anchoring.
  */
-export function AskInput({ state, value, scope, onChange, onSubmit, onStop }: Props) {
+export const AskInput = forwardRef<HTMLTextAreaElement, Props>(function AskInput(
+  { state, value, scope, onChange, onSubmit, onStop, onKeyDownExtra },
+  ref,
+) {
   const isStreaming = state === "streaming";
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (onKeyDownExtra) onKeyDownExtra(event);
+    if (event.defaultPrevented) return;
     if (event.key === "Enter" && !event.shiftKey && !isStreaming) {
       event.preventDefault();
       onSubmit();
@@ -32,6 +49,7 @@ export function AskInput({ state, value, scope, onChange, onSubmit, onStop }: Pr
     <div className="ask-input-wrap">
       <div className="ask-input">
         <textarea
+          ref={ref}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           rows={2}
@@ -66,4 +84,4 @@ export function AskInput({ state, value, scope, onChange, onSubmit, onStop }: Pr
       </div>
     </div>
   );
-}
+});

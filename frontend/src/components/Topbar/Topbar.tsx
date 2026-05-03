@@ -1,15 +1,18 @@
 "use client";
 
-import clsx from "clsx";
 import { usePathname } from "next/navigation";
 
-import { ChevronDownIcon, MoonIcon, QuestionIcon, SearchIcon, SunIcon } from "@/components/Icon";
-import { usePreferences } from "@/lib/preferences-context";
+import { SurahCrumb } from "@/components/AppShell";
+import { MoonIcon, SearchIcon, SunIcon } from "@/components/Icon";
+import { useAdminMode } from "@/hooks/useAdminMode";
+import { kbdChord } from "@/lib/kbd";
+import { usePreferences } from "@/hooks/usePreferences";
 
 import { Crumbs } from "./Crumbs";
+import { NotificationsBell } from "./NotificationsBell";
+import { ReaderModeSwitch } from "./ReaderModeSwitch";
 
 type Props = {
-  surahLabel: string;
   onCommandPalette: () => void;
   onSurahPicker: () => void;
   surahPickerActive: boolean;
@@ -17,7 +20,6 @@ type Props = {
 };
 
 export function Topbar({
-  surahLabel,
   onCommandPalette,
   onSurahPicker,
   surahPickerActive,
@@ -25,34 +27,41 @@ export function Topbar({
 }: Props) {
   const pathname = usePathname();
   const { preferences, toggleTheme } = usePreferences();
+  const { admin } = useAdminMode();
   const isReader = pathname === "/";
 
   return (
     <header className="topbar">
       {isReader ? (
-        <div className="crumbs">
-          <span>Read</span>
-          <span className="sep">›</span>
-          <button
-            ref={surahPickerAnchorRef}
-            type="button"
-            className={clsx("btn", "ghost", "sm")}
-            style={{ fontSize: 13, height: 26, padding: "0 8px" }}
-            onClick={onSurahPicker}
-            aria-expanded={surahPickerActive}
-            aria-haspopup="dialog"
-          >
-            <span className="current" style={{ color: "var(--color-ink)" }}>
-              {surahLabel}
-            </span>
-            <ChevronDownIcon size={13} />
-          </button>
-        </div>
+        <SurahCrumb
+          onSurahPicker={onSurahPicker}
+          surahPickerActive={surahPickerActive}
+          surahPickerAnchorRef={surahPickerAnchorRef}
+        />
       ) : (
         <Crumbs pathname={pathname} />
       )}
 
       <div className="spacer" />
+
+      {/* Reader-only segmented control: gated on `pathname === "/"` because
+          the four modes only make sense while the Reader is mounted. */}
+      {isReader ? <ReaderModeSwitch /> : null}
+
+      {/* Admin pill — Wave 2A. Visible only when admin mode is on. */}
+      {admin ? (
+        <span
+          className="topbar-admin-pill"
+          title="Admin mode on (⌘⇧·)"
+          aria-label="Admin mode on. Toggle with Command Shift Period."
+        >
+          Admin
+        </span>
+      ) : null}
+
+      {/* Notifications bell — Wave 2F. Sits just before the command palette
+          on the right side of the topbar. Popover lives inside the bell. */}
+      <NotificationsBell />
 
       <button
         type="button"
@@ -62,7 +71,7 @@ export function Topbar({
       >
         <SearchIcon size={13} />
         <span>Search verses, notes, sources…</span>
-        <span className="kbd">⌘K</span>
+        <span className="kbd">{kbdChord("cmd", "K")}</span>
       </button>
 
       <button
@@ -72,9 +81,6 @@ export function Topbar({
         aria-label={preferences.theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
       >
         {preferences.theme === "dark" ? <SunIcon size={15} /> : <MoonIcon size={15} />}
-      </button>
-      <button type="button" className="iconbtn" aria-label="Help">
-        <QuestionIcon size={15} />
       </button>
     </header>
   );

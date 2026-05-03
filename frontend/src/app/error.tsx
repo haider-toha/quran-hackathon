@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
 import { AlertWarnIcon } from "@/components/Icon";
 
 type Props = {
@@ -10,9 +8,11 @@ type Props = {
 };
 
 export default function GlobalError({ error, reset }: Props) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+  // Log synchronously on render. Wrapping this in a `useEffect` only
+  // delays the side-effect by a tick without changing the contract — and
+  // re-running on every `error` identity change risks duplicate logs from
+  // an inadvertent rerender. Logging here is idempotent enough.
+  console.error(error);
 
   return (
     <div className="empty" role="alert" aria-live="assertive">
