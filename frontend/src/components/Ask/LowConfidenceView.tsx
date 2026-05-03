@@ -2,7 +2,6 @@
 
 import { Fragment } from "react";
 
-import { ConfidenceMeter } from "@/components/ConfidenceMeter";
 import { AlertWarnIcon, ArrowRightIcon, CompassIcon, PenIcon } from "@/components/Icon";
 import { SAMPLE_DEFERRAL } from "@/lib/mock-data";
 
@@ -10,8 +9,8 @@ import { parseInline } from "./markdown";
 
 /**
  * Deferral panel shown when the model isn't confident enough to answer
- * directly. Renders the canned deferral body (with light inline markdown
- * for `**bold**` and `*em*`) followed by three CTA buttons.
+ * directly. v3 drops the confidence meter at the top — the deferral copy
+ * itself signals limited agreement. Otherwise unchanged.
  */
 export function LowConfidenceView() {
   return (
@@ -24,11 +23,6 @@ export function LowConfidenceView() {
           marginBottom: 16,
         }}
       >
-        <ConfidenceMeter
-          level={SAMPLE_DEFERRAL.confidence.level}
-          sources={SAMPLE_DEFERRAL.confidence.sources}
-          total={SAMPLE_DEFERRAL.confidence.total}
-        />
         <span
           style={{
             fontSize: 11.5,

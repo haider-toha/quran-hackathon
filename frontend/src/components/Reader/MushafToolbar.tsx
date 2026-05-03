@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
 import {
@@ -20,8 +21,10 @@ type Props = {
 };
 
 const TOOLBAR_OFFSET_TOP = 44;
+const TOOLBAR_BELOW_OFFSET = 6;
 const TOOLBAR_APPROX_WIDTH = 360;
 const VIEWPORT_PADDING = 12;
+const FLIP_THRESHOLD = 60;
 
 function clampLeft(rect: DOMRect): number {
   if (typeof window === "undefined") return rect.left;
@@ -31,7 +34,13 @@ function clampLeft(rect: DOMRect): number {
 }
 
 export function MushafToolbar({ rect, onAction, onClose }: Props) {
-  const top = rect.top - TOOLBAR_OFFSET_TOP;
+  // If anchoring above would push the toolbar off-screen (rect.top is too
+  // close to the viewport top), flip below the element. The selection unit
+  // is the same in every reader mode (a `<div data-ayah>`), so this rule
+  // works for mushaf inline spans, interleaved pairs, side-by-side rows,
+  // and translation rows alike.
+  const isBelow = rect.top < FLIP_THRESHOLD;
+  const top = isBelow ? rect.bottom + TOOLBAR_BELOW_OFFSET : rect.top - TOOLBAR_OFFSET_TOP;
   const left = clampLeft(rect);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -44,7 +53,12 @@ export function MushafToolbar({ rect, onAction, onClose }: Props) {
   }, [onClose]);
 
   return (
-    <div ref={ref} className="mushaf-toolbar" style={{ top, left }} role="toolbar">
+    <div
+      ref={ref}
+      className={clsx("mushaf-toolbar", isBelow && "toolbar--below")}
+      style={{ top, left }}
+      role="toolbar"
+    >
       <button type="button" onClick={() => onAction("explain")}>
         <SparkleIcon size={13} /> Explain
       </button>

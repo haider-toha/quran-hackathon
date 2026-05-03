@@ -11,4 +11,7 @@ export type Note = {
   editedAbsolute: string;
   editedAt: string;
   hasAi: boolean;
+  aiAssisted: boolean;
+  templateId: string | null;
+  dismissedSuggestions: readonly string[];
 };
