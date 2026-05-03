@@ -7,13 +7,21 @@ import { ChevronDownIcon, XIcon } from "@/components/Icon";
 import { SlashMenu } from "@/components/SlashMenu";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import {
-  SAMPLE_ANSWER,
-  SAMPLE_DEFERRAL,
-  SAMPLE_QUESTION,
+  ASK_SCENARIOS,
   STREAMING_RETRIEVAL,
+  defaultVariantFor,
+  findScenario,
 } from "@/lib/mock-data";
 import { addRecent } from "@/lib/recents";
-import type { Answer, AskState, Deferral, RetrievalStep, SlashCommand } from "@/types";
+import type {
+  Answer,
+  AskScenario,
+  AskScenarioVariant,
+  AskState,
+  Deferral,
+  RetrievalStep,
+  SlashCommand,
+} from "@/types";
 
 import { AnsweredView } from "./AnsweredView";
 import { AskInput } from "./AskInput";
@@ -32,7 +40,12 @@ type AskHistoryEntry = {
   timestamp: number;
 };
 
-const SCOPE = "Ad-Ḍuḥā 93:1–11";
+const SCOPE = "Aḍ-Ḍuḥā 93:1–11";
+const FALLBACK_SCENARIO: AskScenario = (() => {
+  const first = ASK_SCENARIOS[0];
+  if (!first) throw new Error("ASK_SCENARIOS is empty");
+  return first;
+})();
 
 function makeId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -41,16 +54,22 @@ function makeId(): string {
   return `h-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function questionFor(state: DemoState): string {
-  if (state === "input") return "";
-  return state === "low" ? SAMPLE_DEFERRAL.question : SAMPLE_QUESTION;
+function pickAnswerVariant(scenario: AskScenario): AskScenarioVariant {
+  const answerVariant = scenario.variants.find((v) => v.outcome.kind === "answer");
+  return answerVariant ?? defaultVariantFor(scenario);
 }
 
-function getRetrievalSteps(state: DemoState): readonly RetrievalStep[] {
-  if (state === "input") return [];
-  if (state === "streaming") return STREAMING_RETRIEVAL;
-  if (state === "low") return SAMPLE_DEFERRAL.retrieval;
-  return SAMPLE_ANSWER.retrieval;
+function pickDeferralVariant(scenario: AskScenario): AskScenarioVariant {
+  const deferralVariant = scenario.variants.find((v) => v.outcome.kind === "deferral");
+  return deferralVariant ?? defaultVariantFor(scenario);
+}
+
+function activeAnswer(variant: AskScenarioVariant): Answer | null {
+  return variant.outcome.kind === "answer" ? variant.outcome.answer : null;
+}
+
+function activeDeferral(variant: AskScenarioVariant): Deferral | null {
+  return variant.outcome.kind === "deferral" ? variant.outcome.deferral : null;
 }
 
 /**
@@ -58,10 +77,11 @@ function getRetrievalSteps(state: DemoState): readonly RetrievalStep[] {
  * answer rendered. Streaming/answered/low are reachable via the demo bar
  * (admin only) and via Submit. The demo bar is hidden from non-admin users.
  *
- * Resolves the Wave 2E TODO: rebuilds the input → streaming → answered flow
- * with a real follow-up action, session-scoped Q&A history, the locked
- * Sources surface, the collapsing retrieval pipeline, and the portaled
- * citation hover-card.
+ * Scenario switching: the demo bar exposes a scenario + variant picker
+ * (admin only) so QA can cycle through every authored scenario without
+ * editing code. The default scenario is `ASK_SCENARIOS[0]` (the canonical
+ * mā waddaʿaka reading); state changes (Input → Streaming → Answered)
+ * pick a variant whose outcome matches the destination state.
  */
 export function Ask() {
   const searchParams = useSearchParams();
@@ -69,6 +89,9 @@ export function Ask() {
 
   const initialQuery = searchParams?.get("q") ?? "";
   const [state, setState] = useState<DemoState>("input");
+  const [scenarioId, setScenarioId] = useState<string>(FALLBACK_SCENARIO.id);
+  const [variantId, setVariantId] = useState<string>(() => pickAnswerVariant(FALLBACK_SCENARIO).id);
+
   const [question, setQuestion] = useState<string>(initialQuery);
   // Track the last "canonical" sample value so we know when to overwrite
   // user input vs. preserve it. Switching demo state via the demo bar
@@ -92,36 +115,104 @@ export function Ask() {
     setTextareaEl(node);
   }, []);
 
-  const handleDemoStateChange = useCallback((next: DemoState) => {
-    setState(next);
-    setQuestion(questionFor(next));
-    setLastSampleSource(next);
+  const scenario = useMemo<AskScenario>(
+    () => findScenario(scenarioId) ?? FALLBACK_SCENARIO,
+    [scenarioId],
+  );
+  const variant = useMemo<AskScenarioVariant>(
+    () => scenario.variants.find((v) => v.id === variantId) ?? defaultVariantFor(scenario),
+    [scenario, variantId],
+  );
+  const answerForState = activeAnswer(variant);
+  const deferralForState = activeDeferral(variant);
+
+  // The `questionFor` helper picks the question string for a given demo
+  // state — input shows nothing; streaming/answered show the variant's
+  // canonical question; low shows the deferral variant's question.
+  const questionFor = useCallback(
+    (next: DemoState): string => {
+      if (next === "input") return "";
+      if (next === "low") {
+        return activeDeferral(pickDeferralVariant(scenario))?.question ?? "";
+      }
+      return activeAnswer(pickAnswerVariant(scenario))?.question ?? "";
+    },
+    [scenario],
+  );
+
+  const handleDemoStateChange = useCallback(
+    (next: DemoState) => {
+      setState(next);
+      setQuestion(questionFor(next));
+      setLastSampleSource(next);
+      // When entering low/answered/streaming, snap variantId to the
+      // matching outcome so Retrieval / AnsweredView / LowConfidence read
+      // the right shape.
+      if (next === "low") {
+        setVariantId(pickDeferralVariant(scenario).id);
+      } else if (next === "answered" || next === "streaming") {
+        setVariantId(pickAnswerVariant(scenario).id);
+      }
+    },
+    [scenario, questionFor],
+  );
+
+  const handleScenarioChange = useCallback((id: string) => {
+    setScenarioId(id);
+    const next = findScenario(id);
+    if (!next) return;
+    // Default to an answer variant when switching scenarios — admin can
+    // pick a deferral variant explicitly.
+    const nextVariant = pickAnswerVariant(next);
+    setVariantId(nextVariant.id);
+    setQuestion(activeAnswer(nextVariant)?.question ?? "");
+    setLastSampleSource((prev) => prev);
   }, []);
+
+  const handleVariantChange = useCallback(
+    (id: string) => {
+      setVariantId(id);
+      const nextVariant = scenario.variants.find((v) => v.id === id);
+      if (!nextVariant) return;
+      const outcome = nextVariant.outcome;
+      if (outcome.kind === "answer") {
+        setQuestion(outcome.answer.question);
+        setState((prev) => (prev === "low" ? "answered" : prev));
+      } else {
+        setQuestion(outcome.deferral.question);
+        setState("low");
+      }
+    },
+    [scenario],
+  );
 
   const handleSubmit = useCallback(() => {
     setState("streaming");
+    setVariantId(pickAnswerVariant(scenario).id);
     addRecent(question, "/ask");
-  }, [question]);
+  }, [question, scenario]);
 
   const handleStop = useCallback(() => {
     setState("answered");
-  }, []);
+    setVariantId(pickAnswerVariant(scenario).id);
+  }, [scenario]);
 
   // Follow-up: collapse current Q&A into a history entry, prepend it, then
   // reset the input + state. The previous answer scrolls up into the
   // history list and stays accessible there.
   const handleFollowUp = useCallback(() => {
+    if (!answerForState) return;
     const entry: AskHistoryEntry = {
       id: makeId(),
-      question: questionFor("answered"),
-      result: { kind: "answer", answer: SAMPLE_ANSWER },
+      question: answerForState.question,
+      result: { kind: "answer", answer: answerForState },
       timestamp: Date.now(),
     };
     setHistory((prev) => [entry, ...prev]);
     setState("input");
     setQuestion("");
     setLastSampleSource("input");
-  }, []);
+  }, [answerForState]);
 
   const handleClearHistory = useCallback(() => {
     setHistory([]);
@@ -198,50 +289,54 @@ export function Ask() {
     return () => node.removeEventListener("input", onInput);
   }, [textareaEl]);
 
-  const handleSlashSelect = useCallback((cmd: SlashCommand) => {
-    const node = textareaRef.current;
-    setSlashOpen(false);
-    setSlashQuery("");
-    if (!node) return;
-    const value = node.value;
-    const caret = node.selectionStart ?? value.length;
-    // Find the slash trigger position so we can replace `/<query>` with
-    // `/<trigger> ` (or, for /search, immediately submit the rest as-is).
-    let slashIndex = -1;
-    for (let i = caret - 1; i >= 0; i -= 1) {
-      const ch = value[i];
-      if (ch === "/") {
-        if (i === 0 || /\s/.test(value[i - 1] ?? "")) {
-          slashIndex = i;
+  const handleSlashSelect = useCallback(
+    (cmd: SlashCommand) => {
+      const node = textareaRef.current;
+      setSlashOpen(false);
+      setSlashQuery("");
+      if (!node) return;
+      const value = node.value;
+      const caret = node.selectionStart ?? value.length;
+      // Find the slash trigger position so we can replace `/<query>` with
+      // `/<trigger> ` (or, for /search, immediately submit the rest as-is).
+      let slashIndex = -1;
+      for (let i = caret - 1; i >= 0; i -= 1) {
+        const ch = value[i];
+        if (ch === "/") {
+          if (i === 0 || /\s/.test(value[i - 1] ?? "")) {
+            slashIndex = i;
+          }
+          break;
         }
-        break;
+        if (ch === undefined || /\s/.test(ch)) break;
       }
-      if (ch === undefined || /\s/.test(ch)) break;
-    }
-    if (slashIndex === -1) {
-      return;
-    }
-    if (cmd.id === "search") {
-      // Strip the slash + query, keep whatever else is in the box, submit.
-      const stripped = (value.slice(0, slashIndex) + value.slice(caret)).trim();
-      const finalQuestion = stripped.length > 0 ? stripped : "";
-      setQuestion(finalQuestion);
-      if (finalQuestion.length > 0) {
-        addRecent(finalQuestion, "/ask");
+      if (slashIndex === -1) {
+        return;
       }
-      setState("streaming");
-      return;
-    }
-    // /ayah — drop in the trigger so the user can keep typing the ref.
-    const replaced = value.slice(0, slashIndex) + `/${cmd.trigger} ` + value.slice(caret);
-    setQuestion(replaced);
-    // Restore caret position to right after the inserted trigger + space.
-    const nextCaret = slashIndex + cmd.trigger.length + 2;
-    requestAnimationFrame(() => {
-      node.focus();
-      node.setSelectionRange(nextCaret, nextCaret);
-    });
-  }, []);
+      if (cmd.id === "search") {
+        // Strip the slash + query, keep whatever else is in the box, submit.
+        const stripped = (value.slice(0, slashIndex) + value.slice(caret)).trim();
+        const finalQuestion = stripped.length > 0 ? stripped : "";
+        setQuestion(finalQuestion);
+        if (finalQuestion.length > 0) {
+          addRecent(finalQuestion, "/ask");
+        }
+        setVariantId(pickAnswerVariant(scenario).id);
+        setState("streaming");
+        return;
+      }
+      // /ayah — drop in the trigger so the user can keep typing the ref.
+      const replaced = value.slice(0, slashIndex) + `/${cmd.trigger} ` + value.slice(caret);
+      setQuestion(replaced);
+      // Restore caret position to right after the inserted trigger + space.
+      const nextCaret = slashIndex + cmd.trigger.length + 2;
+      requestAnimationFrame(() => {
+        node.focus();
+        node.setSelectionRange(nextCaret, nextCaret);
+      });
+    },
+    [scenario],
+  );
 
   // Read-only view of the canonical question for the current demo state
   // — used for the "Your question" header so it doesn't drift when the
@@ -249,6 +344,14 @@ export function Ask() {
   const displayQuestion = state === lastSampleSource ? questionFor(state) : question;
 
   const showAnswerSurface = state !== "input";
+
+  // Retrieval steps depend on state + active variant.
+  const retrievalSteps: readonly RetrievalStep[] = useMemo(() => {
+    if (state === "input") return [];
+    if (state === "streaming") return STREAMING_RETRIEVAL;
+    if (state === "low") return deferralForState?.retrieval ?? [];
+    return answerForState?.retrieval ?? [];
+  }, [state, answerForState, deferralForState]);
 
   const historyView = useMemo(
     () =>
@@ -367,20 +470,32 @@ export function Ask() {
             </div>
 
             <Retrieval
-              steps={getRetrievalSteps(state)}
+              steps={retrievalSteps}
               collapsedByDefault={state === "answered"}
-              durationMs={state === "answered" ? SAMPLE_ANSWER.durationMs : undefined}
+              durationMs={state === "answered" ? answerForState?.durationMs : undefined}
             />
           </>
         ) : null}
 
         {state === "streaming" && <StreamingAnswer />}
-        {state === "answered" && (
-          <AnsweredView answer={SAMPLE_ANSWER} onFollowUp={handleFollowUp} />
-        )}
-        {state === "low" && <LowConfidenceView />}
+        {state === "answered" && answerForState ? (
+          <AnsweredView answer={answerForState} onFollowUp={handleFollowUp} />
+        ) : null}
+        {state === "low" && deferralForState ? (
+          <LowConfidenceView deferral={deferralForState} />
+        ) : null}
 
-        {admin ? <DemoStateBar state={state} onChange={handleDemoStateChange} /> : null}
+        {admin ? (
+          <DemoStateBar
+            state={state}
+            onChange={handleDemoStateChange}
+            scenarios={ASK_SCENARIOS}
+            scenarioId={scenarioId}
+            onScenarioChange={handleScenarioChange}
+            variantId={variantId}
+            onVariantChange={handleVariantChange}
+          />
+        ) : null}
 
         <SlashMenu
           anchor={textareaEl}

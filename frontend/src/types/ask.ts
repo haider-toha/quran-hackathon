@@ -60,3 +60,39 @@ export type Deferral = {
   };
   body: readonly string[];
 };
+
+// Scenario / variant types let mock data carry several phrasings of the
+// same underlying question — the canonical phrasing plus user-shaped
+// variants (terse, shorthand, partial, ambiguous) — alongside the
+// expected outcome (answer or low-confidence deferral). The demo state
+// bar reads `ASK_SCENARIOS` to cycle between them, and the existing
+// streaming/answered/low surfaces consume the variant's outcome.
+export type AskIntent =
+  | "direct"
+  | "personal-application"
+  | "historical-context"
+  | "linguistic"
+  | "comparative"
+  | "speculative"
+  | "off-scope";
+
+export type AskScenarioOutcome =
+  | { kind: "answer"; answer: Answer }
+  | { kind: "deferral"; deferral: Deferral };
+
+export type AskScenarioVariant = {
+  id: string;
+  phrasing: string;
+  intent: AskIntent;
+  // One-line note on what makes this variant interesting — partial input,
+  // ambiguous referent, off-scope, etc. Surfaces in the demo bar tooltip.
+  edge: string | null;
+  outcome: AskScenarioOutcome;
+};
+
+export type AskScenario = {
+  id: string;
+  title: string;
+  canonicalQuestion: string;
+  variants: readonly AskScenarioVariant[];
+};

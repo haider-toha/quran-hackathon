@@ -1,20 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { BookmarkIcon, CopyIcon, PenIcon, SparkleIcon, XIcon } from "@/components/Icon";
 import { usePreferences } from "@/hooks/usePreferences";
 import { parseInline } from "@/lib/markdown";
-import { TAFSIR_93_3 } from "@/lib/mock-data";
-import type { Surah, TafsirCitation, Verse } from "@/types";
+import { TAFSIR_AD_DUHA } from "@/lib/mock-data";
+import type { Surah, TafsirCitation, TafsirEntry, Verse } from "@/types";
 
 import { SourceCard } from "./SourceCard";
-
-// Hoisted out of render — these are pure functions of TAFSIR_93_3 (a module
-// constant) and don't need to live behind a useMemo.
-const FOCAL_SUMMARY = TAFSIR_93_3.summary.map((p, i) => parseInline(p, `sum-${i}`));
-const FOCAL_TAKEAWAYS = TAFSIR_93_3.takeaways.map((p, i) => parseInline(p, `tk-${i}`));
-const DRAWN_FROM_CITATIONS: readonly TafsirCitation[] = TAFSIR_93_3.citations.slice(0, 2);
 
 type Props = {
   surah: Surah;
@@ -22,20 +16,39 @@ type Props = {
   onClose: () => void;
 };
 
+function entryFor(surahNumber: number, ayahNumber: number): TafsirEntry | null {
+  if (surahNumber !== 93) return null;
+  return TAFSIR_AD_DUHA[ayahNumber] ?? null;
+}
+
 export function TafsirPanel({ surah, ayah, onClose }: Props) {
   // We read `showReflectionPrompts` (and nothing else) — v3 renders the
   // canonical Detailed layout regardless of `responseStyle`, so the prior
   // silent read of that field has been dropped.
   const { preferences } = usePreferences();
 
-  const [openSourceId, setOpenSourceId] = useState<string | null>(
-    TAFSIR_93_3.citations[0]?.id ?? null,
+  const entry = entryFor(surah.number, ayah.number);
+  const hasEntry = entry !== null;
+
+  const summaryParagraphs: readonly ReactNode[] = useMemo(
+    () =>
+      entry ? entry.summary.map((paragraph, index) => parseInline(paragraph, `sum-${index}`)) : [],
+    [entry],
   );
 
-  const isFocal = surah.number === 93 && ayah.number === 3;
-  const summaryParagraphs: readonly ReactNode[] = isFocal ? FOCAL_SUMMARY : [];
-  const takeawayItems: readonly ReactNode[] = isFocal ? FOCAL_TAKEAWAYS : [];
-  const drawnFromCitations = DRAWN_FROM_CITATIONS;
+  const takeawayItems: readonly ReactNode[] = useMemo(
+    () => (entry ? entry.takeaways.map((line, index) => parseInline(line, `tk-${index}`)) : []),
+    [entry],
+  );
+
+  const drawnFromCitations: readonly TafsirCitation[] = useMemo(
+    () => (entry ? entry.citations.slice(0, 2) : []),
+    [entry],
+  );
+
+  const [openSourceId, setOpenSourceId] = useState<string | null>(
+    () => entry?.citations[0]?.id ?? null,
+  );
 
   const toggleSource = useCallback((id: string) => {
     setOpenSourceId((prev) => (prev === id ? null : id));
@@ -95,18 +108,18 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
             Summary
           </h3>
           <div className="tp-summary">
-            {isFocal ? (
+            {hasEntry ? (
               summaryParagraphs.map((nodes, i) => <p key={`p-${i}`}>{nodes}</p>)
             ) : (
               <p style={{ color: "var(--color-ink-4)" }}>
-                Open this ayah&apos;s tafsir to see the classical commentary. Sample explanation
-                appears for {surah.transliteration} 93:3.
+                No tafsir entry is available for {surah.transliteration} {surah.number}:
+                {ayah.number} in the current corpus.
               </p>
             )}
           </div>
         </div>
 
-        {isFocal ? (
+        {hasEntry ? (
           <div className="tp-section">
             <h3>Three takeaways</h3>
             <ul className="tp-points">
@@ -119,16 +132,16 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
           </div>
         ) : null}
 
-        {isFocal && preferences.showReflectionPrompts ? (
+        {hasEntry && entry && preferences.showReflectionPrompts ? (
           <div className="tp-section">
             <div className="tp-marginalia">
               <span className="lbl">Reflection</span>
-              {TAFSIR_93_3.reflection}
+              {entry.reflection}
             </div>
           </div>
         ) : null}
 
-        {isFocal ? (
+        {hasEntry ? (
           <div className="tp-section">
             <h3>Drawn from</h3>
             {drawnFromCitations.map((citation) => (
