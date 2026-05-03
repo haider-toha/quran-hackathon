@@ -3,13 +3,20 @@
 import { AlertWarnIcon, ArrowRightIcon, CompassIcon, PenIcon } from "@/components/Icon";
 import { parseInline } from "@/lib/markdown";
 import { SAMPLE_DEFERRAL } from "@/lib/mock-data";
+import type { Deferral } from "@/types";
+
+type Props = {
+  // The active deferral. Defaults to SAMPLE_DEFERRAL so existing call sites
+  // that don't yet pass scenarios continue to render the canonical body.
+  deferral?: Deferral;
+};
 
 /**
  * Deferral panel shown when the model isn't confident enough to answer
  * directly. v3 drops the confidence meter at the top — the deferral copy
  * itself signals limited agreement. Otherwise unchanged.
  */
-export function LowConfidenceView() {
+export function LowConfidenceView({ deferral = SAMPLE_DEFERRAL }: Props = {}) {
   return (
     <>
       <div
@@ -37,7 +44,7 @@ export function LowConfidenceView() {
             <AlertWarnIcon size={18} />
           </div>
           <div className="body">
-            {SAMPLE_DEFERRAL.body.map((paragraph, index) => (
+            {deferral.body.map((paragraph, index) => (
               <p key={`p-${index}`}>{parseInline(paragraph, `p-${index}`)}</p>
             ))}
           </div>
