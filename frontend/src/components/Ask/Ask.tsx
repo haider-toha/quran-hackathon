@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ChevronDownIcon, XIcon } from "@/components/Icon";
 import { SlashMenu } from "@/components/SlashMenu";
-import { useAdminMode } from "@/lib/flags";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import {
   SAMPLE_ANSWER,
   SAMPLE_DEFERRAL,

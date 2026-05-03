@@ -25,6 +25,7 @@ export { SAMPLE_NOTES, FEATURED_NOTE_ID, findNote } from "./notes";
 export { SAMPLE_SUGGESTIONS, suggestionsFor } from "./suggestions";
 export { SAMPLE_RESEARCH, RESEARCH_QUESTION, RESEARCH_TOTAL_RESULTS } from "./research";
 export { TAFSIR_SOURCES } from "./tafsir-sources";
+export { TEMPLATES } from "./templates";
 export {
   SAMPLE_ANSWER,
   SAMPLE_DEFERRAL,

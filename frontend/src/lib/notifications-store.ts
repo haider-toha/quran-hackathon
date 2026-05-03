@@ -7,6 +7,8 @@
 // two sample notifications on first read without trampling an empty inbox the
 // user has explicitly cleared.
 
+import { isPlainObject } from "@/lib/validators";
+
 const STORAGE_KEY = "mishkat:notifications:v1";
 
 export type NotificationKind = "deep-research-completed" | "info";
@@ -45,10 +47,6 @@ export function subscribeNotifications(listener: Listener): () => void {
   return () => {
     listeners.delete(listener);
   };
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function isNotification(value: unknown): value is Notification {

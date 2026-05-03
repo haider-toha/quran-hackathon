@@ -1,7 +1,7 @@
 "use client";
 
-import { useAdminMode } from "@/lib/flags";
-import { usePreferences } from "@/lib/preferences-context";
+import { useAdminMode } from "@/hooks/useAdminMode";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { SuggestionFrequency, SuggestionsSurface } from "@/types";
 
 // The user-visible (non-admin) surfaces. Admin mode unlocks two more

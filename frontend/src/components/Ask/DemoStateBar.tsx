@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 
-import { useAdminMode } from "@/lib/flags";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import type { AskState } from "@/types";
 
 type DemoState = Extract<AskState, "input" | "streaming" | "answered" | "low">;

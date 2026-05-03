@@ -10,15 +10,9 @@ import {
   type ReactNode,
 } from "react";
 
+import { isPlainObject } from "@/lib/validators";
 import type { FeatureFlags } from "@/types";
 
-declare global {
-  interface Window {
-    __MISHKAT_ADMIN__?: boolean;
-  }
-}
-
-const ADMIN_STORAGE_KEY = "mishkat_admin";
 const FLAGS_STORAGE_KEY = "mishkat:flags:v1";
 
 export const DEFAULT_FLAGS: FeatureFlags = {
@@ -31,6 +25,18 @@ export const DEFAULT_FLAGS: FeatureFlags = {
   adminAskStateLow: false,
 };
 
+// Statically declared key list so we can iterate without a runtime cast.
+// Keep in sync with `FeatureFlags` and `DEFAULT_FLAGS`.
+const FLAG_KEYS: readonly (keyof FeatureFlags)[] = [
+  "slashCommands",
+  "suggestionsRail",
+  "deepResearch",
+  "recitation",
+  "notesExport",
+  "deleteAccount",
+  "adminAskStateLow",
+] as const;
+
 type FlagsContextValue = {
   flags: FeatureFlags;
   setFlag: <K extends keyof FeatureFlags>(key: K, value: FeatureFlags[K]) => void;
@@ -38,16 +44,12 @@ type FlagsContextValue = {
 
 const FlagsContext = createContext<FlagsContextValue | null>(null);
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function validateFlags(input: unknown): FeatureFlags {
   if (!isPlainObject(input)) return DEFAULT_FLAGS;
   // Narrow each known key to a boolean; unknown keys are dropped. Don't
   // trust localStorage to give back the right shape after a schema change.
   const out: FeatureFlags = { ...DEFAULT_FLAGS };
-  for (const key of Object.keys(DEFAULT_FLAGS) as (keyof FeatureFlags)[]) {
+  for (const key of FLAG_KEYS) {
     const candidate = input[key];
     if (typeof candidate === "boolean") out[key] = candidate;
   }
@@ -102,64 +104,4 @@ export function useSetFlag(): <K extends keyof FeatureFlags>(
     throw new Error("useSetFlag must be used inside <FlagsProvider>");
   }
   return value.setFlag;
-}
-
-// ── Admin mode ────────────────────────────────────────────────────────────
-// Persisted flag controlled by `Cmd/Ctrl+Shift+.` and overridable via
-// `window.__MISHKAT_ADMIN__` for local debugging. Lives outside the flags
-// context because it's bootstrapped from a different source (window flag +
-// dedicated storage key) and toggled by a global key listener — keeping the
-// flags context value stable across admin toggles avoids re-rendering every
-// flag consumer when admin flips.
-
-function readStoredAdmin(): boolean {
-  if (typeof window === "undefined") return false;
-  if (window.__MISHKAT_ADMIN__ === true) return true;
-  try {
-    const raw = window.localStorage.getItem(ADMIN_STORAGE_KEY);
-    return raw === "true";
-  } catch {
-    return false;
-  }
-}
-
-export function useAdminMode(): { admin: boolean; toggle: () => void } {
-  const [admin, setAdmin] = useState<boolean>(readStoredAdmin);
-
-  // Global keyboard shortcut: Cmd+Shift+. on Mac, Ctrl+Shift+. elsewhere.
-  // Listen on `window` so the chord works regardless of focus target.
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      const isModifier = event.metaKey || event.ctrlKey;
-      if (!isModifier) return;
-      if (!event.shiftKey) return;
-      if (event.key !== "." && event.code !== "Period") return;
-      event.preventDefault();
-      setAdmin((prev) => {
-        const next = !prev;
-        try {
-          window.localStorage.setItem(ADMIN_STORAGE_KEY, String(next));
-        } catch {
-          // ignore
-        }
-        return next;
-      });
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  const toggle = useCallback(() => {
-    setAdmin((prev) => {
-      const next = !prev;
-      try {
-        window.localStorage.setItem(ADMIN_STORAGE_KEY, String(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  }, []);
-
-  return { admin, toggle };
 }

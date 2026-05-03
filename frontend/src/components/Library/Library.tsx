@@ -6,7 +6,7 @@ import { useDeferredValue, useMemo, useState, useSyncExternalStore } from "react
 import { GridIcon, ListIcon, PlusIcon, SearchIcon } from "@/components/Icon";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
 import { createNoteFromTemplate, readUserNotes, subscribeUserNotes } from "@/lib/notes-store";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
 
 import { DateFilter, type DateRange } from "./DateFilter";

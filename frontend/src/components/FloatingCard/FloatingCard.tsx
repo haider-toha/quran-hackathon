@@ -29,7 +29,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { useDialogFocus } from "@/lib/use-dialog-focus";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 
 export type Placement = "top" | "bottom" | "left" | "right" | "auto";
 

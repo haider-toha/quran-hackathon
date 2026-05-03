@@ -2,6 +2,7 @@
 // first, deduped on `query` (case-insensitive), capped at MAX entries. Read
 // returns a snapshot so callers can pass it to React safely.
 
+import { isPlainObject } from "@/lib/validators";
 import type { AppRoute } from "@/types";
 
 const STORAGE_KEY = "mishkat:recents:v1";
@@ -16,8 +17,8 @@ export type RecentSearch = {
   timestamp: number;
 };
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function isAppRoute(value: unknown): value is AppRoute {
+  return typeof value === "string" && (ROUTES as readonly string[]).includes(value);
 }
 
 function isRecentSearch(value: unknown): value is RecentSearch {
@@ -25,8 +26,7 @@ function isRecentSearch(value: unknown): value is RecentSearch {
   return (
     typeof value.id === "string" &&
     typeof value.query === "string" &&
-    typeof value.route === "string" &&
-    ROUTES.includes(value.route as AppRoute) &&
+    isAppRoute(value.route) &&
     typeof value.timestamp === "number" &&
     Number.isFinite(value.timestamp)
   );

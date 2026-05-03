@@ -13,7 +13,7 @@ import {
   subscribeUserNotes,
   updateUserNote,
 } from "@/lib/notes-store";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Template } from "@/types";
 
 import { NoteBody } from "./NoteBody";

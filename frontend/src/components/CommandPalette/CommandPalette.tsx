@@ -29,7 +29,7 @@ import { kbdChord, kbdLabel } from "@/lib/kbd";
 import { AD_DUHA, SAMPLE_NOTES } from "@/lib/mock-data";
 import { createNoteFromTemplate } from "@/lib/notes-store";
 import { type RecentSearch, readRecents } from "@/lib/recents";
-import { useDialogFocus } from "@/lib/use-dialog-focus";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { AppRoute, Template } from "@/types";
 
 type CommandKind = "nav" | "verse" | "note" | "create" | "recent";

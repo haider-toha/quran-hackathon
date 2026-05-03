@@ -28,5 +28,3 @@ export type TafsirEntry = {
   reflection: string;
   citations: readonly TafsirCitation[];
 };
-
-export type ResponseMode = "simple" | "detailed" | "comparative";

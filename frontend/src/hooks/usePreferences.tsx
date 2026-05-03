@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { TAFSIR_SOURCES } from "@/lib/mock-data";
+import { isPlainObject, pick } from "@/lib/validators";
 import {
   DEFAULT_PREFERENCES,
   type LastRead,
@@ -25,8 +26,7 @@ import {
   type VerseRef,
 } from "@/types";
 
-type PreferencesContextValue = {
-  preferences: Preferences;
+type PreferencesActions = {
   setPreference: <K extends keyof Preferences>(key: K, value: Preferences[K]) => void;
   toggleTheme: () => void;
   reset: () => void;
@@ -36,7 +36,12 @@ type PreferencesContextValue = {
 
 const STORAGE_KEY = "mishkat:preferences:v1";
 
-const PreferencesContext = createContext<PreferencesContextValue | null>(null);
+// Two contexts so consumers that only need to read a single field don't
+// re-render every time *any* preference changes. The actions context value
+// is referentially stable (all callbacks wrapped in `useCallback`); the
+// value context updates on each `setPreferences`.
+const PreferencesValueContext = createContext<Preferences | null>(null);
+const PreferencesActionsContext = createContext<PreferencesActions | null>(null);
 
 // Allowlists for every enum-shaped preference. localStorage is hostile
 // input (extension tampering, schema drift, XSS in another origin); narrow
@@ -53,14 +58,6 @@ const RESPONSE_STYLES: readonly ResponseStyle[] = ["brief", "standard", "compara
 const SUGGESTIONS_SURFACES: readonly SuggestionsSurface[] = ["rail", "off"];
 const SUGGESTION_FREQUENCIES: readonly SuggestionFrequency[] = ["high", "low", "off"];
 const LIBRARY_VIEWS: readonly LibraryView[] = ["cards", "table"];
-
-function pick<T>(allowed: readonly T[], value: unknown, fallback: T): T {
-  return allowed.includes(value as T) ? (value as T) : fallback;
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 function defaultEnabledSources(): readonly string[] {
   return TAFSIR_SOURCES.filter((s) => s.enabledByDefault).map((s) => s.id);
@@ -199,35 +196,73 @@ export function PreferencesProvider({ children }: { children: ReactNode }): Reac
     setPreferences((prev) => (prev.onboarded ? prev : { ...prev, onboarded: true }));
   }, []);
 
-  const value = useMemo<PreferencesContextValue>(
-    () => ({ preferences, setPreference, toggleTheme, reset, setLastRead, markOnboarded }),
-    [preferences, setPreference, toggleTheme, reset, setLastRead, markOnboarded],
+  const actions = useMemo<PreferencesActions>(
+    () => ({ setPreference, toggleTheme, reset, setLastRead, markOnboarded }),
+    [setPreference, toggleTheme, reset, setLastRead, markOnboarded],
   );
 
-  return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
+  return (
+    <PreferencesActionsContext.Provider value={actions}>
+      <PreferencesValueContext.Provider value={preferences}>
+        {children}
+      </PreferencesValueContext.Provider>
+    </PreferencesActionsContext.Provider>
+  );
 }
 
-export function usePreferences(): PreferencesContextValue {
-  const value = useContext(PreferencesContext);
+function useValueContext(): Preferences {
+  const value = useContext(PreferencesValueContext);
   if (!value) {
     throw new Error("usePreferences must be used inside <PreferencesProvider>");
   }
   return value;
 }
 
-// Inline pre-paint script that mirrors the React validation above for the
-// only two fields that affect first paint (theme + rooting). Same allowlists,
-// no `parsed.theme === 'dark'` shortcut so a tampered value can't smuggle
-// anything past — both fields are explicitly enumerated.
-export const PREFERENCES_BOOTSTRAP_SCRIPT = `(() => {
-  try {
-    const raw = localStorage.getItem(${JSON.stringify(STORAGE_KEY)});
-    const parsed = raw ? JSON.parse(raw) : {};
-    const root = document.documentElement;
-    root.dataset.theme = ['light','dark'].includes(parsed && parsed.theme) ? parsed.theme : 'light';
-    root.dataset.rooting = ['manuscript','modern','neutral'].includes(parsed && parsed.rooting) ? parsed.rooting : 'neutral';
-  } catch (_err) {
-    document.documentElement.dataset.theme = 'light';
-    document.documentElement.dataset.rooting = 'neutral';
+export function usePreferenceActions(): PreferencesActions {
+  const value = useContext(PreferencesActionsContext);
+  if (!value) {
+    throw new Error("usePreferenceActions must be used inside <PreferencesProvider>");
   }
-})();`;
+  return value;
+}
+
+// Combined hook kept for backwards compatibility with the v3 codebase.
+// New code should prefer the granular selector hooks below to avoid
+// re-rendering on unrelated preference changes.
+type PreferencesContextValue = {
+  preferences: Preferences;
+} & PreferencesActions;
+
+export function usePreferences(): PreferencesContextValue {
+  const preferences = useValueContext();
+  const actions = usePreferenceActions();
+  return { preferences, ...actions };
+}
+
+// ── Selector hooks ────────────────────────────────────────────────────────
+// Each selector reads a single field from the value context. Components
+// that only depend on one field can subscribe via the matching selector.
+// (Note: React context still re-renders all consumers when the provider
+// value changes; the split between value and actions contexts is what
+// gives us the real win — components that only need actions never
+// re-render on preference updates.)
+
+export function usePreferenceTheme(): Preferences["theme"] {
+  return useValueContext().theme;
+}
+
+export function usePreferenceRooting(): Preferences["rooting"] {
+  return useValueContext().rooting;
+}
+
+export function usePreferenceLastRead(): Preferences["lastRead"] {
+  return useValueContext().lastRead;
+}
+
+export function usePreferenceView(): Preferences["libraryView"] {
+  return useValueContext().libraryView;
+}
+
+export function usePreferenceResponseStyle(): Preferences["responseStyle"] {
+  return useValueContext().responseStyle;
+}

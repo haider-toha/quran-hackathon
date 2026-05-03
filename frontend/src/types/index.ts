@@ -4,7 +4,6 @@ export type {
   TafsirSource,
   TafsirCitation,
   TafsirEntry,
-  ResponseMode,
 } from "./tafsir";
 export type { Note, NoteTag } from "./notes";
 export type { ResearchType, TrustLevel, ResearchResult } from "./research";

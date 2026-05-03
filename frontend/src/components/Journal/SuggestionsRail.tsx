@@ -11,7 +11,7 @@ import {
   subscribeDismissals,
 } from "@/lib/dismissal-store";
 import { suggestionsFor } from "@/lib/mock-data";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { Note, Suggestion, SuggestionFrequency } from "@/types";
 
 type Props = {

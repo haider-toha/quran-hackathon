@@ -1,6 +1,6 @@
 "use client";
 
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { ResponseStyle } from "@/types";
 
 const OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: string; desc: string }> = [

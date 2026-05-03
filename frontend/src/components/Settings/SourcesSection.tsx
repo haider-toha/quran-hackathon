@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { TAFSIR_93_3, TAFSIR_SOURCES } from "@/lib/mock-data";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { TafsirSource } from "@/types";
 
 import { SourceRow } from "./SourceRow";

@@ -5,10 +5,9 @@ import { useCallback, useEffect, useId, useRef, useState, type ChangeEvent } fro
 import { LinkIcon, SparkleIcon } from "@/components/Icon";
 import { SlashMenu } from "@/components/SlashMenu/SlashMenu";
 import { TemplatePicker } from "@/components/TemplatePicker/TemplatePicker";
+import { renderMarkdown } from "@/lib/markdown";
 import { runSlashCommand } from "@/lib/slash-commands";
 import type { Note, SlashCommand, SlashCommandResult, Template } from "@/types";
-
-import { renderMarkdown } from "./markdown";
 
 type Props = {
   note: Note;

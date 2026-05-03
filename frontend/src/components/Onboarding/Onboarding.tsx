@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 
 import { ReadingPrefsStep } from "./ReadingPrefsStep";
 import { SeedNoteStep } from "./SeedNoteStep";

@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { ReaderMode, ResponseStyle } from "@/types";
 
 type Props = {

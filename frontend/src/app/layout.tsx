@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
 import { AppShell } from "@/components/AppShell";
-import { FlagsProvider } from "@/lib/flags";
+import { FlagsProvider } from "@/hooks/useFeatureFlags";
+import { PreferencesProvider } from "@/hooks/usePreferences";
 import { fontVariableClassName } from "@/lib/fonts";
-import { PREFERENCES_BOOTSTRAP_SCRIPT, PreferencesProvider } from "@/lib/preferences-context";
+import { PREFERENCES_BOOTSTRAP_SCRIPT } from "@/lib/preferences-bootstrap";
 
 import "./globals.css";
 

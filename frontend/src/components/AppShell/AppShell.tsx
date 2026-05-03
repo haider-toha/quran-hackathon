@@ -9,7 +9,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { SurahPicker } from "@/components/SurahPicker";
 import { Topbar } from "@/components/Topbar";
 import { DEFAULT_SURAH_NUMBER, findSurahSummary, TAFSIR_SOURCES } from "@/lib/mock-data";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { AppRoute } from "@/types";
 
 const SHORTCUT_TARGETS: Readonly<Record<string, AppRoute>> = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useFeatureFlags } from "@/lib/flags";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export function AccountSection() {
   const flags = useFeatureFlags();

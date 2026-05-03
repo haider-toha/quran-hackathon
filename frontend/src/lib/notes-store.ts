@@ -11,6 +11,7 @@
 // which busts a cached snapshot so the next read returns a fresh array
 // (referential change is what triggers React to re-render).
 
+import { isPlainObject, isReadonlyStringArray } from "@/lib/validators";
 import type { Note, Template } from "@/types";
 
 const STORAGE_KEY = "mishkat:notes:v1";
@@ -34,14 +35,6 @@ export function subscribeUserNotes(listener: Listener): () => void {
   return () => {
     listeners.delete(listener);
   };
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isReadonlyStringArray(value: unknown): value is readonly string[] {
-  return Array.isArray(value) && value.every((v) => typeof v === "string");
 }
 
 function validateNote(input: unknown): Note | null {

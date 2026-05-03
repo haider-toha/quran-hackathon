@@ -1,3 +1,4 @@
+export { ICON_MAP, getIcon } from "./icon-map";
 export type { IconProps } from "./Icon";
 export {
   BookIcon,

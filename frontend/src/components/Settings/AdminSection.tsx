@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 
-import { useFeatureFlags, useSetFlag } from "@/lib/flags";
+import { useFeatureFlags, useSetFlag } from "@/hooks/useFeatureFlags";
 import type { FeatureFlags } from "@/types";
 
 type FlagKey = keyof FeatureFlags;

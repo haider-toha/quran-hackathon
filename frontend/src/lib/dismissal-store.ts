@@ -5,6 +5,8 @@
 // mock). "snoozedUntil" is a unix-ms cutoff after which the suggestion
 // reappears. Snooze is checked against `Date.now()` on every read.
 
+import { isPlainObject } from "@/lib/validators";
+
 const STORAGE_KEY = "mishkat:dismissals:v1";
 const DEFAULT_SNOOZE_MS = 24 * 60 * 60 * 1000; // 24h
 
@@ -25,10 +27,6 @@ export function subscribeDismissals(listener: Listener): () => void {
   return () => {
     listeners.delete(listener);
   };
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function isDismissalRecord(value: unknown): value is DismissalRecord {

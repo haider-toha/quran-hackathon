@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icon";
 import { findSurahSummary } from "@/lib/mock-data";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { LastRead, Surah } from "@/types";
 
 import { ContinueBanner } from "./ContinueBanner";

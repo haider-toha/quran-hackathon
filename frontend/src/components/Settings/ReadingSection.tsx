@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { ReaderMode } from "@/types";
 
 const READER_MODE_OPTIONS: ReadonlyArray<{ value: ReaderMode; label: string; desc: string }> = [

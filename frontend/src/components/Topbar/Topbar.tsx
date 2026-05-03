@@ -14,9 +14,9 @@ import {
   SearchIcon,
   SunIcon,
 } from "@/components/Icon";
-import { useAdminMode } from "@/lib/flags";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import { kbdChord } from "@/lib/kbd";
-import { usePreferences } from "@/lib/preferences-context";
+import { usePreferences } from "@/hooks/usePreferences";
 import type { ReaderMode } from "@/types";
 
 import { Crumbs } from "./Crumbs";

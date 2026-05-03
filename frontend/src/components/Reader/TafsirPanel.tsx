@@ -3,17 +3,17 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { BookmarkIcon, CopyIcon, PenIcon, SparkleIcon, XIcon } from "@/components/Icon";
+import { usePreferences } from "@/hooks/usePreferences";
+import { parseInline } from "@/lib/markdown";
 import { TAFSIR_93_3 } from "@/lib/mock-data";
-import { usePreferences } from "@/lib/preferences-context";
 import type { Surah, TafsirCitation, Verse } from "@/types";
 
-import { parseInlineMarkdown } from "./inline-markdown";
 import { SourceCard } from "./SourceCard";
 
 // Hoisted out of render — these are pure functions of TAFSIR_93_3 (a module
 // constant) and don't need to live behind a useMemo.
-const FOCAL_SUMMARY = TAFSIR_93_3.summary.map((p, i) => parseInlineMarkdown(p, `sum-${i}`));
-const FOCAL_TAKEAWAYS = TAFSIR_93_3.takeaways.map((p, i) => parseInlineMarkdown(p, `tk-${i}`));
+const FOCAL_SUMMARY = TAFSIR_93_3.summary.map((p, i) => parseInline(p, `sum-${i}`));
+const FOCAL_TAKEAWAYS = TAFSIR_93_3.takeaways.map((p, i) => parseInline(p, `tk-${i}`));
 const DRAWN_FROM_CITATIONS: readonly TafsirCitation[] = TAFSIR_93_3.citations.slice(0, 2);
 
 type Props = {

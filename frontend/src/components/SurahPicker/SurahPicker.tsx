@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SearchIcon, XIcon } from "@/components/Icon";
 import { JUZ_LABEL } from "@/lib/copy";
 import { JUZ_AMMA_SURAHS } from "@/lib/mock-data";
-import { useDialogFocus } from "@/lib/use-dialog-focus";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { SurahSummary } from "@/types";
 
 type Props = {

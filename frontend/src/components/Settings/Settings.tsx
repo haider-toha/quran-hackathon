@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 
-import { useAdminMode } from "@/lib/flags";
+import { useAdminMode } from "@/hooks/useAdminMode";
 
 import { AccountSection } from "./AccountSection";
 import { AdminSection } from "./AdminSection";
