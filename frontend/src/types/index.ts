@@ -24,6 +24,10 @@ export type {
   AnswerParagraph,
   Answer,
   Deferral,
+  AskIntent,
+  AskScenario,
+  AskScenarioVariant,
+  AskScenarioOutcome,
 } from "./ask";
 export type { AppRoute } from "./routes";
 export type { Template, TemplateSection, TemplateSectionType } from "./templates";
