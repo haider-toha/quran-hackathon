@@ -37,8 +37,8 @@ export function MushafToolbar({ rect, onAction, onClose }: Props) {
   // If anchoring above would push the toolbar off-screen (rect.top is too
   // close to the viewport top), flip below the element. The selection unit
   // is the same in every reader mode (a `<div data-ayah>`), so this rule
-  // works for mushaf inline spans, interleaved pairs, side-by-side rows,
-  // and translation rows alike.
+  // works for mushaf inline spans, interleaved pairs, and translation rows
+  // alike.
   const isBelow = rect.top < FLIP_THRESHOLD;
   const top = isBelow ? rect.bottom + TOOLBAR_BELOW_OFFSET : rect.top - TOOLBAR_OFFSET_TOP;
   const left = clampLeft(rect);

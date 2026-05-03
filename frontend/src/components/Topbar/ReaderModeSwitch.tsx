@@ -1,9 +1,9 @@
 "use client";
 
-// ReaderModeSwitch — the four-way segmented control in the Topbar that
-// switches the reader between interleaved / mushaf / translation /
-// side-by-side. Implemented as an ARIA tablist with roving focus so
-// keyboard users can cycle modes with ArrowLeft / ArrowRight / Home / End.
+// ReaderModeSwitch — the three-way segmented control in the Topbar that
+// switches the reader between interleaved / mushaf / translation.
+// Implemented as an ARIA tablist with roving focus so keyboard users can
+// cycle modes with ArrowLeft / ArrowRight / Home / End.
 //
 // We intentionally do not wire `role="tabpanel"` for the panels — the modes
 // switch the entire route view rather than swapping a peer panel, so an
@@ -13,7 +13,7 @@
 import clsx from "clsx";
 import { useCallback, useRef } from "react";
 
-import { AlignLeftIcon, BookIcon, ColumnsIcon, LayersIcon } from "@/components/Icon";
+import { AlignLeftIcon, BookIcon, LayersIcon } from "@/components/Icon";
 import { usePreferences } from "@/hooks/usePreferences";
 import type { ReaderMode } from "@/types";
 
@@ -27,7 +27,6 @@ const READER_MODE_OPTIONS: readonly ReaderModeOption[] = [
   { value: "interleaved", label: "Interleaved", Icon: LayersIcon },
   { value: "mushaf", label: "Mushaf", Icon: BookIcon },
   { value: "translation", label: "Translation", Icon: AlignLeftIcon },
-  { value: "side-by-side", label: "Side by side", Icon: ColumnsIcon },
 ];
 
 export function ReaderModeSwitch() {
@@ -72,6 +71,12 @@ export function ReaderModeSwitch() {
     [safeIndex, setPreference, focusTabAt],
   );
 
+  // CSS variable drives the indicator's translateX — the indicator div
+  // animates between tab positions instead of each button toggling its own
+  // background. Keeping the layout calculation in CSS (button width + gap)
+  // means changing pill geometry only requires editing globals.css.
+  const indicatorStyle = { "--rms-index": safeIndex } as React.CSSProperties;
+
   return (
     <div
       ref={listRef}
@@ -79,7 +84,9 @@ export function ReaderModeSwitch() {
       role="tablist"
       aria-label="Reader mode"
       onKeyDown={onKeyDown}
+      style={indicatorStyle}
     >
+      <span className="rms-indicator" aria-hidden="true" />
       {READER_MODE_OPTIONS.map(({ value, label, Icon }, index) => {
         const active = preferences.readerMode === value;
         return (

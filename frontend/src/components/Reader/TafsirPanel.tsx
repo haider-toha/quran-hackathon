@@ -1,19 +1,30 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { BookmarkIcon, CopyIcon, PenIcon, SparkleIcon, XIcon } from "@/components/Icon";
 import { usePreferences } from "@/hooks/usePreferences";
+import { copyToClipboard } from "@/lib/clipboard";
 import { parseInline } from "@/lib/markdown";
 import { TAFSIR_AD_DUHA } from "@/lib/mock-data";
-import type { Surah, TafsirCitation, TafsirEntry, Verse } from "@/types";
+import { addUserNote } from "@/lib/notes-store";
+import { showToast } from "@/lib/toast-store";
+import type { Note, Surah, TafsirCitation, TafsirEntry, Verse } from "@/types";
 
 import { SourceCard } from "./SourceCard";
 
 type Props = {
   surah: Surah;
   ayah: Verse;
+  // `onClose` is the parent's "user requested close" handler. The parent
+  // flips `closing=true` and the panel plays the slide-out animation; when
+  // `animationend` fires, the panel calls `onClosed` so the parent can
+  // unmount it. Two-phase close keeps the exit animation deterministic
+  // without relying on a setTimeout that might out-race the CSS.
   onClose: () => void;
+  closing: boolean;
+  onClosed: () => void;
 };
 
 function entryFor(surahNumber: number, ayahNumber: number): TafsirEntry | null {
@@ -40,7 +51,8 @@ function readStoredWidth(): number {
   }
 }
 
-export function TafsirPanel({ surah, ayah, onClose }: Props) {
+export function TafsirPanel({ surah, ayah, onClose, closing, onClosed }: Props) {
+  const router = useRouter();
   // We read `showReflectionPrompts` (and nothing else) — v3 renders the
   // canonical Detailed layout regardless of `responseStyle`, so the prior
   // silent read of that field has been dropped.
@@ -149,8 +161,85 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
     document.addEventListener("pointerup", onUp);
   }, []);
 
+  const handleSaveToNote = useCallback(() => {
+    const ref = `${surah.number}:${ayah.number}`;
+    const body = [
+      `## ${surah.transliteration} ${ref}`,
+      "",
+      `> ${ayah.english}`,
+      "",
+      "## My notes",
+      "",
+    ].join("\n");
+    const note: Note = {
+      id: `note-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      title: `${surah.transliteration} ${ref}`,
+      preview: ayah.english.slice(0, 180),
+      body,
+      link: ref,
+      tags: [],
+      editedRelative: "Just now",
+      editedAbsolute: "Just now",
+      editedAt: new Date().toISOString(),
+      hasAi: false,
+      aiAssisted: false,
+      templateId: null,
+      dismissedSuggestions: [],
+    };
+    addUserNote(note);
+    onClose();
+    router.push(`/journal?note=${encodeURIComponent(note.id)}`);
+  }, [surah, ayah, onClose, router]);
+
+  const handleFollowUp = useCallback(() => {
+    const q = `Tell me more about ${surah.transliteration} ${surah.number}:${ayah.number}`;
+    onClose();
+    router.push(`/ask?q=${encodeURIComponent(q)}`);
+  }, [surah, ayah, onClose, router]);
+
+  const handleCopy = useCallback(async () => {
+    const ref = `${surah.transliteration} ${surah.number}:${ayah.number}`;
+    const lines: string[] = [
+      ref,
+      "",
+      ayah.arabic,
+      "",
+      `"${ayah.english}"`,
+    ];
+    if (entry) {
+      lines.push("", "Summary", ...entry.summary);
+      if (entry.takeaways.length > 0) {
+        lines.push("", "Three takeaways");
+        for (const t of entry.takeaways) lines.push(`• ${t}`);
+      }
+      if (entry.citations.length > 0) {
+        lines.push("", "Drawn from");
+        for (const c of entry.citations) lines.push(`— ${c.source}, ${c.author}`);
+      }
+    }
+    const ok = await copyToClipboard(lines.join("\n"));
+    showToast(ok ? `Copied explanation for ${ref}` : "Couldn't copy explanation", {
+      variant: ok ? "success" : "error",
+    });
+  }, [surah, ayah, entry]);
+
+  // When the parent flips `closing`, the slide-out animation plays. The
+  // matching `animationend` fires `onClosed` so the parent can unmount the
+  // panel only after the motion finishes — no setTimeout race with CSS.
+  const handleAnimationEnd = useCallback(
+    (event: React.AnimationEvent<HTMLElement>) => {
+      if (event.animationName === "slideOutRight") onClosed();
+    },
+    [onClosed],
+  );
+
   return (
-    <aside className="tafsir-panel" style={{ width: panelWidth }} aria-label="Tafsir explanation">
+    <aside
+      className={`tafsir-panel${closing ? " tp--closing" : ""}`}
+      style={{ width: panelWidth }}
+      aria-label="Tafsir explanation"
+      onAnimationEnd={handleAnimationEnd}
+    >
       <div
         className="tp-resize"
         role="separator"
@@ -249,17 +338,19 @@ export function TafsirPanel({ surah, ayah, onClose }: Props) {
       </div>
 
       <div className="tp-foot">
-        <button type="button" className="btn primary">
+        <button type="button" className="btn primary" onClick={handleSaveToNote}>
           <PenIcon size={13} /> Save to note
         </button>
-        <button type="button" className="btn">
+        <button type="button" className="btn" onClick={handleFollowUp}>
           <SparkleIcon size={13} /> Follow-up
         </button>
         <button
           type="button"
           className="btn ghost"
           style={{ marginLeft: "auto" }}
-          aria-label="Copy"
+          onClick={handleCopy}
+          aria-label="Copy explanation"
+          title="Copy"
         >
           <CopyIcon size={13} />
         </button>

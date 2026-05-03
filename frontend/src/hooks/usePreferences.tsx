@@ -48,12 +48,7 @@ const PreferencesActionsContext = createContext<PreferencesActions | null>(null)
 // once at the boundary so downstream typed access is safe.
 const THEMES: readonly Theme[] = ["light", "dark"];
 const ROOTINGS: readonly Rooting[] = ["manuscript", "modern", "neutral"];
-const READER_MODES: readonly ReaderMode[] = [
-  "interleaved",
-  "mushaf",
-  "translation",
-  "side-by-side",
-];
+const READER_MODES: readonly ReaderMode[] = ["interleaved", "mushaf", "translation"];
 const RESPONSE_STYLES: readonly ResponseStyle[] = ["brief", "standard", "comparative"];
 const SUGGESTIONS_SURFACES: readonly SuggestionsSurface[] = ["rail", "off"];
 const SUGGESTION_FREQUENCIES: readonly SuggestionFrequency[] = ["high", "low", "off"];

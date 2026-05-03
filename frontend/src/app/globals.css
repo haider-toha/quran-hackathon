@@ -406,6 +406,7 @@
   .nav-item .kbd {
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
   }
   .nav-item:hover .kbd {
@@ -595,6 +596,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    height: 28px;
     font-size: 13px;
     color: var(--color-ink-3);
     min-width: 0;
@@ -604,6 +606,28 @@
   }
   .crumbs .current {
     color: var(--color-ink);
+  }
+  /* SurahCrumb dropdown trigger — must inherit `.crumbs` font so the
+     "Read" span and the trigger label render at the same size and weight.
+     `.btn` would force font-weight: 500 + a different font-size, which
+     visually breaks the breadcrumb path. */
+  .crumbs .crumb-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    transition: background 100ms var(--ease);
+  }
+  .crumbs .crumb-trigger:hover {
+    background: var(--color-line-2);
   }
 
   .topbar .spacer {
@@ -631,7 +655,7 @@
   }
   .iconbtn:active {
     background: var(--color-bg-deep);
-    transform: translateY(0.5px);
+    transform: translateY(0.5px) scale(0.94);
   }
   .iconbtn.on {
     background: var(--color-accent-soft);
@@ -660,10 +684,24 @@
     border-color: var(--color-line-strong);
     background: var(--color-bg-deep);
   }
+  /* Focus-within (keyboard tab into the searchbar button) gets a subtle
+     ring + lift so the user knows it's actionable. The shadow uses the
+     accent-soft tint so it doesn't compete with the topbar's neutral
+     palette. */
+  .searchbar:focus-visible,
+  .searchbar:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+    outline: none;
+  }
+  .searchbar:active {
+    transform: translateY(0.5px);
+  }
   .searchbar .kbd {
     margin-left: auto;
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
     background: var(--color-bg);
     padding: 1px 5px;
@@ -989,13 +1027,12 @@
 
   .mushaf-page {
     direction: rtl;
-    text-align: justify;
+    text-align: start;
     font-family: var(--font-arabic);
     font-size: 32px;
     line-height: 2.3;
     color: var(--color-ink);
     word-spacing: 2px;
-    text-align-last: right;
   }
   .mushaf-page .ayah-frag {
     display: inline;
@@ -1027,6 +1064,21 @@
   .mushaf-page .ayah-run.selected {
     background: var(--color-tafsir-bg-strong);
     color: var(--color-ink);
+    /* `selectionPulse` plays once on selection — a tiny background-glow
+       breathe so the verse confirms the click. The keyframes box-shadow
+       is on top of the existing background, not replacing it. */
+    animation: selectionPulse 320ms var(--ease-spring, var(--ease));
+  }
+  @keyframes selectionPulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--color-tafsir-bg-strong);
+    }
+    50% {
+      box-shadow: 0 0 0 4px var(--color-tafsir-bg);
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
   }
   .mushaf-page .ayah-run.playing {
     background: var(--color-accent-softer);
@@ -1055,13 +1107,9 @@
     display: block;
   }
   .verse-marker .vm-num {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
     font-family: var(--font-arabic);
-    font-size: 13px;
-    color: var(--color-tafsir);
+    font-size: 12px;
+    fill: var(--color-tafsir);
     pointer-events: none;
   }
   .verse-marker .vm-circle {
@@ -1083,27 +1131,7 @@
   }
 
   .translation-lane {
-    margin-top: 36px;
-    padding-top: 24px;
-    border-top: 1px solid var(--color-line);
-  }
-  .translation-lane .tl-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-ink-4);
-    font-weight: 500;
-  }
-  .translation-lane .tl-head .src {
-    font-family: var(--font-display);
-    font-style: italic;
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 11.5px;
+    margin-top: 12px;
   }
   .tl-ayah {
     display: grid;
@@ -1188,6 +1216,10 @@
     background: var(--color-line-2);
     color: var(--color-ink);
   }
+  .mushaf-toolbar button:active {
+    transform: scale(0.94);
+    background: var(--color-bg-deep);
+  }
   .mushaf-toolbar .div {
     width: 1px;
     background: var(--color-line);
@@ -1225,29 +1257,6 @@
     opacity: 1;
     color: var(--color-tafsir);
     border-color: var(--color-tafsir-line);
-  }
-
-  .marginalia {
-    position: relative;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 13.5px;
-    line-height: 1.55;
-    color: var(--color-ink-3);
-    padding: 8px 0 8px 16px;
-    border-left: 1px solid var(--color-note-line);
-    margin: 14px 0 14px 8px;
-    max-width: 320px;
-  }
-  .marginalia .lbl {
-    font-family: var(--font-sans);
-    font-style: normal;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-note);
-    margin-bottom: 4px;
-    display: block;
   }
 
   /* ── Continue-from-last-read banner ────────────────────── */
@@ -1368,110 +1377,69 @@
     letter-spacing: -0.005em;
   }
 
-  /* ── Side-by-side reader ───────────────────────────────── */
-  .sbs-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  .sbs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 28px;
-    padding: 12px 14px;
-    margin: 0 -14px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: background 120ms var(--ease);
-    background: transparent;
-    border: 0;
-    color: inherit;
-    font: inherit;
-    width: calc(100% + 28px);
-    text-align: inherit;
-    align-items: start;
-  }
-  .sbs-row:hover {
-    background: var(--color-line-2);
-  }
-  .sbs-row.selected {
-    background: var(--color-tafsir-bg);
-  }
-  .sbs-row:focus-visible {
-    outline: 2px solid var(--color-tafsir);
-    outline-offset: 2px;
-  }
-  .sbs-row .sbs-english {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: left;
-  }
-  .sbs-row .sbs-num {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    color: var(--color-ink-4);
-    letter-spacing: 0.04em;
-  }
-  .sbs-row .sbs-english-text {
-    font-family: var(--font-serif);
-    font-size: 15.5px;
-    line-height: 1.7;
-    color: var(--color-ink-2);
-    font-weight: 380;
-    letter-spacing: -0.005em;
-  }
-  .sbs-row .sbs-arabic {
-    font-family: var(--font-arabic);
-    font-size: 26px;
-    line-height: 1.9;
-    color: var(--color-ink);
-    text-align: right;
-  }
-
   /* ── Topbar reader-mode switcher ───────────────────────── */
   .reader-mode-switch {
     display: inline-flex;
     align-items: center;
+    position: relative;
+    height: 28px;
     background: var(--color-bg-deep);
     border: 1px solid var(--color-line);
     border-radius: var(--radius);
-    padding: 2px;
+    padding: 1px;
     gap: 1px;
+  }
+  /* Sliding pill that follows the active tab. Position is driven by the
+     `--rms-index` custom property set on the wrapper from React. The
+     spring easing gives the slide a tiny overshoot so the motion reads as
+     "snapping" into the next tab rather than a flat tween. 25px = button
+     width (24px) + gap (1px). */
+  .reader-mode-switch .rms-indicator {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-bg-elev);
+    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+    transform: translateX(calc(var(--rms-index, 0) * 25px));
+    transition: transform 240ms var(--ease-spring, var(--ease));
+    pointer-events: none;
+    z-index: 0;
+  }
+  [data-theme="dark"] .reader-mode-switch .rms-indicator {
+    background: var(--color-line-strong);
   }
   .reader-mode-switch .rms-btn {
     appearance: none;
     border: 0;
     background: transparent;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: inline-grid;
     place-items: center;
     color: var(--color-ink-4);
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
+    position: relative;
+    z-index: 1;
     transition:
-      background 100ms var(--ease),
-      color 100ms var(--ease);
+      color 160ms var(--ease),
+      transform 120ms var(--ease);
   }
   .reader-mode-switch .rms-btn:hover {
     color: var(--color-ink-2);
   }
-  .reader-mode-switch .rms-btn.on {
-    background: var(--color-bg-elev);
-    color: var(--color-ink);
-    box-shadow: var(--shadow-sm);
+  .reader-mode-switch .rms-btn:active {
+    transform: scale(0.92);
   }
-  [data-theme="dark"] .reader-mode-switch .rms-btn.on {
-    background: var(--color-line-strong);
+  .reader-mode-switch .rms-btn.on {
     color: var(--color-ink);
   }
 
-  /* ── Per-ayah audio play button (interleaved + sbs + tl) ── */
+  /* ── Per-ayah audio play button (interleaved + tl) ───────── */
   .ayah-audio {
     display: inline-grid;
     place-items: center;
@@ -1503,10 +1471,6 @@
     margin-top: 6px;
     display: flex;
     justify-content: flex-end;
-  }
-  .sbs-row .sbs-audio {
-    display: inline-flex;
-    align-items: center;
   }
 
   /* ── Toolbar viewport-bounds flip ──────────────────────── */
@@ -1645,6 +1609,23 @@
     overflow: hidden;
     animation: slideInRight 220ms var(--ease);
   }
+  /* When the parent flips `closing`, the panel slides right + fades. The
+     parent waits for `animationend` (or a 200ms timeout fallback) before
+     unmounting so the user sees the exit. */
+  .tafsir-panel.tp--closing {
+    animation: slideOutRight 200ms var(--ease) forwards;
+    pointer-events: none;
+  }
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(28px);
+      opacity: 0;
+    }
+  }
   .tp-resize {
     position: absolute;
     inset: 0 auto 0 0;
@@ -1670,28 +1651,40 @@
     }
   }
   .tp-head {
-    /* Match the topbar's height exactly so the panel's "93:1 Explanation"
-       row visually sits on the same Y as "Read › Ad-Duha · 93". */
+    /* Match the topbar's height + padding + gap exactly so the panel's
+       "93:1 Explanation" row visually sits on the same Y as the topbar
+       controls (reader-mode switch, search bar, night-mode toggle). */
     height: 48px;
     padding: 0 18px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex-shrink: 0;
   }
   .tp-ref {
+    /* 28px tall to match the topbar's iconbtn / searchbar / reader-mode
+       switch — without a fixed height the badge collapses to its content
+       (~18px) and reads as visually shorter than the surrounding row. */
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 8px;
     font-family: var(--font-mono);
     font-size: 11.5px;
+    line-height: 1;
     color: var(--color-tafsir);
     background: var(--color-tafsir-bg);
-    padding: 2px 8px;
     border-radius: 4px;
     border: 1px solid var(--color-tafsir-line);
   }
   .tp-title {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 500;
+    line-height: 1;
     color: var(--color-ink);
   }
 
@@ -1886,7 +1879,6 @@
   }
 
   .tp-foot {
-    border-top: 1px solid var(--color-line);
     padding: 12px 18px;
     display: flex;
     gap: 8px;
@@ -4189,6 +4181,7 @@
   .kbd-inline {
     font-family: var(--font-mono);
     font-size: 10.5px;
+    letter-spacing: 0.12em;
     color: var(--color-ink-4);
   }
   .cmdk-foot .kbd-inline {
@@ -4539,6 +4532,162 @@
     color: var(--color-ink-3);
     font-family: var(--font-serif);
     line-height: 1.55;
+  }
+
+  /* ── Toaster (ephemeral micro-feedback) ─────────────────────────
+     Bottom-center stack. Each toast slides up from below + fades in,
+     then fades + slips back down on exit. Pointer-events none on the
+     stack so the rest of the UI stays interactive; toasts re-enable
+     pointer events on themselves so the close button works. */
+  .toaster {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    z-index: 1200;
+    pointer-events: none;
+  }
+  .toast {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 8px 12px;
+    min-width: 180px;
+    max-width: min(420px, calc(100vw - 48px));
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    animation: toastIn 220ms var(--ease-spring, var(--ease)) both;
+  }
+  .toast--exiting {
+    animation: toastOut 180ms var(--ease) forwards;
+  }
+  .toast-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: inherit;
+    flex-shrink: 0;
+  }
+  .toast--success .toast-icon {
+    background: var(--color-positive, #22c55e);
+    color: var(--color-bg);
+  }
+  .toast--error .toast-icon {
+    background: var(--color-danger, #ef4444);
+    color: #fff;
+  }
+  .toast--info .toast-icon {
+    background: var(--color-accent);
+    color: var(--color-accent-fg, #fff);
+  }
+  .toast-msg {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toast-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+    padding: 4px;
+    margin: -4px -2px -4px 0;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    transition:
+      opacity 120ms var(--ease),
+      background 120ms var(--ease);
+  }
+  .toast-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes toastOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+  }
+
+  /* ── Polish micro-interactions ──────────────────────────────────
+     Small, replayable animations the rest of the UI hooks into:
+       • theme-icon-swap    rotate + fade entrance for sun/moon
+       • bell-pulse         attention pulse for unread badge
+       • notif-stagger      list-item stagger using --n index
+  */
+  .theme-icon-swap {
+    display: inline-grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    animation: themeIconIn 280ms var(--ease-spring, var(--ease)) both;
+    transform-origin: center;
+  }
+  @keyframes themeIconIn {
+    from {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+    }
+  }
+
+  .bell-pulse {
+    animation: bellPulse 1.8s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes bellPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 var(--color-accent);
+    }
+    50% {
+      transform: scale(1.18);
+      box-shadow: 0 0 0 3px transparent;
+    }
+  }
+
+  /* Stagger: each list item gets `style={{ "--n": index }}` so the entrance
+     `popIn` animation delays per row. Cap at 8 so deep lists don't trail. */
+  .notif-row {
+    animation: popIn 200ms var(--ease) both;
+    animation-delay: calc(min(var(--n, 0), 8) * 38ms);
   }
 }
 

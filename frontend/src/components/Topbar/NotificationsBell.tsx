@@ -88,6 +88,7 @@ export function NotificationsBell() {
         {unreadCount > 0 ? (
           <span
             aria-hidden="true"
+            className="bell-pulse"
             style={{
               position: "absolute",
               top: 4,
@@ -163,10 +164,18 @@ export function NotificationsBell() {
           <div style={{ overflowY: "auto", maxHeight: 320 }}>
             {hasNotifications ? (
               <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                {items.map((item) => (
+                {items.map((item, index) => (
                   <li
                     key={`${item.id}-${item.createdAt}`}
-                    style={{ borderBottom: "1px solid var(--color-line-2)" }}
+                    // `--n` drives the per-item entrance delay in
+                    // `.notif-row` so the popover reads as a stagger reveal.
+                    className="notif-row"
+                    style={
+                      {
+                        borderBottom: "1px solid var(--color-line-2)",
+                        "--n": index,
+                      } as React.CSSProperties
+                    }
                   >
                     <NotificationRow item={item} onActivate={() => markRead(item.id)} />
                   </li>

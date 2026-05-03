@@ -8,11 +8,13 @@ import { usePreferences } from "@/hooks/usePreferences";
 import { findSurah, findSurahSummary } from "@/lib/mock-data";
 import type { LastRead, Surah } from "@/types";
 
+import { copyToClipboard } from "@/lib/clipboard";
+import { showToast } from "@/lib/toast-store";
+
 import { ContinueBanner } from "./ContinueBanner";
 import { InterleavedReader } from "./InterleavedReader";
 import { MushafPage, type AyahSelection } from "./MushafPage";
 import { MushafToolbar, type ToolbarAction } from "./MushafToolbar";
-import { SideBySideReader } from "./SideBySideReader";
 import { SuraBand } from "./SuraBand";
 import { TafsirPanel } from "./TafsirPanel";
 import { TranslationLane } from "./TranslationLane";
@@ -64,6 +66,13 @@ export function Reader({ surah }: Props) {
   const [selectedAyah, setSelectedAyah] = useState<number | null>(null);
   const [toolbarRect, setToolbarRect] = useState<DOMRect | null>(null);
   const [playing, setPlaying] = useState<number | null>(null);
+  // Two-phase close: `panelClosing` keeps the TafsirPanel mounted while its
+  // slide-out animation plays. We unmount only after the animation ends so
+  // the user sees the exit motion. `selectedAyah` is what the rest of the
+  // tree (selected verse highlight, focus restore) reads from — it flips to
+  // null at the same time as `panelClosing` is set so the verse highlight
+  // releases immediately while the panel slides away.
+  const [panelClosing, setPanelClosing] = useState(false);
   // Snapshot lastRead at hydration: SSR has no localStorage, so
   // `preferences.lastRead` is null on the server but populated on the client.
   // Computing eagerly with a lazy `useState` initializer would render
@@ -101,30 +110,49 @@ export function Reader({ surah }: Props) {
   );
 
   const handleClosePanel = useCallback(() => {
-    setSelectedAyah(null);
     setToolbarRect(null);
+    setPanelClosing(true);
+  }, []);
+
+  const handlePanelClosed = useCallback(() => {
+    setSelectedAyah(null);
+    setPanelClosing(false);
   }, []);
 
   const handleCloseToolbar = useCallback(() => {
     setToolbarRect(null);
   }, []);
 
-  const handleToolbarAction = useCallback((_action: ToolbarAction) => {
-    // The action types are wired up here; the focused panel stays open
-    // because `selectedAyah` remains set. We just dismiss the floating bar.
-    setToolbarRect(null);
-  }, []);
+  const handleToolbarAction = useCallback(
+    async (action: ToolbarAction) => {
+      // The action types are wired up here; the focused panel stays open
+      // because `selectedAyah` remains set. We just dismiss the floating bar.
+      setToolbarRect(null);
+      if (action !== "copy") return;
+      if (selectedAyah === null) return;
+      const verse = surah.verses.find((v) => v.number === selectedAyah);
+      if (!verse) return;
+      const ref = `Qur'an ${surah.number}:${verse.number} (${surah.transliteration})`;
+      const text = `${verse.arabic}\n\n${verse.english}\n\n— ${ref}`;
+      const ok = await copyToClipboard(text);
+      showToast(
+        ok ? `Copied ${surah.transliteration} ${surah.number}:${verse.number}` : "Couldn't copy",
+        { variant: ok ? "success" : "error" },
+      );
+    },
+    [selectedAyah, surah],
+  );
 
   // Escape closes the panel (and any visible toolbar). Empty dep array is
   // safe here: the only references are `setToolbarRect` and `setSelectedAyah`,
   // which React guarantees are referentially stable across renders. We
   // attach once on mount and detach on unmount.
+  // Escape dismisses the floating selection toolbar. Panel close-on-Escape
+  // is handled inside TafsirPanel itself so its slide-out animation can play
+  // (Reader unmounting the panel here would skip the exit animation).
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setToolbarRect(null);
-        setSelectedAyah(null);
-      }
+      if (event.key === "Escape") setToolbarRect(null);
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -184,7 +212,7 @@ export function Reader({ surah }: Props) {
 
           <SuraBand surah={surah} />
 
-          {mode === "mushaf" || mode === "interleaved" || mode === "side-by-side" ? (
+          {mode === "mushaf" || mode === "interleaved" ? (
             surah.bismillah ? (
               <div className="bismillah" dir="rtl" lang="ar">
                 {surah.bismillah}
@@ -212,15 +240,6 @@ export function Reader({ surah }: Props) {
             />
           ) : null}
 
-          {mode === "side-by-side" ? (
-            <SideBySideReader
-              surah={surah}
-              selected={selectedAyah}
-              recitation={preferences.recitationEnabled}
-              onSelect={handleSelectAyah}
-            />
-          ) : null}
-
           {mode === "translation" ? (
             <TranslationLane
               surah={surah}
@@ -228,14 +247,6 @@ export function Reader({ surah }: Props) {
               recitation={preferences.recitationEnabled}
               onSelect={handleSelectAyah}
             />
-          ) : null}
-
-          {preferences.showReflectionPrompts && mode === "mushaf" ? (
-            <div className="marginalia" style={{ marginTop: 28 }}>
-              <span className="lbl">Reflection</span>
-              The pause that opens this surah is itself a mercy — what does it teach you about
-              silence in your own life?
-            </div>
           ) : null}
 
           <nav
@@ -310,7 +321,13 @@ export function Reader({ surah }: Props) {
       </div>
 
       {selectedVerse ? (
-        <TafsirPanel surah={surah} ayah={selectedVerse} onClose={handleClosePanel} />
+        <TafsirPanel
+          surah={surah}
+          ayah={selectedVerse}
+          onClose={handleClosePanel}
+          closing={panelClosing}
+          onClosed={handlePanelClosed}
+        />
       ) : null}
 
       {toolbarRect ? (

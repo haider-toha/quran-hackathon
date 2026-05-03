@@ -27,11 +27,6 @@ const READER_MODE_OPTIONS: ReadonlyArray<{ value: ReaderMode; label: string; des
     label: "Translation",
     desc: "English-only, for quiet reading.",
   },
-  {
-    value: "side-by-side",
-    label: "Side by side",
-    desc: "Arabic and translation in parallel columns.",
-  },
 ];
 
 const RESPONSE_STYLE_OPTIONS: ReadonlyArray<{ value: ResponseStyle; label: string; desc: string }> =

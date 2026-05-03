@@ -5,7 +5,6 @@
 // own client leaf keeps `useSearchParams()` out of AppShell so the shell
 // can stay a Server Component.
 
-import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
@@ -41,19 +40,13 @@ export function SurahCrumb({ onSurahPicker, surahPickerActive, surahPickerAnchor
       <button
         ref={surahPickerAnchorRef}
         type="button"
-        className={clsx("btn", "ghost", "sm")}
-        // `height: 26` (or .btn.sm's 24) clips the underdots on d/h in the
-        // transliteration — switch to padding-driven sizing so descenders
-        // stay visible.
-        style={{ fontSize: 13, height: "auto", padding: "4px 8px", lineHeight: 1.3 }}
+        className="crumb-trigger"
         onClick={onSurahPicker}
         aria-expanded={surahPickerActive}
         aria-haspopup="dialog"
       >
-        <span className="current" style={{ color: "var(--color-ink)" }}>
-          {surahLabel}
-        </span>
-        <ChevronDownIcon size={13} />
+        <span className="current">{surahLabel}</span>
+        <ChevronDownIcon size={12} />
       </button>
     </div>
   );

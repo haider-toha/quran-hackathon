@@ -34,11 +34,6 @@ export function TranslationLane({ surah, selected, recitation, onSelect }: Props
 
   return (
     <div className="translation-lane">
-      <div className="tl-head">
-        <span>Translation</span>
-        <span style={{ color: "var(--color-ink-5)" }}>·</span>
-        <span className="src">The Clear Quran — Mustafa Khattab</span>
-      </div>
       {surah.verses.map((verse) => {
         const isSelected = selected === verse.number;
         return (

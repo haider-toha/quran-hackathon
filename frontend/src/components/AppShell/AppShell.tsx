@@ -19,6 +19,8 @@
 
 import { Suspense, type ReactNode } from "react";
 
+import { Toaster } from "@/components/Toaster";
+
 import { ChromeMain } from "./ChromeMain";
 import { OnboardingFrame } from "./OnboardingFrame";
 import { OnboardingGate } from "./OnboardingGate";
@@ -39,6 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         }
         onboarding={<div className="onboarding-root">{children}</div>}
       />
+      <Toaster />
     </>
   );
 }

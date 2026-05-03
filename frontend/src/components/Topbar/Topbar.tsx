@@ -76,11 +76,15 @@ export function Topbar({
 
       <button
         type="button"
-        className="iconbtn"
+        className="iconbtn theme-toggle"
         onClick={toggleTheme}
         aria-label={preferences.theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
       >
-        {preferences.theme === "dark" ? <SunIcon size={15} /> : <MoonIcon size={15} />}
+        {/* `key` forces a remount on theme change so the entrance animation
+            replays. The wrapper carries the rotate+fade keyframes. */}
+        <span key={preferences.theme} className="theme-icon-swap" aria-hidden="true">
+          {preferences.theme === "dark" ? <SunIcon size={15} /> : <MoonIcon size={15} />}
+        </span>
       </button>
     </header>
   );

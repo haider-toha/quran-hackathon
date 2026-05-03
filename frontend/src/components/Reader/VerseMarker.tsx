@@ -34,10 +34,16 @@ export function VerseMarker({ n, onClick }: Props) {
         {PETALS.map((p) => (
           <circle key={`${p.cx}-${p.cy}`} className="vm-petal" cx={p.cx} cy={p.cy} r="1.4" />
         ))}
+        <text
+          className="vm-num"
+          x={CENTER}
+          y={CENTER}
+          textAnchor="middle"
+          dominantBaseline="central"
+        >
+          {toEasternArabicNumeral(n)}
+        </text>
       </svg>
-      <span className="vm-num" lang="ar" dir="rtl">
-        {toEasternArabicNumeral(n)}
-      </span>
     </button>
   );
 }

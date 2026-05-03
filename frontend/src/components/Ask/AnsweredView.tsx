@@ -1,8 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 
 import { CopyIcon, PenIcon, SparkleIcon } from "@/components/Icon";
+import { copyToClipboard } from "@/lib/clipboard";
+import { showToast } from "@/lib/toast-store";
 import type { Answer, AnswerParagraph } from "@/types";
 
 import { CitationAnchor } from "./CitationAnchor";
@@ -11,6 +13,15 @@ type Props = {
   answer: Answer;
   onFollowUp: () => void;
 };
+
+function paragraphToText(paragraph: AnswerParagraph): string {
+  return paragraph.segments
+    .map((segment) => {
+      if (segment.kind === "cite") return `${segment.value} [${segment.citation}]`;
+      return segment.value;
+    })
+    .join("");
+}
 
 /**
  * Fully-rendered answer: paragraphs (with inline citation anchors), citation
@@ -23,6 +34,22 @@ type Props = {
  */
 export function AnsweredView({ answer, onFollowUp }: Props) {
   const durationSeconds = (answer.durationMs / 1000).toFixed(1);
+
+  const handleCopy = useCallback(async () => {
+    const lines: string[] = [`Q: ${answer.question}`, ""];
+    for (const p of answer.paragraphs) lines.push(paragraphToText(p), "");
+    if (answer.closing) lines.push(answer.closing, "");
+    if (answer.citations.length > 0) {
+      lines.push("Citations");
+      for (const c of answer.citations) {
+        lines.push(`[${c.number}] ${c.source} — ${c.author}, ${c.ref}`);
+      }
+    }
+    const ok = await copyToClipboard(lines.join("\n").trim());
+    showToast(ok ? "Copied answer" : "Couldn't copy answer", {
+      variant: ok ? "success" : "error",
+    });
+  }, [answer]);
 
   return (
     <>
@@ -57,7 +84,7 @@ export function AnsweredView({ answer, onFollowUp }: Props) {
         <button type="button" className="btn">
           <PenIcon size={13} /> Save to note
         </button>
-        <button type="button" className="btn ghost">
+        <button type="button" className="btn ghost" onClick={handleCopy}>
           <CopyIcon size={13} /> Copy
         </button>
         <span className="meta" style={{ marginLeft: "auto" }}>
