@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api-docs.quran.foundation)",
+      "WebFetch(domain:api.qurancdn.com)",
+      "Bash(git mv *)"
+    ]
+  }
+}

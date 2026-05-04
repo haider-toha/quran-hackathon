@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     debug: bool = False
 
     anthropic_api_key: str = ""
+    openai_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
 
     supabase_url: str = ""
