@@ -1,6 +1,6 @@
 -- Bookmarks, highlights, and last-read tracking.
 
-create table bookmarks (
+create table if not exists bookmarks (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users(id) on delete cascade,
   verse_id    int  not null references verses(id)     on delete cascade,
@@ -9,7 +9,7 @@ create table bookmarks (
   unique (user_id, verse_id)
 );
 
-create table highlights (
+create table if not exists highlights (
   id            uuid primary key default gen_random_uuid(),
   user_id       uuid not null references auth.users(id) on delete cascade,
   verse_id      int  not null references verses(id)     on delete cascade,
@@ -19,9 +19,9 @@ create table highlights (
   created_at    timestamptz not null default now()
 );
 
-create index highlights_user_idx on highlights(user_id, verse_id);
+create index if not exists highlights_user_idx on highlights(user_id, verse_id);
 
-create table reading_progress (
+create table if not exists reading_progress (
   user_id        uuid primary key references auth.users(id) on delete cascade,
   last_verse_id  int  references verses(id) on delete set null,
   updated_at     timestamptz not null default now()

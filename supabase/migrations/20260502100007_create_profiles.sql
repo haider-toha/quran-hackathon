@@ -1,7 +1,7 @@
 -- User profiles (extends auth.users with app-specific fields) plus a trigger
 -- that auto-creates a profile row whenever a new auth user signs up.
 
-create table profiles (
+create table if not exists profiles (
   id                      uuid primary key references auth.users(id) on delete cascade,
   display_name            text,
   avatar_url              text,
@@ -13,6 +13,7 @@ create table profiles (
   updated_at              timestamptz not null default now()
 );
 
+drop trigger if exists trg_profiles_updated on profiles;
 create trigger trg_profiles_updated
   before update on profiles
   for each row execute function set_updated_at();
@@ -32,6 +33,7 @@ begin
 end
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();

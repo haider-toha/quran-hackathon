@@ -4,7 +4,7 @@
 -- The API returns tafsir text as HTML. We store both the HTML (for display)
 -- and a stripped plain-text version (for FTS and embedding).
 
-create table tafsirs (
+create table if not exists tafsirs (
   id              int primary key,         -- resource_id from API
   slug            text unique,
   name            text not null,
@@ -18,7 +18,7 @@ create table tafsirs (
 );
 
 -- One row per (tafsir, verse). Matches the API shape exactly.
-create table tafsir_entries (
+create table if not exists tafsir_entries (
   id                    bigint primary key,   -- API entry id (e.g. 82641)
   tafsir_id             int not null references tafsirs(id) on delete cascade,
   verse_id              int not null references verses(id) on delete cascade,
@@ -36,6 +36,6 @@ create table tafsir_entries (
   unique (tafsir_id, verse_id)
 );
 
-create index tafsir_entries_tafsir_verse_idx on tafsir_entries(tafsir_id, verse_id);
-create index tafsir_entries_verse_idx        on tafsir_entries(verse_id);
-create index tafsir_entries_fts              on tafsir_entries using gin (body_tsv);
+create index if not exists tafsir_entries_tafsir_verse_idx on tafsir_entries(tafsir_id, verse_id);
+create index if not exists tafsir_entries_verse_idx        on tafsir_entries(verse_id);
+create index if not exists tafsir_entries_fts              on tafsir_entries using gin (body_tsv);
